@@ -1,0 +1,43 @@
+{
+    "name": "alisyria/ldog-framework",
+    "description": "Framework For Publishing Open Government Data Based On Linked Data Principles As Coined By Tim Berner's  Lee",
+    "keywords": [
+        "framework",
+        "linked data",
+        "semantic web",
+        "open government data",
+        "linked open government data",
+        "5 stars linked data"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "AliSyria\\LDOG\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AliSyria\\LDOG\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AliSyria\\LDOG\\LdogServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "5.0",
+        "phpunit/phpunit": "^8.5"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
