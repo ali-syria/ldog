@@ -12,7 +12,8 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "^7.4"
+        "php": "^7.4",
+        "easyrdf/easyrdf": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -28,6 +29,9 @@
         "laravel": {
             "providers": [
                 "AliSyria\\LDOG\\LdogServiceProvider"
+            ],
+            "aliases": [
+                "AliSyria\\LDOG\\Facades\\URI"
             ]
         }
     },

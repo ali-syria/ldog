@@ -6,7 +6,7 @@ namespace AliSyria\LDOG\Tests;
 
 use AliSyria\LDOG\LdogServiceProvider;
 
-class TestCase extends Orchestra\Testbench\TestCase
+class TestCase extends \Orchestra\Testbench\TestCase
 {
     public function setUp(): void
     {
