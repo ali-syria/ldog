@@ -16,16 +16,16 @@ class Factory
     {
         $this->domain=config('ldog.domain');
     }
-    public function realResource(string $topic,string $concept,string $reference):RealResourceUriContract
+    public function realResource(string $sector,string $concept,string $reference):RealResourceUriContract
     {
-        return new RealResourceUri($this->domain,$topic,$concept,$reference);
+        return new RealResourceUri($this->domain,$sector,$concept,$reference);
     }
-    public function ontology(string $topic,string $name):OntologyUriContract
+    public function ontology(string $sector,string $name):OntologyUriContract
     {
-        return new OntologyUri($this->domain,$topic,$name);
+        return new OntologyUri($this->domain,$sector,$name);
     }
-    public function dataShape(string $topic,string $name):DataShapeUriContract
+    public function dataShape(string $sector,string $name):DataShapeUriContract
     {
-        return new DataShapeUri($this->domain,$topic,$name);
+        return new DataShapeUri($this->domain,$sector,$name);
     }
 }

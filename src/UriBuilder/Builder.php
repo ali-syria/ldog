@@ -25,7 +25,7 @@ class Builder implements UriBuilderContract
     {
         return $this->domain;
     }
-    public final function getTopicUri():string
+    public final function getSectorUri():string
     {
         return "http://".$this->subdomain.".".$this->domain;
     }

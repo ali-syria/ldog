@@ -22,7 +22,7 @@ class DataShapeUri extends Builder implements DataShapeUriContract
     }
     public function getBasueUri(): string
     {
-        return $this->getTopicUri()."/data_shape/$this->name#";
+        return $this->getSectorUri()."/data_shape/$this->name#";
     }
 
     public function getResourceUri(string $resouce): string

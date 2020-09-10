@@ -21,25 +21,40 @@ class RealResourceUri extends Builder implements RealResourceUriContract
 
     public function setConcept(string $concept)
     {
-        $this->concept=Str::of($concept)->lower()->plural();
+        $this->concept=Str::of($concept)->lower();
     }
     public function setReference(string $reference)
     {
         $this->reference=$reference;
     }
 
+    public function getResourcePath(): string
+    {
+        return 'resoucre/'.$this->concept.'/'.$this->reference;
+    }
+
+    public function getHtmlPath(): string
+    {
+        return 'page/'.$this->concept.'/'.$this->reference;
+    }
+
+    public function getDataPath(): string
+    {
+        return 'data/'.$this->concept.'/'.$this->reference;
+    }
+
     public function getResourceUri(): string
     {
-        return $this->getTopicUri().'/resoucre/'.$this->concept.'/'.$this->reference;
+        return $this->getSectorUri().'/'.$this->getResourcePath();
     }
 
     public function getHtmlUri(): string
     {
-        return $this->getTopicUri().'/page/'.$this->concept.'/'.$this->reference;
+        return $this->getSectorUri().'/'.$this->getHtmlPath();
     }
 
     public function getDataUri(): string
     {
-        return $this->getTopicUri().'/data/'.$this->concept.'/'.$this->reference;
+        return $this->getSectorUri().'/'.$this->getDataPath();
     }
 }

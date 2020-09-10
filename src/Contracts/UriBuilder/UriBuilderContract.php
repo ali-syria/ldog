@@ -8,5 +8,5 @@ interface UriBuilderContract
 {
     public function getTopLevelDomain():string;
     public function getSubDomain():string;
-    public function getTopicUri():string ;
+    public function getSectorUri():string ;
 }

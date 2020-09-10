@@ -21,7 +21,7 @@ class OntologyUri extends Builder implements OntologyUriContract
     }
     public function getBasueUri(): string
     {
-        return $this->getTopicUri()."/ontology/$this->name#";
+        return $this->getSectorUri()."/ontology/$this->name#";
     }
 
     public function getResourceUri(string $resouce): string

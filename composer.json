@@ -13,7 +13,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.4",
-        "easyrdf/easyrdf": "^1.0"
+        "easyrdf/easyrdf": "^1.0",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {
         "psr-4": {
@@ -30,9 +31,10 @@
             "providers": [
                 "AliSyria\\LDOG\\LdogServiceProvider"
             ],
-            "aliases": [
-                "AliSyria\\LDOG\\Facades\\URI"
-            ]
+            "aliases": {
+                "URI": "AliSyria\\LDOG\\Facades\\URI",
+                "GS": "AliSyria\\LDOG\\Facades\\GS"
+            }
         }
     },
     "require-dev": {

@@ -31,9 +31,36 @@ class UriBuilderTest extends TestCase
 
         $this->assertTrue(URI::realResource('topography','City','tartous')->getTopLevelDomain()==$domain);
     }
+    public function testRealResourcePathCanBeGenerated()
+    {
+        $expected='resoucre/city/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('topography','City','tartous')
+                ->getResourcePath()
+        );
+    }
+    public function testRealResourceHtmlPathCanBeGenerated()
+    {
+        $expected='page/city/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('topography','City','tartous')
+                ->getHtmlPath()
+        );
+    }
+    public function testRealResourceDataPathCanBeGenerated()
+    {
+        $expected='data/city/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('topography','City','tartous')
+                ->getDataPath()
+        );
+    }
     public function testRealResourceUriCanBeGenerated()
     {
-        $expected='http://topography.'.$this->domain.'/resoucre/cities/tartous';
+        $expected='http://topography.'.$this->domain.'/resoucre/city/tartous';
         $this->assertEquals(
             $expected,
             URI::realResource('topography','City','tartous')
@@ -42,7 +69,7 @@ class UriBuilderTest extends TestCase
     }
     public function testRealResourceHtmlUriCanBeGenerated()
     {
-        $expected='http://topography.'.$this->domain.'/page/cities/tartous';
+        $expected='http://topography.'.$this->domain.'/page/city/tartous';
         $this->assertEquals(
             $expected,
             URI::realResource('topography','City','tartous')
@@ -51,7 +78,7 @@ class UriBuilderTest extends TestCase
     }
     public function testRealResourceDataUriCanBeGenerated()
     {
-        $expected='http://topography.'.$this->domain.'/data/cities/tartous';
+        $expected='http://topography.'.$this->domain.'/data/city/tartous';
         $this->assertEquals(
             $expected,
             URI::realResource('topography','City','tartous')
