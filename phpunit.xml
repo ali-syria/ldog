@@ -21,6 +21,10 @@
         </whitelist>
     </filter>
     <php>
-        <env name="DB_CONNECTION" value="testing"/>
+        <env name="GS_OPEN_DRIVER" value="graph_db"/>
+        <env name="GS_OPEN_HOST" value="http://10.0.2.2:7200"/>
+        <env name="GS_OPEN_REPOSITORY" value="test"/>
+        <env name="GS_OPEN_USERNAME" value="admin"/>
+        <env name="GS_OPEN_PASSWORD" value="root"/>
     </php>
 </phpunit>

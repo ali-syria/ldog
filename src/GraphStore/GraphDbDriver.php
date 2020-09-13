@@ -5,10 +5,12 @@ namespace AliSyria\LDOG\GraphStore;
 
 
 use AliSyria\LDOG\Contracts\GraphStore\ConnectionContract;
+use AliSyria\LDOG\Contracts\GraphStore\GraphManagementContract;
+use AliSyria\LDOG\Contracts\GraphStore\GraphUpdateContract;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
-class GraphDbDriver implements ConnectionContract
+class GraphDbDriver implements ConnectionContract,GraphUpdateContract,GraphManagementContract
 {
     private string $host;
     private string $repository;
@@ -75,5 +77,28 @@ class GraphDbDriver implements ConnectionContract
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function loadIRIintoNamedGraph(string $sourceIRI, string $graphIRI)
+    {
+        $result=$this->client->asForm()->post("repositories/{$this->repository}/statements",[
+            'update'=>"LOAD  <$sourceIRI> INTO GRAPH <$graphIRI>",
+        ]);
+        $result->throw();
+    }
+
+    public function clearNamedGraph(string $graphIRI)
+    {
+        $result=$this->client->asForm()->post("repositories/{$this->repository}/statements",[
+            'update'=>"CLEAR GRAPH <$graphIRI>",
+        ]);
+        $result->throw();
+    }
+    public function clearAll()
+    {
+        $result=$this->client->asForm()->post("repositories/{$this->repository}/statements",[
+            'update'=>"CLEAR ALL",
+        ]);
+        $result->throw();
     }
 }

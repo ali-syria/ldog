@@ -19,11 +19,4 @@ class GraphStoreTest extends TestCase
 
         $this->assertEquals($openRepo,GS::getConnection()->getRepository());
     }
-    public function testRunSelectQuery()
-    {
-        config([
-            'ldog.graph_stores.open.repository'=> 'news'
-        ]);
-        dd(GS::getConnection()->query('select * where {  ?s ?d ?o . }'));
-    }
 }
