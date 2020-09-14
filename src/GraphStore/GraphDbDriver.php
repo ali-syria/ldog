@@ -7,10 +7,12 @@ namespace AliSyria\LDOG\GraphStore;
 use AliSyria\LDOG\Contracts\GraphStore\ConnectionContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphManagementContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphUpdateContract;
+use AliSyria\LDOG\Contracts\GraphStore\QueryContract;
+use EasyRdf\Sparql\Result;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
-class GraphDbDriver implements ConnectionContract,GraphUpdateContract,GraphManagementContract
+class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContract,GraphManagementContract
 {
     private string $host;
     private string $repository;
@@ -100,5 +102,22 @@ class GraphDbDriver implements ConnectionContract,GraphUpdateContract,GraphManag
             'update'=>"CLEAR ALL",
         ]);
         $result->throw();
+    }
+
+    public function rawQuery(string $query):string
+    {
+        return $this->client->get("repositories/{$this->repository}",[
+            'query'=>$query
+        ])->body();
+    }
+
+    public function jsonQuery(string $query): Result
+    {
+        return new Result($this->rawQuery($query),'application/sparql-results+json');
+    }
+
+    public function rdfQuery(string $query): array
+    {
+        // TODO: Implement rdfQuery() method.
     }
 }
