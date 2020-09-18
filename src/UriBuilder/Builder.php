@@ -11,6 +11,8 @@ class Builder implements UriBuilderContract
     private string $domain;
     private string $subdomain;
 
+    public const PREFIX_LDOG="http://ldog.org/ontologies/2020/8/framework#";
+
     public function __construct(string $domain,string $subdomain)
     {
         $this->domain= $domain;

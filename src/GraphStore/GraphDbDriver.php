@@ -8,6 +8,7 @@ use AliSyria\LDOG\Contracts\GraphStore\ConnectionContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphManagementContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphUpdateContract;
 use AliSyria\LDOG\Contracts\GraphStore\QueryContract;
+use AliSyria\LDOG\Contracts\GraphStore\ResourceDescriptionContract;
 use EasyRdf\Sparql\Result;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -55,10 +56,12 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
     }
     public function query(string $query,int $limit=10)
     {
-        return $this->client->get("repositories/{$this->repository}",[
+        $response= $this->client->get("repositories/{$this->repository}",[
             'query'=>$query,
             'limit'=>$limit
-        ])->json();
+        ]);
+        $response->throw();
+        return $response->json();
     }
 
     public function getHost(): string
@@ -106,9 +109,10 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
 
     public function rawQuery(string $query):string
     {
-        return $this->client->get("repositories/{$this->repository}",[
+        $response= $this->client->get("repositories/{$this->repository}",[
             'query'=>$query
-        ])->body();
+        ]);
+        return $response->body();
     }
 
     public function jsonQuery(string $query): Result
@@ -119,5 +123,28 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
     public function rdfQuery(string $query): array
     {
         // TODO: Implement rdfQuery() method.
+    }
+
+    public function rawUpdate(string $query): string
+    {
+        $response= $this->client->asForm()->post("repositories/{$this->repository}/statements",[
+            'update'=>$query
+        ]);
+        $response->throw();
+
+        return $response->body();
+    }
+
+    public function describeResource(string $uri,string $mimeType): ResourceDescriptionContract
+    {
+        $query="describe <$uri>";
+        $response=$this->client->withHeaders([
+            'Accept'=>$mimeType
+        ])->get("repositories/{$this->repository}",[
+            'query'=>$query
+        ]);
+        $response->throw();
+
+        return new ResourceDescription($response->header('Content-Type'),$response->body());
     }
 }

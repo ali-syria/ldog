@@ -21,7 +21,7 @@ class RealResourceUri extends Builder implements RealResourceUriContract
 
     public function setConcept(string $concept)
     {
-        $this->concept=Str::of($concept)->lower();
+        $this->concept=Str::of($concept)->kebab();
     }
     public function setReference(string $reference)
     {

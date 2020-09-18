@@ -11,4 +11,5 @@ interface QueryContract
     public function rawQuery(string $query):string;
     public function jsonQuery(string $query):Result;
     public function rdfQuery(string $query):array;
+    public function describeResource(string $uri,string $mimeType):ResourceDescriptionContract;
 }

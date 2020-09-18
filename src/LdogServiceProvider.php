@@ -4,12 +4,14 @@
 namespace AliSyria\LDOG;
 
 
+use AliSyria\LDOG\Authentication\GraphUserProvider;
 use AliSyria\LDOG\GraphStore\ConnectionFactory;
 use AliSyria\LDOG\GraphStore\GraphDbDriver;
 use AliSyria\LDOG\GraphStore\GraphStoreManager;
 use AliSyria\LDOG\UriBuilder\Factory;
 use AliSyria\LDOG\UriDereferencer\Dereferencer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -55,5 +57,14 @@ class LdogServiceProvider extends ServiceProvider
         ],'config');
 
         $this->loadRoutesFrom(__DIR__.'../../routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views','ldog');
+
+        $this->publishes([
+            __DIR__.'/../resources/views'=> resource_path('views/vendor/ldog')
+        ],'views');
+
+        Auth::provider('ldog',function($app, array $config){
+            return new GraphUserProvider();
+        });
     }
 }

@@ -5,8 +5,10 @@ namespace AliSyria\LDOG\UriDereferencer;
 
 
 use AliSyria\LDOG\Contracts\UriDereferencer\DereferencerContract;
+use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class Dereferencer implements DereferencerContract
 {
@@ -62,5 +64,52 @@ class Dereferencer implements DereferencerContract
         }
 
         return (string)$uri;
+    }
+
+    public static function resourceToRdfResponse(string $sector,string $concept,string $reference,
+         string $mimeType): Response
+    {
+        $resourceUriBuilder=URI::realResource($sector,$concept,$reference);
+        $resourceDescription=GS::getConnection()->describeResource($resourceUriBuilder->getResourceUri(),
+            $mimeType);
+
+        return response($resourceDescription->getBody())
+            ->withHeaders([
+                'Content-Type'=>$resourceDescription->getMimeType()
+            ]);
+    }
+
+    public static function resourceToHtmlResponse(string $sector,string $concept,string $reference,
+          string $mimeType): Response
+    {
+        $resourceUriBuilder=URI::realResource($sector,$concept,$reference);
+
+        $resultSet=static::getHtmlDataAboutResource($resourceUriBuilder->getResourceUri());
+
+        return response()->view('ldog::resource.page',[
+            'results'=>$resultSet
+        ])
+            ->withHeaders([
+                'Content-Type'=>$mimeType
+            ]);
+    }
+    private static function getHtmlDataAboutResource(string $uri)
+    {
+        $resultSet=GS::getConnection()->jsonQuery("
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+           
+            select ?property ?propertyText ?value ?valueText 
+               where {
+                   <$uri> ?property ?value.
+                   optional {
+                       ?property rdfs:label ?propertyText.                     
+                   }
+                   optional {
+                        ?value rdfs:label ?valueText.
+                   }
+               }            
+        ");
+
+        return $resultSet;
     }
 }

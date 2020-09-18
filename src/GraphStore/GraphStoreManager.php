@@ -15,17 +15,17 @@ class GraphStoreManager
         $this->connection=app('ldog.gs.open');
     }
 
-    public function openConnection():self
+    public function openConnection():ConnectionContract
     {
         $this->connection= app('ldog.gs.open');
 
-        return $this;
+        return $this->connection;
     }
-    public function secureConnection():self
+    public function secureConnection():ConnectionContract
     {
         $this->connection= app('ldog.gs.secure');
 
-        return $this;
+        return $this->connection;
     }
     public function getConnection():ConnectionContract
     {

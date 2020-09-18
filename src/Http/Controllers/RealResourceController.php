@@ -18,12 +18,16 @@ class RealResourceController extends Controller
             302,$request->headers->all()
         );
     }
-    public function page(Request $request,string $concept,string $reference)
+    public function page(Request $request,string $sector,string $concept,string $reference)
     {
-
+        return Dereferencer::resourceToHtmlResponse(
+            $sector,$concept,$reference,$request->header('Accept')
+        );
     }
-    public function data(Request $request,string $concept,string $reference)
+    public function data(Request $request,string $sector,string $concept,string $reference)
     {
-
+        return Dereferencer::resourceToRdfResponse(
+            $sector,$concept,$reference,$request->header('Accept')
+        );
     }
 }

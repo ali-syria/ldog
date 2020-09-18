@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\Contracts\UriDereferencer;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 interface DereferencerContract
 {
@@ -18,4 +19,9 @@ interface DereferencerContract
 
     public static function resolveRealResource(Request $request,string $sector,
          string $concept,string $reference);
+
+    public static function resourceToRdfResponse(string $sector,string $concept,string $reference,
+                                                 string $mimeType):Response;
+    public static function resourceToHtmlResponse(string $sector,string $concept,string $reference,
+                                                  string $mimeType):Response;
 }
