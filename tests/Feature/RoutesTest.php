@@ -57,12 +57,42 @@ class RoutesTest extends TestCase
     /**
      * @dataProvider htmlMimeTypesProvider
      */
-    public function testRealResourceRequestAcceptHtmlIsRedirectedToDataUri(string $mimeType)
+    public function testRealResourceRequestAcceptHtmlIsRedirectedToHtmlUri(string $mimeType)
     {
         $uriBuilder=URI::realResource('topography','City','tartous');
         $resourceUri=$uriBuilder->getResourceUri();
 
         $htmlUri=$uriBuilder->getHtmlUri();
+
+        $this->withHeader('accept',$mimeType)
+            ->get($resourceUri)
+            ->assertRedirect($htmlUri);
+    }
+
+    /**
+     * @dataProvider rdfMimeTypesProvider
+     */
+    public function testSubRealResourceRequestAcceptRdfIsRedirectedToDataUri(string $mimeType)
+    {
+        $uriBuilder=URI::realResource('organizations','Institution','free-zones','Branch','tartous');
+        $resourceUri=$uriBuilder->getSubResourceUri();
+
+        $dataUri=$uriBuilder->getSubDataUri();
+
+        $this->withHeader('accept',$mimeType)
+            ->get($resourceUri)
+            ->assertRedirect($dataUri);
+    }
+
+    /**
+     * @dataProvider htmlMimeTypesProvider
+     */
+    public function testSubRealResourceRequestAcceptHtmlIsRedirectedToHtmlUri(string $mimeType)
+    {
+        $uriBuilder=URI::realResource('organizations','Institution','free-zones','Branch','tartous');
+        $resourceUri=$uriBuilder->getSubResourceUri();
+
+        $htmlUri=$uriBuilder->getSubHtmlUri();
 
         $this->withHeader('accept',$mimeType)
             ->get($resourceUri)

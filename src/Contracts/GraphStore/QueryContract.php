@@ -12,4 +12,5 @@ interface QueryContract
     public function jsonQuery(string $query):Result;
     public function rdfQuery(string $query):array;
     public function describeResource(string $uri,string $mimeType):ResourceDescriptionContract;
+    public function isResourceExist(string $uri):bool;
 }

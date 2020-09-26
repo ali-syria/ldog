@@ -93,6 +93,53 @@ class Dereferencer implements DereferencerContract
                 'Content-Type'=>$mimeType
             ]);
     }
+
+    public static function resolveSubRealResource(Request $request, string $sector, string $concept,
+        string $reference, string $subConcept, string $subReference)
+    {
+        $resourceUriBuilder=URI::realResource($sector,$concept,$reference,$subConcept,$subReference);
+        $uri=null;
+
+        if($request->wantsRDF())
+        {
+            $uri=$resourceUriBuilder->getSubDataUri();
+        }
+        else
+        {
+            $uri=$resourceUriBuilder->getSubHtmlUri();
+        }
+
+        return (string)$uri;
+    }
+
+    public static function subResourceToRdfResponse(string $sector, string $concept, string $reference,
+        string $subConcept, string $subReference, string $mimeType): Response
+    {
+        $resourceUriBuilder=URI::realResource($sector,$concept,$reference,$subConcept,$subReference);
+        $resourceDescription=GS::getConnection()->describeResource($resourceUriBuilder->getSubResourceUri(),
+            $mimeType);
+
+        return response($resourceDescription->getBody())
+            ->withHeaders([
+                'Content-Type'=>$resourceDescription->getMimeType()
+            ]);
+    }
+
+    public static function subResourceToHtmlResponse(string $sector, string $concept, string $reference,
+         string $subConcept, string $subReference, string $mimeType): Response
+    {
+        $resourceUriBuilder=URI::realResource($sector,$concept,$reference,$subConcept,$subReference);
+
+        $resultSet=static::getHtmlDataAboutResource($resourceUriBuilder->getSubResourceUri());
+
+        return response()->view('ldog::resource.page',[
+            'results'=>$resultSet
+        ])
+            ->withHeaders([
+                'Content-Type'=>$mimeType
+            ]);
+    }
+
     private static function getHtmlDataAboutResource(string $uri)
     {
         $resultSet=GS::getConnection()->jsonQuery("
@@ -112,4 +159,5 @@ class Dereferencer implements DereferencerContract
 
         return $resultSet;
     }
+
 }

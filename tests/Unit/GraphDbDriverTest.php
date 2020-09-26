@@ -141,6 +141,30 @@ class GraphDbDriverTest extends TestCase
         $this->assertStringContainsString($resourceUri,$resourceDescription->getBody());
     }
 
+    public function testIsResourceExist()
+    {
+        $uriBuilder=URI::realResource('topography','City','tartous');
+        $resourceUri=$uriBuilder->getResourceUri();
+
+        $this->graphDB->rawUpdate(
+            "
+            PREFIX dst: <http://topography.data.example/ontologies/City#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            
+            INSERT DATA
+                    { 
+                      GRAPH <http://topography.data.example/cities> {
+                                <$resourceUri> a dst:City;
+                                               rdfs:label  'Tartous';
+                                               rdfs:comment 'City in on syrian coast'  .                      
+                      }
+                    }"
+        );
+
+        $this->assertTrue($this->graphDB->isResourceExist($resourceUri));
+        $this->assertFalse($this->graphDB->isResourceExist($resourceUri."7899"));
+    }
+
     public function rdfMimeTypesProvider():array
     {
         $data=[];

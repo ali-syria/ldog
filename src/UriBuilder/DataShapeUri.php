@@ -6,7 +6,7 @@ namespace AliSyria\LDOG\UriBuilder;
 
 use AliSyria\LDOG\Contracts\UriBuilder\DataShapeUriContract;
 
-class DataShapeUri extends Builder implements DataShapeUriContract
+class DataShapeUri extends UriBuilder implements DataShapeUriContract
 {
 
     private string $name;

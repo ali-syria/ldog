@@ -4,6 +4,7 @@
 namespace AliSyria\LDOG\Tests\Unit;
 
 
+use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\Tests\TestCase;
 
@@ -19,6 +20,7 @@ class UriBuilderTest extends TestCase
         config([
             'ldog.domain'=>$this->domain
         ]);
+        GS::getConnection()->clearAll();
     }
 
     public function testTopLevelDomainCanBeConfigured()
@@ -85,6 +87,62 @@ class UriBuilderTest extends TestCase
                 ->getDataUri()
         );
     }
+
+    public function testSubRealResourcePathCanBeGenerated()
+    {
+        $expected='resoucre/institution/free-zones/branch/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('organizations','Institution','free-zones','Branch','tartous')
+                ->getSubResourcePath()
+        );
+    }
+    public function testSubRealResourceHtmlPathCanBeGenerated()
+    {
+        $expected='page/institution/free-zones/branch/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('organizations','Institution','free-zones','Branch','tartous')
+                ->getSubHtmlPath()
+        );
+    }
+    public function testSubRealResourceDataPathCanBeGenerated()
+    {
+        $expected='data/institution/free-zones/branch/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('organizations','Institution','free-zones','Branch','tartous')
+                ->getSubDataPath()
+        );
+    }
+    public function testSubRealResourceUriCanBeGenerated()
+    {
+        $expected='http://organizations.'.$this->domain.'/resoucre/institution/free-zones/branch/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('organizations','Institution','free-zones','Branch','tartous')
+                ->getSubResourceUri()
+        );
+    }
+    public function testSubRealResourceHtmlUriCanBeGenerated()
+    {
+        $expected='http://organizations.'.$this->domain.'/page/institution/free-zones/branch/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('organizations','Institution','free-zones','Branch','tartous')
+                ->getSubHtmlUri()
+        );
+    }
+    public function testRealSubResourceDataUriCanBeGenerated()
+    {
+        $expected='http://organizations.'.$this->domain.'/data/institution/free-zones/branch/tartous';
+        $this->assertEquals(
+            $expected,
+            URI::realResource('organizations','Institution','free-zones','Branch','tartous')
+                ->getSubDataUri()
+        );
+    }
+
     public function testOntologyBaseUriCanBeGenerated()
     {
         $expected='http://topography.'.$this->domain.'/ontology/administrative_division#';
@@ -120,5 +178,28 @@ class UriBuilderTest extends TestCase
             URI::dataShape('topography','city')
                 ->getResourceUri('name')
         );
+    }
+    public function testIsUriExist()
+    {
+        $uriBuilder=URI::realResource('topography','City','tartous');
+        $resourceUri=$uriBuilder->getResourceUri();
+
+        GS::getConnection()->rawUpdate(
+            "
+            PREFIX dst: <http://topography.data.example/ontologies/City#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            
+            INSERT DATA
+                    { 
+                      GRAPH <http://topography.data.example/cities> {
+                                <$resourceUri> a dst:City;
+                                               rdfs:label  'Tartous';
+                                               rdfs:comment 'City in on syrian coast'  .                      
+                      }
+                    }"
+        );
+
+        $this->assertTrue(URI::isUriExist($resourceUri));
+        $this->assertFalse(URI::isUriExist($resourceUri."7899"));
     }
 }

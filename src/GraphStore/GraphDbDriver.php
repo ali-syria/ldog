@@ -9,6 +9,7 @@ use AliSyria\LDOG\Contracts\GraphStore\GraphManagementContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphUpdateContract;
 use AliSyria\LDOG\Contracts\GraphStore\QueryContract;
 use AliSyria\LDOG\Contracts\GraphStore\ResourceDescriptionContract;
+use AliSyria\LDOG\Facades\GS;
 use EasyRdf\Sparql\Result;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -146,5 +147,12 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         $response->throw();
 
         return new ResourceDescription($response->header('Content-Type'),$response->body());
+    }
+
+    public function isResourceExist(string $uri): bool
+    {
+        return GS::getConnection()->jsonQuery("
+            ASK { <$uri> ?p ?o }
+        ")->getBoolean();
     }
 }

@@ -17,5 +17,5 @@ class AuthenticationTest extends TestCase
         $this->connection=GS::secureConnection();
         $this->connection->clearAll();
     }
-    
+
 }

@@ -6,7 +6,7 @@ namespace AliSyria\LDOG\UriBuilder;
 
 use AliSyria\LDOG\Contracts\UriBuilder\OntologyUriContract;
 
-class OntologyUri extends Builder implements OntologyUriContract
+class OntologyUri extends UriBuilder implements OntologyUriContract
 {
     private string $name;
 

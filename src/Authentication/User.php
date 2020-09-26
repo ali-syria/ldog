@@ -9,7 +9,7 @@ use AliSyria\LDOG\Contracts\GraphStore\ConnectionContract;
 use AliSyria\LDOG\Exceptions\UserAlreadyExist;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
-use AliSyria\LDOG\UriBuilder\Builder;
+use AliSyria\LDOG\UriBuilder\UriBuilder;
 use AliSyria\LDOG\UriBuilder\RealResourceUri;
 use EasyRdf\Graph;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -55,7 +55,7 @@ class User implements Authenticatable,AccountManagement
     {
         $userUri=self::getUserUri($this->username)->getResourceUri();
 
-        $ldogPrefix=Builder::PREFIX_LDOG;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
         GS::secureConnection()->rawUpdate("
             PREFIX ldog: <$ldogPrefix>
@@ -87,7 +87,7 @@ class User implements Authenticatable,AccountManagement
 
     public static function retrieve(string $username): ?self
     {
-        $ldogPrefix=Builder::PREFIX_LDOG;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
         $resultSet=GS::secureConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
@@ -130,7 +130,7 @@ class User implements Authenticatable,AccountManagement
         $userUri=self::getUserUri($username)->getResourceUri();
         $passwordUri=self::getPasswordUri($hashedPassword)->getResourceUri();
 
-        $ldogPrefix=Builder::PREFIX_LDOG;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
         GS::secureConnection()->rawUpdate("
             PREFIX ldog: <$ldogPrefix>
@@ -153,7 +153,7 @@ class User implements Authenticatable,AccountManagement
         $userUri=self::getUserUri($this->username)->getResourceUri();
         $passwordUri=self::getPasswordUri($this->password)->getResourceUri();
 
-        $ldogPrefix=Builder::PREFIX_LDOG;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
         GS::secureConnection()->rawUpdate("
             PREFIX ldog: <$ldogPrefix>

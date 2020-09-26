@@ -9,7 +9,7 @@ use AliSyria\LDOG\Contracts\GraphStore\ConnectionContract;
 use AliSyria\LDOG\Exceptions\UserAlreadyExist;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Tests\TestCase;
-use AliSyria\LDOG\UriBuilder\Builder;
+use AliSyria\LDOG\UriBuilder\UriBuilder;
 use EasyRdf\Graph;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -28,7 +28,7 @@ class UserTest extends TestCase
     public function testCreateUser()
     {
         $user=User::create('ali','secret');
-        $ldogPrefix=Builder::PREFIX_LDOG;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
         $resultSet=$this->connection->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
@@ -61,7 +61,7 @@ class UserTest extends TestCase
         $this->assertTrue(data_get($firstUserInResult,'username')===$user->username
             && data_get($firstUserInResult,'password')===$user->password,'user credentials is correctly returned from create method');
 
-        $this->assertEquals(Builder::PREFIX_LDOG."Bcrypt",data_get($firstUserInResult,'hashAlgorithmUri'),'user password is hashed using bcrypt algorithm');
+        $this->assertEquals(UriBuilder::PREFIX_LDOG."Bcrypt",data_get($firstUserInResult,'hashAlgorithmUri'),'user password is hashed using bcrypt algorithm');
     }
 
     public function testThrowExceptionWhenCreatingUserAlreadyExist()
@@ -126,7 +126,7 @@ class UserTest extends TestCase
         $user=User::create('ali','secret');
         $user->setRememberToken($rememberToken);
 
-        $ldogPrefix=Builder::PREFIX_LDOG;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
         $rememberTokenName=$user->getRememberTokenName();
         $userUri=User::getUserUri($user->username)->getResourceUri();
 
