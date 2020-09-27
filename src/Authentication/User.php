@@ -17,6 +17,7 @@ use phpDocumentor\Reflection\Types\Self_;
 
 class User implements Authenticatable,AccountManagement
 {
+    public string $uri;
     public string $username;
     public string $password;
     public ?string $rememberToken=null;
@@ -24,13 +25,18 @@ class User implements Authenticatable,AccountManagement
     protected $rememberTokenName = 'rememberToken';
     protected $authIdentifierName = 'username';
 
-    public function __construct(string $username,string $password,$rememberToken=null)
+    public function __construct(string $uri,string $username,string $password,$rememberToken=null)
     {
+        $this->uri=$uri;
         $this->username=$username;
         $this->password=$password;
         $this->rememberToken=$rememberToken;
     }
 
+    public function getUri():string
+    {
+        return $this->uri;
+    }
     public function getAuthIdentifierName()
     {
         return $this->authIdentifierName;
@@ -92,7 +98,7 @@ class User implements Authenticatable,AccountManagement
         $resultSet=GS::secureConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             
-            SELECT  ?passwordHash ?hashAlgorithm ?rememberToken
+            SELECT ?user ?passwordHash ?hashAlgorithm ?rememberToken
             WHERE {
                 ?user a ldog:LoginAccount;
                       ldog:username '$username';
@@ -110,7 +116,8 @@ class User implements Authenticatable,AccountManagement
            if(optional($result)->passwordHash)
            {
                $rememberToken=optional(optional($result)->rememberToken)->getValue();
-               $user=new self($username,$result->passwordHash->getValue(),$rememberToken);
+               $user=new self($result->user->getUri(),$username,$result->passwordHash->getValue(),
+                   $rememberToken);
            }
            break;
         }
@@ -145,7 +152,7 @@ class User implements Authenticatable,AccountManagement
                               ldog:hashValue '$hashedPassword' .     
             }            
         ");
-        return new self($username,$hashedPassword);
+        return new self($userUri,$username,$hashedPassword);
     }
 
     public function delete(): void

@@ -10,5 +10,6 @@ interface AccountManagement
 {
     public static function retrieve(string $username):?self ;
     public static function create(string $username,string $password):self;
+    public function getUri():string;
     public function delete():void;
 }
