@@ -4,6 +4,7 @@
 namespace AliSyria\LDOG\OrganizationManager;
 
 
+use AliSyria\LDOG\Authentication\User;
 use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\HasParentContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
@@ -22,7 +23,6 @@ abstract class Organization implements OrganizationContract
     private string $name;
     private string $description;
     private ?string $logoUrl;
-    private ?OrganizationContract $parentOrganization;
 
     public function __construct(string $uri,string $name,string $description,?string $logoUrl)
     {
@@ -120,22 +120,106 @@ abstract class Organization implements OrganizationContract
 
     public function parentOrganization(): ?OrganizationContract
     {
-        return $this->parentOrganization;
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $organizationUri=$this->getUri();
+
+        $resultSet=GS::secureConnection()->jsonQuery("
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT ?parentOrganization ?class ?name ?description ?logo
+            WHERE {
+                  <$organizationUri> ldog:subOrganizationOf ?parentOrganization.
+                  ?parentOrganization  a ?class ;
+                          ldog:name ?name ;
+                          ldog:description ?description .
+                  OPTIONAL {?parentOrganization ldog:logo ?logo  . }                         
+            }                                       
+        ");
+        $organization=null;
+        foreach ($resultSet as $result)
+        {
+            if(optional($result)->parentOrganization)
+            {
+                $class=OrganizationFactory::resolveLdogClassUriToClass($result->class->getUri());
+                $organization= new $class($result->parentOrganization->getUri(),$result->name->getValue(),$result->description->getValue(),
+                    optional(optional($result)->logo)->getValue());
+            }
+            break;
+        }
+
+        return $organization;
     }
 
     public function childOrganizations(): ?Collection
     {
-        // TODO: Implement childOrganizations() method.
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $organizationUri=$this->getUri();
+
+        $resultSet=GS::secureConnection()->jsonQuery("
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT ?childOrganization ?class ?name ?description ?logo
+            WHERE {
+                  ?childOrganization ldog:subOrganizationOf  <$organizationUri> .
+                  ?childOrganization  a ?class ;
+                          ldog:name ?name ;
+                          ldog:description ?description .
+                  OPTIONAL {?childOrganization ldog:logo ?logo  . }                         
+            }                                       
+        ");
+        $organizations=[];
+        foreach ($resultSet as $result)
+        {
+            if(optional($result)->childOrganization)
+            {
+                try{
+                    $class=OrganizationFactory::resolveLdogClassUriToClass($result->class->getUri());
+                }
+                catch (\RuntimeException $e)
+                {
+                    continue;
+                }
+                $organizations[]= new $class($result->childOrganization->getUri(),$result->name->getValue(),$result->description->getValue(),
+                    optional(optional($result)->logo)->getValue());
+            }
+        }
+
+        return new Collection($organizations);
     }
 
     public function employees(): Collection
     {
-        // TODO: Implement employees() method.
-    }
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $organizationUri=$this->getUri();
 
-    public function admin(): EmployeeContract
-    {
-        // TODO: Implement admin() method.
+        $resultSet=GS::getConnection()->jsonQuery("
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT ?employee ?username ?id ?name ?description
+            WHERE {
+                ?employee a ldog:Employee ;
+                      ldog:hasLoginAccount ?loginAccount;
+                      ldog:isEmployeeOf <$organizationUri> ;
+                      ldog:id ?id ;
+                      ldog:name ?name ;
+                      ldog:description ?description .   
+                ?loginAccount ldog:username ?username. 
+            }
+        ");
+
+        $employees=[];
+        foreach ($resultSet as $result)
+        {
+            if(optional($result)->employee)
+            {
+                $loginAccount=User::retrieve($result->username->getValue());
+                $employees[]= new Employee($this,$loginAccount,$result->id->getValue(),
+                    $result->employee->getUri(),$result->name->getValue(),
+                    $result->description->getValue());
+            }
+        }
+
+        return new Collection($employees);
     }
 
     public static final function generateId(string $name): string

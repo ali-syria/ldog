@@ -21,7 +21,6 @@ interface OrganizationContract
     public function parentOrganization():?OrganizationContract;
     public function childOrganizations():?Collection;
     public function employees():Collection;
-    public function admin():EmployeeContract;
 
     public static function create(?OrganizationContract $parentOrganization,string $name,
          string $description,string $logoUrl=null):self;

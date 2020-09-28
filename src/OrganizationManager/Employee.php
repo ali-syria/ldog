@@ -55,12 +55,12 @@ class Employee implements EmployeeContract
 
     public function getOrganization(): OrganizationContract
     {
-        // TODO: Implement getOrganization() method.
+        return $this->organization;
     }
 
     public function getLoginAccount(): AccountManagement
     {
-        // TODO: Implement getLoginAccount() method.
+        return $this->loginAccount;
     }
 
     public static function retrieveByLoginAccount(AccountManagement $loginAccount):?self
