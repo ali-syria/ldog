@@ -13,4 +13,5 @@ interface QueryContract
     public function rdfQuery(string $query):array;
     public function describeResource(string $uri,string $mimeType):ResourceDescriptionContract;
     public function isResourceExist(string $uri):bool;
+    public function isGraphExist(string $graphUri):bool;
 }

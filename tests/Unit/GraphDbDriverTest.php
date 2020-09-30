@@ -8,6 +8,7 @@ use AliSyria\LDOG\Contracts\GraphStore\ResourceDescriptionContract;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\GraphStore\GraphDbDriver;
 use AliSyria\LDOG\Tests\TestCase;
+use AliSyria\LDOG\UriBuilder\UriBuilder;
 use AliSyria\LDOG\UriDereferencer\Dereferencer;
 use EasyRdf\Sparql\Result;
 use phpDocumentor\Reflection\Types\True_;
@@ -163,6 +164,27 @@ class GraphDbDriverTest extends TestCase
 
         $this->assertTrue($this->graphDB->isResourceExist($resourceUri));
         $this->assertFalse($this->graphDB->isResourceExist($resourceUri."7899"));
+    }
+
+    public function testIsGraphExist()
+    {
+        $graphUri=URI::ontology('transport','vehicle')->getBasueUri();
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+
+        $this->graphDB->rawUpdate(
+            "
+            PREFIX ldog: <$ldogPrefix>
+            
+            INSERT DATA
+                    { 
+                      GRAPH <$graphUri> {
+                                <$graphUri> a ldog:Ontology .                      
+                      }
+                    }"
+        );
+
+        $this->assertTrue($this->graphDB->isGraphExist($graphUri));
+        $this->assertFalse($this->graphDB->isGraphExist($graphUri."#dff"));
     }
 
     public function rdfMimeTypesProvider():array

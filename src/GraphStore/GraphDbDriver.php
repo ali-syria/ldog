@@ -155,4 +155,13 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
             ASK { <$uri> ?p ?o }
         ")->getBoolean();
     }
+
+    public function isGraphExist(string $graphUri): bool
+    {
+        return GS::getConnection()->jsonQuery("
+            ASK { 
+                GRAPH <$graphUri> { ?s ?p ?o }
+            }
+        ")->getBoolean();
+    }
 }
