@@ -11,8 +11,12 @@ abstract class UriBuilder implements UriBuilderContract
     private string $domain;
     private string $subdomain;
 
+    public const PREFIX_RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    public const PREFIX_RDFS="http://www.w3.org/2000/01/rdf-schema#";
+    public const PREFIX_OWL="http://www.w3.org/2002/07/owl#";
     public const PREFIX_LDOG="http://ldog.org/ontologies/2020/8/framework#";
     public const PREFIX_XSD="http://www.w3.org/2001/XMLSchema#";
+    public const PREFIX_LUCENE="http://www.ontotext.com/owlim/lucene#";
 
     public function __construct(string $domain,string $subdomain)
     {

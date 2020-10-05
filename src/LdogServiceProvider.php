@@ -5,6 +5,9 @@ namespace AliSyria\LDOG;
 
 
 use AliSyria\LDOG\Authentication\GraphUserProvider;
+use AliSyria\LDOG\Console\Init;
+use AliSyria\LDOG\Console\InitGraphDbLuceneReconciliator;
+use AliSyria\LDOG\Console\RefreshGraphDbLuceneIndex;
 use AliSyria\LDOG\GraphStore\ConnectionFactory;
 use AliSyria\LDOG\GraphStore\GraphDbDriver;
 use AliSyria\LDOG\GraphStore\GraphStoreManager;
@@ -46,6 +49,11 @@ class LdogServiceProvider extends ServiceProvider
             return isset($acceptable[0]) && Str::contains($acceptable[0],
                     Dereferencer::getRDFmimeTypes());
         });
+        $this->commands([
+            Init::class,
+            InitGraphDbLuceneReconciliator::class,
+            RefreshGraphDbLuceneIndex::class,
+        ]);
 
         if(!$this->app->runningInConsole())
         {

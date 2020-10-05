@@ -18,4 +18,8 @@ return [
             'password'=> env('GS_SECURE_PASSWORD','root'),
         ]
     ],
+    'reconciliation'=> [
+        'driver'=> 'graphdb_lucene',
+        'index'=> 'reconcilation',
+    ],
 ];
