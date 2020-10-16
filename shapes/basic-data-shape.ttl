@@ -1,0 +1,14 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ldog: <http://ldog.org/ontologies/2020/8/framework#> .
+
+ldog:BasicPropertyShape
+    a sh:NodeShape ;
+    sh:targetClass rdfs:Resource ;
+
+    sh:property [
+        sh:path [sh:alternativePath (rdfs:label ldog:name)] ;
+        sh:minCount 1 ;
+        sh:message "label is required"
+    ] .

@@ -14,7 +14,9 @@
     "require": {
         "php": "^7.4",
         "easyrdf/easyrdf": "^1.0",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "ml/json-ld": "^1.2",
+        "symfony/process": "^5.1"
     },
     "autoload": {
         "psr-4": {

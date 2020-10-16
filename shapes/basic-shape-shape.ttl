@@ -1,0 +1,62 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ldog: <http://ldog.org/ontologies/2020/8/framework#> .
+
+ldog:BasicShapeShape
+    a sh:NodeShape ;
+    sh:targetSubjectsOf sh:property ;
+
+    sh:property [
+        sh:path sh:closed ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;   
+        sh:hasValue true;    
+    ] ;
+    sh:property [
+        sh:path sh:targetClass ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;    
+    ] .   
+
+
+ldog:BasicPropertyShape
+    a sh:NodeShape ;
+    sh:targetObjectsOf sh:property ;
+
+    sh:property [
+        sh:path sh:name ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path sh:description ;
+        sh:minCount 1 ;
+    ]  ;
+    sh:property [
+        sh:path sh:order ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;     
+    sh:property [
+        sh:path sh:datatype ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;        
+    ] ;
+    sh:property [
+        sh:path sh:minCount ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;        
+    ] ;  
+    sh:property [
+        sh:path sh:maxCount ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;        
+    ] ;          
+    sh:property [
+        sh:path sh:message ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;       
+    ] .
+
+ 
+    

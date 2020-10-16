@@ -17,6 +17,8 @@ abstract class UriBuilder implements UriBuilderContract
     public const PREFIX_LDOG="http://ldog.org/ontologies/2020/8/framework#";
     public const PREFIX_XSD="http://www.w3.org/2001/XMLSchema#";
     public const PREFIX_LUCENE="http://www.ontotext.com/owlim/lucene#";
+    public const PREFIX_SHACL="http://www.w3.org/ns/shacl#";
+    public const PREFIX_SCHEMA="http://schema.org/";
 
     public function __construct(string $domain,string $subdomain)
     {

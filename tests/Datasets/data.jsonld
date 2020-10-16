@@ -1,0 +1,29 @@
+[
+  {
+    "@id":"http://example.org/ns#Bob",
+    "@type":["http://schema.org/Person"],
+    "http://schema.org/givenName":[
+      {"@value":"Robert"}
+    ],
+    "http://schema.org/familyName":[
+      {"@value":"Junior"}
+    ],
+    "http://schema.org/birthDate":[
+      {"@value":"1971-07-07","@type":"http://www.w3.org/2001/XMLSchema#date"}
+    ],
+    "http://schema.org/deathDate":[
+      {"@value":"1968-09-10","@type":"http://www.w3.org/2001/XMLSchema#date"}
+    ],
+    "http://schema.org/address":[
+      {"@id":"http://example.org/ns#BobsAddress"}
+    ]
+  },
+  {
+    "@id":"http://example.org/ns#BobsAddress",
+    "http://schema.org/streetAddress":[{"@value":"1600 Amphitheatre Pkway"}],
+    "http://schema.org/postalCode":[{"@value":9404}]
+  },
+  {
+    "@id":"http://schema.org/Person"
+  }
+]

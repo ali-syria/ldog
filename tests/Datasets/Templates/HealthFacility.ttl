@@ -1,0 +1,18 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ldog: <http://ldog.org/ontologies/2020/8/framework#> .
+@prefix hshapes: <http://health.data.ae/shapes/> .
+@prefix : <http://health.data.ae/templates/> .
+
+:HealthFacilityTemplate a ldog:DataCollectionTemplate;
+                        rdfs:label "Health Facilities Template" ;
+                        rdfs:comment "Health Facilities information in each emirate" ;
+                        ldog:hasShape hshapes:HealthFacilityShape ; 
+                        ldog:isDataCollectionTemplateOf ;
+                        ldog:shouldDataCollectionExportedBy ldog:AllBranches.#branches(all) or departments(specify them by uri) [DataSource Organization] or same organiztion
+
+:Covid19DailyCasesReportTemplate a ldog:ReportTemplate;
+                        rdfs:label "Covid 19 daily cases Template" ;
+                        rdfs:comment "Covid 19 daily cases information in each emirate" ;
+                        ldog:hasShape hshapes:Covid19DailyCasesReportShape ;
+                        ldog:isDataCollectionTemplateOf ;
+                        ldog:shouldDataCollectionExportedBy ldog:AllBranches.                                                 
