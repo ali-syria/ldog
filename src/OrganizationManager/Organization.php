@@ -7,6 +7,7 @@ namespace AliSyria\LDOG\OrganizationManager;
 use AliSyria\LDOG\Authentication\User;
 use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\HasParentContract;
+use AliSyria\LDOG\Contracts\OrganizationManager\ModellingOrganizationContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\WeakOrganizationContract;
 use AliSyria\LDOG\Contracts\UriBuilder\RealResourceUriContract;
@@ -53,6 +54,7 @@ abstract class Organization implements OrganizationContract
     {
         $hasParent=in_array(HasParentContract::class,class_implements(static::class));
         $isWeak=in_array(WeakOrganizationContract::class,class_implements(static::class));
+        $isModellingOrganization=in_array(ModellingOrganizationContract::class,class_implements(static::class));
 
         throw_if($hasParent&& is_null($parentOrganization),
             new \RuntimeException('parent organization is required'));
@@ -69,6 +71,12 @@ abstract class Organization implements OrganizationContract
             $organizationUri=static::generateUri($name);
             $organizationsGraph=$organizationUri->getSectorUri();
             $organizationUriString=$organizationUri->getResourceUri();
+        }
+
+        $organizationRoleClass='DataSourceOrganization';
+        if($isModellingOrganization)
+        {
+            $organizationRoleClass='ModellingOrganization';
         }
 
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
@@ -93,6 +101,7 @@ abstract class Organization implements OrganizationContract
             {
                 GRAPH <$organizationsGraph> {
                     <$organizationUriString> a ldog:$ldogClass ;
+                                       a ldog:$organizationRoleClass;
                                        ldog:name '$name' ;
                                        ldog:description '$description' ;
                                        ldog:logo '$logoUrl'^^xsd:anyURI .

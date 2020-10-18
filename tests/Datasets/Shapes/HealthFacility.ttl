@@ -10,7 +10,9 @@
 
 :HealthFacilityShape a sh:NodeShape ;
                     sh:closed true;
-                    sh:targetClass hont:HealthFacility;
+                    sh:targetClass hont:HealthFacility ;
+                    ldog:resourceIdentifierProperty hfont:uniqueID ;
+                    ldog:resourceLabelExpression "flat number {unique_id}" ;
                     sh:property [
                         hfont:path hfont:uniqueID ;
                         sh:name "unique_id" ;
@@ -131,7 +133,7 @@
                         hfont:path hfont:expiry_date ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
-                        sh:order 10 ;
+                        sh:order 11 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
                         sh:minCount 0;
@@ -142,7 +144,7 @@
                         hfont:path hfont:area ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
-                        sh:order 10 ;
+                        sh:order 12 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
                         sh:minCount 0;
@@ -153,7 +155,7 @@
                         hfont:path hfont:email ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
-                        sh:order 10 ;
+                        sh:order 13 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
                         sh:minCount 0;
@@ -164,7 +166,7 @@
                         hfont:path hfont:latitude ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
-                        sh:order 10 ;
+                        sh:order 14 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
                         sh:minCount 0;
@@ -175,7 +177,7 @@
                         hfont:path hfont:longitude ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
-                        sh:order 10 ;
+                        sh:order 15 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
                         sh:minCount 0;

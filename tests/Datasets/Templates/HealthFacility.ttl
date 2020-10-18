@@ -8,11 +8,13 @@
                         rdfs:comment "Health Facilities information in each emirate" ;
                         ldog:hasShape hshapes:HealthFacilityShape ; 
                         ldog:isDataCollectionTemplateOf ;
-                        ldog:shouldDataCollectionExportedBy ldog:AllBranches.#branches(all) or departments(specify them by uri) [DataSource Organization] or same organiztion
-
+                        ldog:shouldDataCollectionExportedBy ldog:AllBranches ;#branches(all) or departments(specify them by uri) [DataSource Organization] or same organiztion
+                        ldog:dataDomain     ldog:Health .
 :Covid19DailyCasesReportTemplate a ldog:ReportTemplate;
                         rdfs:label "Covid 19 daily cases Template" ;
                         rdfs:comment "Covid 19 daily cases information in each emirate" ;
                         ldog:hasShape hshapes:Covid19DailyCasesReportShape ;
                         ldog:isDataCollectionTemplateOf ;
-                        ldog:shouldDataCollectionExportedBy ldog:AllBranches.                                                 
+                        ldog:shouldDataCollectionExportedBy ldog:AllBranches ;
+                        ldog:frequencyOfExport ldog:Daily ;
+                        ldog:dataDomain     ldog:Health;                                     

@@ -8,6 +8,12 @@ ldog:BasicShapeShape
     sh:targetSubjectsOf sh:property ;
 
     sh:property [
+        sh:path rdf:type ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;    
+        sh:hasValue ldog:DataShape; 
+    ] ;
+    sh:property [
         sh:path sh:closed ;
         sh:minCount 1 ;
         sh:maxCount 1 ;   
@@ -17,7 +23,22 @@ ldog:BasicShapeShape
         sh:path sh:targetClass ;
         sh:minCount 1 ;
         sh:maxCount 1 ;    
-    ] .   
+    ] ; 
+    sh:property [
+        sh:path ldog:resourceIdentifierProperty ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;    
+    ] ;
+    sh:property [
+        sh:path ldog:resourceLabelExpression ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;    
+    ] ;
+    sh:property [
+        sh:path ldog:resourceCommentExpression ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;    
+    ] .           
 
 
 ldog:BasicPropertyShape
