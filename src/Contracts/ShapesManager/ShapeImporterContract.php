@@ -4,10 +4,12 @@
 namespace AliSyria\LDOG\Contracts\ShapesManager;
 
 
+use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
+
 interface ShapeImporterContract
 {
-    public static function importFromUrl(string $url,string $dataSubDomain):void;
+    public static function importFromUrl(string $url,string $dataSubDomain,string $prefix):void;
     public static function checkIfExist(string $shapeUri):bool;
-    public static function generateUri(string $dataSubDomain):string;
-    public static function validateShape(string $shapeUri):bool;
+    public static function generateUri(string $dataSubDomain,string $prefix):string;
+    public static function validateShape(string $shapeUrl):ShaclValidationReport;
 }

@@ -5,27 +5,67 @@ namespace AliSyria\LDOG\ShapesManager;
 
 
 use AliSyria\LDOG\Contracts\ShapesManager\ShapeImporterContract;
+use AliSyria\LDOG\Exceptions\DataShapeAlreadyExist;
+use AliSyria\LDOG\Facades\GS;
+use AliSyria\LDOG\Facades\URI;
+use AliSyria\LDOG\ShaclValidator\JenaShaclValidator;
+use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
+use AliSyria\LDOG\UriBuilder\UriBuilder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class ShapeManager implements ShapeImporterContract
 {
 
-    public static function importFromUrl(string $url, string $dataSubDomain): void
+    public static function importFromUrl(string $url, string $dataSubDomain,string $prefix): void
     {
-        // TODO: Implement importFromUrl() method.
+        $shapeUri=self::generateUri($dataSubDomain,$prefix);
+
+        throw_if(self::checkIfExist($shapeUri),
+            new DataShapeAlreadyExist('a shape with same prefix already exists'));
+
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+
+        GS::getConnection()->loadIRIintoNamedGraph($url,$shapeUri);
+
+        GS::getConnection()->rawUpdate("
+            PREFIX ldog: <$ldogPrefix> 
+            
+            INSERT DATA {
+                GRAPH <$shapeUri> {
+                    <$shapeUri> a ldog:DataShape ;
+                                 ldog:prefix '$prefix' .
+                }
+            }
+        ");
     }
 
     public static function checkIfExist(string $shapeUri): bool
     {
-        // TODO: Implement checkIfExist() method.
+        return GS::getConnection()->isGraphExist($shapeUri);
     }
 
-    public static function generateUri(string $dataSubDomain): string
+    public static function generateUri(string $dataSubDomain,string $prefix): string
     {
-        // TODO: Implement generateUri() method.
+        return URI::dataShape($dataSubDomain,$prefix)->getBasueUri();
     }
 
-    public static function validateShape(string $shapeUri): bool
+    public static function validateShape(string $shapeUrl): ShaclValidationReport
     {
-        // TODO: Implement validateShape() method.
+        $shapeGraphContent=file_get_contents($shapeUrl);
+
+        $temporaryDirectory=(new TemporaryDirectory())->name(Str::uuid())->create();
+        $shapeFileName=Str::uuid().'.ttl';
+        $shapeFilePath=$temporaryDirectory->path($shapeFileName);
+
+        File::put($shapeFilePath,$shapeGraphContent);
+
+        $validationReport=app(JenaShaclValidator::class)
+            ->basicShapeValidation($shapeFilePath);
+
+        $temporaryDirectory->delete();
+
+        return $validationReport;
     }
 }

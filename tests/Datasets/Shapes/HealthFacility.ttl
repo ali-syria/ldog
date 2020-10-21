@@ -3,18 +3,19 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ldog: <http://ldog.org/ontologies/2020/8/framework#> .
-@prefix hfont: <http://health.data.ae/ontology/HealthFacility> .
-@prefix address: <http://health.data.ae/ontology/Address#>
-@prefix contact: <http://health.data.ae/ontology/Contact#>
+@prefix hfont: <http://health.data.ae/ontology/HealthFacility#> .
+@prefix address: <http://health.data.ae/ontology/Address#> .
+@prefix contact: <http://health.data.ae/ontology/Contact#> .
 @prefix : <http://health.data.ae/shapes/> .
 
 :HealthFacilityShape a sh:NodeShape ;
+                     a ldog:DataShape ;
                     sh:closed true;
-                    sh:targetClass hont:HealthFacility ;
+                    sh:targetClass hfont:HealthFacility ;
                     ldog:resourceIdentifierProperty hfont:uniqueID ;
                     ldog:resourceLabelExpression "flat number {unique_id}" ;
                     sh:property [
-                        hfont:path hfont:uniqueID ;
+                        sh:path hfont:uniqueID ;
                         sh:name "unique_id" ;
                         sh:description "unique id" ;
                         sh:order 1 ;
@@ -22,62 +23,67 @@
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:message "unique id field is required,integer" ;
-                    ] ;   
+                    ] ;
                     sh:property [
-                        hfont:path hfont:name ;
+                        sh:path hfont:name ;
                         sh:name "name" ;
                         sh:description "name of facility" ;
                         sh:order 2 ;
                         sh:datatype xsd:string;
                         sh:minCount 1;
+                        sh:maxCount 1;
                         sh:uniqueLang true ;
-                        sh:languageIn ("ar" "en")
+                        sh:languageIn ("ar" "en") ;
                         sh:message "name field is required,string" ;
-                    ] ;  
+                    ] ;
                     sh:property [
-                        hfont:path hfont:category ;
+                        sh:path hfont:category ;
                         sh:name "category" ;
                         sh:description "category of facility" ;
                         sh:order 3 ;
+                        sh:datatype xsd:anyUri ;
                         sh:class hfont:HealthFacilityCategory ;
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:message "category field is required" ;
-                    ] ;       
+                    ] ;
                     sh:property [
-                        hfont:path hfont:subCategory ;
+                        sh:path hfont:subCategory ;
                         sh:name "sub category" ;
                         sh:description "sub category of facility" ;
                         sh:order 4 ;
+                        sh:datatype xsd:anyUri  ;
                         sh:class hfont:HealthFacilitySubCategory ;
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:message "sub category field is required" ;
-                    ] ;                                                   
+                    ] ;
                     sh:property [
-                        hfont:path hfont:address_line_one ;
+                        sh:path hfont:address_line_one ;
                         sh:name "address line one" ;
                         sh:description "address line one of facility" ;
                         sh:order 5 ;
                         sh:datatype xsd:string;
                         sh:minCount 1;
+                        sh:maxCount 1;
                         sh:uniqueLang true ;
-                        sh:languageIn ("ar" "en")
+                        sh:languageIn ("ar" "en") ;
                         sh:message "address line one field is required,string" ;
-                    ] ;  
+                    ] ;
                     sh:property [
-                        hfont:path hfont:address_line_two ;
+                        sh:path hfont:address_line_two ;
                         sh:name "address line two" ;
                         sh:description "address line two of facility" ;
                         sh:order 6 ;
                         sh:datatype xsd:string;
                         sh:minCount 0;
+                        sh:maxCount 1;
                         sh:uniqueLang true ;
-                        sh:languageIn ("ar" "en")
+                        sh:languageIn ("ar" "en") ;
                         sh:message "address line two string" ;
-                    ] ;                     
+                    ] ;
                     sh:property [
-                        hfont:path address:postalCode ;
+                        sh:path address:postalCode ;
                         sh:name "postal code" ;
                         sh:description "postal code of facility address" ;
                         sh:order 7 ;
@@ -85,9 +91,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "postal code field is string" ;
-                    ] ;  
+                    ] ;
                     sh:property [
-                        hfont:path contact:website ;
+                        sh:path contact:website ;
                         sh:name "website" ;
                         sh:description "website of facility" ;
                         sh:order 8 ;
@@ -95,9 +101,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "website field is url" ;
-                    ] ;   
+                    ] ;
                     sh:property [
-                        hfont:path contact:telephone ;
+                        sh:path contact:telephone ;
                         sh:name "telephone" ;
                         sh:description "telephone of facility" ;
                         sh:order 9 ;
@@ -106,9 +112,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "telephone field format " ;
-                    ] ;            
+                    ] ;
                     sh:property [
-                        hfont:path hfont:expiry_date ;
+                        sh:path hfont:expiry_date ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 10 ;
@@ -119,7 +125,7 @@
                         sh:message "expiry date field: required,valid date format is " ;
                     ] ;
                     sh:property [
-                        hfont:path hfont:status ;
+                        sh:path hfont:status ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 10 ;
@@ -128,9 +134,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
-                    ] ;        
+                    ] ;
                     sh:property [
-                        hfont:path hfont:expiry_date ;
+                        sh:path hfont:expiry_date ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 11 ;
@@ -139,9 +145,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
-                    ] ;    
+                    ] ;
                     sh:property [
-                        hfont:path hfont:area ;
+                        sh:path hfont:area ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 12 ;
@@ -150,9 +156,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
-                    ] ;     
+                    ] ;
                     sh:property [
-                        hfont:path hfont:email ;
+                        sh:path hfont:email ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 13 ;
@@ -161,9 +167,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
-                    ] ;  
+                    ] ;
                     sh:property [
-                        hfont:path hfont:latitude ;
+                        sh:path hfont:latitude ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 14 ;
@@ -172,9 +178,9 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
-                    ] ;    
+                    ] ;
                     sh:property [
-                        hfont:path hfont:longitude ;
+                        sh:path hfont:longitude ;
                         sh:name "expiry date" ;
                         sh:description "license expiry date of facility" ;
                         sh:order 15 ;
@@ -183,6 +189,6 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
-                    ] ;                                                                                                                                                       
+                    ] .
 
                                                       

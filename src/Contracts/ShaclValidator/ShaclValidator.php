@@ -11,8 +11,8 @@ abstract class ShaclValidator
 
     protected function __construct()
     {
-        $this->basicDataShapePath=__DIR__."../../../shapes/basic-data-shape.ttl";
-        $this->basicShapeShapePath=__DIR__."../../../shapes/basic-shape-shape.ttl";
+        $this->basicDataShapePath=__DIR__."/../../../shapes/basic-data-shape.ttl";
+        $this->basicShapeShapePath=__DIR__."/../../../shapes/basic-shape-shape.ttl";
     }
 
     abstract public function validateGraph(string $dataGraphPath,string $shapGraphPath):ShaclValidationReportContract;
@@ -21,8 +21,8 @@ abstract class ShaclValidator
     {
         return $this->validateGraph($dataGraphPath,$this->basicDataShapePath);
     }
-    final public function basicShapValidation(string $shapGraphPath):ShaclValidationReportContract
+    final public function basicShapeValidation(string $shapeGraphPath):ShaclValidationReportContract
     {
-        return $this->validateGraph($shapGraphPath,$this->basicShapeShapePath);
+        return $this->validateGraph($shapeGraphPath,$this->basicShapeShapePath);
     }
 }
