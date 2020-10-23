@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\UriBuilder;
 
 
 use AliSyria\LDOG\Contracts\UriBuilder\DataShapeUriContract;
+use AliSyria\LDOG\Contracts\UriBuilder\DataTemplateUriContract;
 use AliSyria\LDOG\Contracts\UriBuilder\OntologyUriContract;
 use AliSyria\LDOG\Contracts\UriBuilder\RealResourceUriContract;
 use AliSyria\LDOG\Contracts\UriBuilder\UriExistenceCheckerContract;
@@ -31,6 +32,10 @@ class Factory implements UriExistenceCheckerContract
     public function dataShape(string $sector,string $name):DataShapeUriContract
     {
         return new DataShapeUri($this->domain,$sector,$name);
+    }
+    public function template(string $sector,string $name):DataTemplateUriContract
+    {
+        return new DataTemplateUri($this->domain,$sector,$name);
     }
     public function isUriExist($uri): bool
     {

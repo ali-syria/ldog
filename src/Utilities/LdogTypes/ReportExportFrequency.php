@@ -11,6 +11,10 @@ use Illuminate\Support\Collection;
 
 class ReportExportFrequency extends LdogType
 {
+    const HOURLY= 'Hourly';
+    const DAILY= 'Daily';
+    const MONTHLY= 'Monthly';
+    const YEARLY= 'Yearly';
 
     public function __construct(string $uri, string $label, ?string $description = null)
     {

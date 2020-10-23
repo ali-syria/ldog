@@ -7,6 +7,7 @@ namespace AliSyria\LDOG\Tests\Unit;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
+use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\ShapesManager\ShapeManager;
 use AliSyria\LDOG\Tests\TestCase;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
@@ -30,11 +31,12 @@ class ShapeManagerTest extends TestCase
         $url=$this->shapeUrl;
         $prefix='health-facility-shape';
 
-        ShapeManager::importFromUrl($url,'health',$prefix);
+        $dataShape=ShapeManager::importFromUrl($url,'health',$prefix);
 
         $graphUri=ShapeManager::generateUri('health',$prefix);
 
         $this->assertTrue(ShapeManager::checkIfExist($graphUri));
+        $this->assertInstanceOf(DataShape::class,$dataShape);
 
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
         $resultSet=GS::getConnection()->jsonQuery("

@@ -6,7 +6,7 @@
 @prefix hfont: <http://health.data.ae/ontology/HealthFacility#> .
 @prefix address: <http://health.data.ae/ontology/Address#> .
 @prefix contact: <http://health.data.ae/ontology/Contact#> .
-@prefix : <http://health.data.ae/shapes/> .
+@prefix : <{SHAPE_NAMESPACE}> .
 
 :HealthFacilityShape a sh:NodeShape ;
                      a ldog:DataShape ;

@@ -20,4 +20,9 @@ abstract class LdogType
     }
 
     abstract public static function all():Collection;
+
+    public static function find(string $uri):self
+    {
+        return static::all()->where('uri',$uri)->first();
+    }
 }

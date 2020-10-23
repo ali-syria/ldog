@@ -84,7 +84,7 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
     {
         return $this->password;
     }
-
+    //LOAD <file:///c:/test/tang-song.ttl> INTO GRAPH <http://example.org/tang-song>
     public function loadIRIintoNamedGraph(string $sourceIRI, string $graphIRI)
     {
         $result=$this->client->asForm()->post("repositories/{$this->repository}/statements",[

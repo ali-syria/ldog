@@ -18,7 +18,7 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 class ShapeManager implements ShapeImporterContract
 {
 
-    public static function importFromUrl(string $url, string $dataSubDomain,string $prefix): void
+    public static function importFromUrl(string $url, string $dataSubDomain,string $prefix): DataShape
     {
         $shapeUri=self::generateUri($dataSubDomain,$prefix);
 
@@ -39,6 +39,8 @@ class ShapeManager implements ShapeImporterContract
                 }
             }
         ");
+
+        return new DataShape($shapeUri);
     }
 
     public static function checkIfExist(string $shapeUri): bool

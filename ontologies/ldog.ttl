@@ -1,0 +1,802 @@
+@prefix : <http://ldog.org/ontologies/2020/8/framework#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dbpr: <http://dbpedia.org/resource> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://ldog.org/ontologies/2020/8/framework> .
+
+<http://ldog.org/ontologies/2020/8/framework> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+rdf:type rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2000/01/rdf-schema#subClassOf
+rdfs:subClassOf rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2002/07/owl#InverseFunctionalProperty
+owl:InverseFunctionalProperty rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2002/07/owl#equivalentProperty
+owl:equivalentProperty rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2002/07/owl#sameAs
+owl:sameAs rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://ldog.org/ontologies/2020/8/framework#basedOnTemplate
+:basedOnTemplate rdf:type owl:ObjectProperty ;
+                 rdfs:domain :BatchImport ;
+                 rdfs:range :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#belongsTo
+:belongsTo rdf:type owl:ObjectProperty ;
+           owl:inverseOf :has ;
+           rdfs:domain owl:Thing ;
+           rdfs:range owl:Thing .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#dataDomain
+:dataDomain rdf:type owl:ObjectProperty ;
+            rdfs:domain :BatchImport ,
+                        :BatchImportTemplate ;
+            rdfs:range :DataDomain .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#frequencyOfExport
+:frequencyOfExport rdf:type owl:ObjectProperty ;
+                   rdfs:domain :ReportTemplate ;
+                   rdfs:range :Frequency .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#has
+:has rdf:type owl:ObjectProperty ;
+     rdfs:domain owl:Thing ;
+     rdfs:range owl:Thing .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasBatchImport
+:hasBatchImport rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                owl:inverseOf :isBatchImportOf ;
+                rdfs:domain :DataSourceOrganization ;
+                rdfs:range :BatchImport .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasBatchImportTemplate
+:hasBatchImportTemplate rdf:type owl:ObjectProperty ;
+                        rdfs:subPropertyOf owl:topObjectProperty ;
+                        owl:inverseOf :isBatchImportTemplateOf ;
+                        rdfs:domain :ModellingOrganization ;
+                        rdfs:range :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasBranch
+:hasBranch rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf :hasSector ;
+           owl:inverseOf :isBranchOf ;
+           rdfs:domain :IndependentAgency ,
+                       :Institution ;
+           rdfs:range :Branch .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasCabinetOrganization
+:hasCabinetOrganization rdf:type owl:ObjectProperty ;
+                        owl:inverseOf :isCabinetOrganizationOf ;
+                        rdfs:domain :Cabinet ;
+                        rdfs:range :CabinetOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasDataCollection
+:hasDataCollection rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf :hasBatchImport ;
+                   owl:inverseOf :isDataCollectionOf ;
+                   rdfs:domain :DataSourceOrganization ;
+                   rdfs:range :DataCollection .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasDataCollectionTemplate
+:hasDataCollectionTemplate rdf:type owl:ObjectProperty ;
+                           rdfs:subPropertyOf :hasBatchImportTemplate ;
+                           owl:inverseOf :isDataCollectionTemplateOf ;
+                           rdfs:domain :ModellingOrganization ;
+                           rdfs:range :DataCollectionTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasDepartment
+:hasDepartment rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf :hasSector ;
+               owl:inverseOf :isDepartmentOF ;
+               rdfs:domain :GovernmentalOrganization ;
+               rdfs:range :Department .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasEmployee
+:hasEmployee rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ;
+             owl:inverseOf :isEmployeeOf ;
+             rdfs:domain :GovernmentalOrganization ;
+             rdfs:range :Employee .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasIndependentAgency
+:hasIndependentAgency rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf :hasCabinetOrganization ;
+                      owl:inverseOf :isIndependentAgencyOf ;
+                      rdfs:domain :Cabinet ;
+                      rdfs:range :IndependentAgency .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasInstitution
+:hasInstitution rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf :has ,
+                                   owl:topObjectProperty ;
+                owl:inverseOf :isInstitutionOf ;
+                rdfs:domain :Ministry ;
+                rdfs:range :Institution .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasLoginAccount
+:hasLoginAccount rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf owl:topObjectProperty ;
+                 owl:inverseOf :isLoginAccountOf ;
+                 rdfs:domain :Employee ;
+                 rdfs:range :LoginAccount .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasMinistry
+:hasMinistry rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf :hasCabinetOrganization ;
+             owl:inverseOf :isMinistryOf ;
+             rdfs:domain :Cabinet ;
+             rdfs:range :Ministry .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasOntology
+:hasOntology rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ;
+             owl:inverseOf :isOntologyOf ;
+             rdfs:domain :BatchImportTemplate ;
+             rdfs:range :Ontology .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasPassword
+:hasPassword rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ;
+             owl:inverseOf :isPasswordOf ;
+             rdfs:domain :LoginAccount ;
+             rdfs:range :Password .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasReport
+:hasReport rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf :hasBatchImport ;
+           owl:inverseOf :isReportOf ;
+           rdfs:domain :DataSourceOrganization ;
+           rdfs:range :Report .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasReportTemplate
+:hasReportTemplate rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf :hasBatchImportTemplate ;
+                   owl:inverseOf :isReportTemplateOf ;
+                   rdfs:domain :ModellingOrganization ;
+                   rdfs:range :ReportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasSector
+:hasSector rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf :has ,
+                              owl:topObjectProperty ;
+           owl:inverseOf :isSectorOf ;
+           rdfs:domain :GovernmentalOrganization ;
+           rdfs:range :Sector .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasShape
+:hasShape rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty ;
+          owl:inverseOf :isShapeOf ;
+          rdfs:domain :BatchImportTemplate ;
+          rdfs:range :DataShape .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hashAlgorithm
+:hashAlgorithm rdf:type owl:ObjectProperty ;
+               rdfs:domain :Password ;
+               rdfs:range :HashAlgorithm .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#id
+:id rdf:type owl:ObjectProperty ,
+             owl:InverseFunctionalProperty ;
+    rdfs:domain owl:Thing .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isBatchImportOf
+:isBatchImportOf rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf owl:topObjectProperty ;
+                 rdfs:domain :BatchImport ;
+                 rdfs:range :DataSourceOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isBatchImportTemplateOf
+:isBatchImportTemplateOf rdf:type owl:ObjectProperty ;
+                         rdfs:subPropertyOf owl:topObjectProperty ;
+                         rdfs:domain :BatchImportTemplate ;
+                         rdfs:range :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isBranchOf
+:isBranchOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf :isSectorOf ;
+            rdfs:domain :Branch ;
+            rdfs:range :IndependentAgency ,
+                       :Institution .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isCabinetOrganizationOf
+:isCabinetOrganizationOf rdf:type owl:ObjectProperty ;
+                         rdfs:subPropertyOf :subOrganizationOf ,
+                                            owl:topObjectProperty ;
+                         rdfs:domain :CabinetOrganization ;
+                         rdfs:range :Cabinet .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isDataCollectionOf
+:isDataCollectionOf rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf :isBatchImportOf ;
+                    rdfs:domain :DataCollection ;
+                    rdfs:range :DataSourceOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isDataCollectionTemplateOf
+:isDataCollectionTemplateOf rdf:type owl:ObjectProperty ;
+                            rdfs:subPropertyOf :isBatchImportTemplateOf ;
+                            rdfs:domain :DataCollectionTemplate ;
+                            rdfs:range :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isDepartmentOF
+:isDepartmentOF rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf :isSectorOf ;
+                rdfs:domain :Department ;
+                rdfs:range :GovernmentalOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isEmployeeOf
+:isEmployeeOf rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf owl:topObjectProperty ;
+              rdfs:domain :Employee ;
+              rdfs:range :GovernmentalOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isIndependentAgencyOf
+:isIndependentAgencyOf rdf:type owl:ObjectProperty ;
+                       rdfs:subPropertyOf :isCabinetOrganizationOf ;
+                       rdfs:domain :IndependentAgency ;
+                       rdfs:range :Cabinet .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isInstitutionOf
+:isInstitutionOf rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf :subOrganizationOf ,
+                                    owl:topObjectProperty ;
+                 rdfs:domain :Institution ;
+                 rdfs:range :Ministry .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isLoginAccountOf
+:isLoginAccountOf rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf owl:topObjectProperty ;
+                  rdfs:domain :LoginAccount ;
+                  rdfs:range :Employee .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isMinistryOf
+:isMinistryOf rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf :isCabinetOrganizationOf ;
+              rdfs:domain :Ministry ;
+              rdfs:range :Cabinet .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isOntologyOf
+:isOntologyOf rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf owl:topObjectProperty ;
+              rdfs:domain :Ontology ;
+              rdfs:range :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isPasswordOf
+:isPasswordOf rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf owl:topObjectProperty ;
+              rdfs:domain :Password ;
+              rdfs:range :LoginAccount .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isReportOf
+:isReportOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf :isBatchImportOf ;
+            rdfs:domain :Report ;
+            rdfs:range :DataSourceOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isReportTemplateOf
+:isReportTemplateOf rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf :isBatchImportTemplateOf ;
+                    rdfs:domain :ReportTemplate ;
+                    rdfs:range :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isSectorOf
+:isSectorOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf :subOrganizationOf ,
+                               owl:topObjectProperty ;
+            rdfs:domain :Sector ;
+            rdfs:range :GovernmentalOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#isShapeOf
+:isShapeOf rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty ;
+           rdfs:domain :DataShape ;
+           rdfs:range :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#publishedBy
+:publishedBy rdf:type owl:ObjectProperty ;
+             rdfs:domain :BatchImport ;
+             rdfs:range :Employee .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#publisher
+:publisher rdf:type owl:ObjectProperty ;
+           rdfs:domain :BatchImport ;
+           rdfs:range :GovernmentalOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#shouldBatchExportedBy
+:shouldBatchExportedBy rdf:type owl:ObjectProperty ;
+                       rdfs:subPropertyOf owl:topObjectProperty ;
+                       owl:inverseOf :shouldExportBatch ;
+                       rdfs:domain :BatchImportTemplate ;
+                       rdfs:range :BatchDataExporterTarget ,
+                                  :DataSourceOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#shouldDataCollectionExportedBy
+:shouldDataCollectionExportedBy rdf:type owl:ObjectProperty ;
+                                rdfs:subPropertyOf :shouldBatchExportedBy ;
+                                owl:inverseOf :shouldExportDataCollection ;
+                                rdfs:domain :DataCollectionTemplate ;
+                                rdfs:range :DataSourceOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#shouldExportBatch
+:shouldExportBatch rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf owl:topObjectProperty ;
+                   rdfs:domain :DataSourceOrganization ;
+                   rdfs:range :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#shouldExportDataCollection
+:shouldExportDataCollection rdf:type owl:ObjectProperty ;
+                            rdfs:subPropertyOf :shouldExportBatch ;
+                            rdfs:domain :DataSourceOrganization ;
+                            rdfs:range :DataCollectionTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#shouldExportReport
+:shouldExportReport rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf :shouldExportBatch ;
+                    owl:inverseOf :shouldReportExportedBy ;
+                    rdfs:domain :DataSourceOrganization ;
+                    rdfs:range :ReportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#shouldReportExportedBy
+:shouldReportExportedBy rdf:type owl:ObjectProperty ;
+                        rdfs:subPropertyOf :shouldBatchExportedBy ;
+                        rdfs:domain :ReportTemplate ;
+                        rdfs:range :DataSourceOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#subOrganizationOf
+:subOrganizationOf rdf:type owl:ObjectProperty ;
+                   rdfs:domain <http://www.w3.org/ns/org#Organization> ;
+                   rdfs:range <http://www.w3.org/ns/org#Organization> .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://ldog.org/ontologies/2020/8/framework#description
+:description rdf:type owl:DatatypeProperty ;
+             rdfs:domain owl:Thing ;
+             rdfs:range xsd:string ;
+             rdfs:label "description" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#fromDate
+:fromDate rdf:type owl:DatatypeProperty ;
+          rdfs:domain :BatchImport ;
+          rdfs:range xsd:dateTime .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hashValue
+:hashValue rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Password ;
+           rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#id
+:id rdf:type owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#logo
+:logo rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty ;
+      rdfs:domain :GovernmentalOrganization ;
+      rdfs:range xsd:anyURI .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#name
+:name rdf:type owl:DatatypeProperty ;
+      rdfs:domain owl:Thing ;
+      rdfs:range xsd:string ;
+      rdfs:comment "name of anything" ;
+      rdfs:label "name" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#prefix
+:prefix rdf:type owl:DatatypeProperty ;
+        rdfs:domain :DataShape ,
+                    :Ontology ;
+        rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#publishingDate
+:publishingDate rdf:type owl:DatatypeProperty ;
+                rdfs:domain :BatchImport ;
+                rdfs:range xsd:dateTimeStamp .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#rememberToken
+:rememberToken rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Password ;
+               rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#resourceCommentExpression
+:resourceCommentExpression rdf:type owl:DatatypeProperty ;
+                           rdfs:domain :DataShape ;
+                           rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#resourceIdentifierProperty
+:resourceIdentifierProperty rdf:type owl:DatatypeProperty ;
+                            rdfs:domain :DataShape ;
+                            rdfs:range xsd:anyURI .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#resourceLabelExpression
+:resourceLabelExpression rdf:type owl:DatatypeProperty ;
+                         rdfs:domain :DataShape ;
+                         rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#subDomain
+:subDomain rdf:type owl:DatatypeProperty ;
+           rdfs:domain :DataDomain ;
+           rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#toDate
+:toDate rdf:type owl:DatatypeProperty ;
+        rdfs:domain :BatchImport ;
+        rdfs:range xsd:dateTime .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#username
+:username rdf:type owl:DatatypeProperty ;
+          rdfs:domain :LoginAccount ;
+          rdfs:range xsd:string .
+
+
+###  http://www.w3.org/2002/07/owl#topDataProperty
+owl:topDataProperty rdfs:domain :DataShape ;
+                    rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://ldog.org/ontologies/2020/8/framework#BatchDataExporterTarget
+:BatchDataExporterTarget rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#BatchImport
+:BatchImport rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#BatchImportTemplate
+:BatchImportTemplate rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Branch
+:Branch rdf:type owl:Class ;
+        rdfs:subClassOf :Sector ;
+        owl:disjointWith :Department .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Cabinet
+:Cabinet rdf:type owl:Class ;
+         rdfs:subClassOf :GovernmentalOrganization ,
+                         :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#CabinetOrganization
+:CabinetOrganization rdf:type owl:Class ;
+                     rdfs:subClassOf :GovernmentalOrganization ,
+                                     :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#DataCollection
+:DataCollection rdf:type owl:Class ;
+                rdfs:subClassOf :BatchImport ;
+                owl:disjointWith :Report .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#DataCollectionTemplate
+:DataCollectionTemplate rdf:type owl:Class ;
+                        rdfs:subClassOf :BatchImportTemplate ;
+                        owl:disjointWith :ReportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#DataDomain
+:DataDomain rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#DataShape
+:DataShape rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#DataSourceOrganization
+:DataSourceOrganization rdf:type owl:Class ;
+                        owl:disjointWith :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Department
+:Department rdf:type owl:Class ;
+            rdfs:subClassOf :Sector .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Employee
+:Employee rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Frequency
+:Frequency rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#GovernmentalOrganization
+:GovernmentalOrganization rdf:type owl:Class ;
+                          rdfs:subClassOf <http://www.w3.org/ns/org#Organization> ;
+                          rdfs:label "Governmental Organization" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#HashAlgorithm
+:HashAlgorithm rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#IndependentAgency
+:IndependentAgency rdf:type owl:Class ;
+                   rdfs:subClassOf :CabinetOrganization ;
+                   owl:disjointWith :Ministry .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Institution
+:Institution rdf:type owl:Class ;
+             rdfs:subClassOf :GovernmentalOrganization ,
+                             :ModellingOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#LoginAccount
+:LoginAccount rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Ministry
+:Ministry rdf:type owl:Class ;
+          rdfs:subClassOf :CabinetOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#ModellingOrganization
+:ModellingOrganization rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Ontology
+:Ontology rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Password
+:Password rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Report
+:Report rdf:type owl:Class ;
+        rdfs:subClassOf :BatchImport .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#ReportTemplate
+:ReportTemplate rdf:type owl:Class ;
+                rdfs:subClassOf :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Sector
+:Sector rdf:type owl:Class ;
+        rdfs:subClassOf :DataSourceOrganization ,
+                        :GovernmentalOrganization .
+
+
+###  http://www.w3.org/ns/org#Organization
+<http://www.w3.org/ns/org#Organization> rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://dbpedia.org/resource/Bcrypt
+<http://dbpedia.org/resource/Bcrypt> rdf:type owl:NamedIndividual ;
+                                     owl:sameAs :Bcrypt .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#AllBranches
+:AllBranches rdf:type owl:NamedIndividual ,
+                      :BatchDataExporterTarget ;
+             rdfs:label "All branches" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#AllDepartments
+:AllDepartments rdf:type owl:NamedIndividual ,
+                         :BatchDataExporterTarget ;
+                rdfs:label "All departments" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#AllSectors
+:AllSectors rdf:type owl:NamedIndividual ,
+                     :BatchDataExporterTarget ;
+            rdfs:label "All branches and departments" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Bcrypt
+:Bcrypt rdf:type owl:NamedIndividual ,
+                 :HashAlgorithm ;
+        rdfs:comment "password hash algorithm" ;
+        rdfs:label <http://ldog.org/ontologies/2020/8/Bcrypt> .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Daily
+:Daily rdf:type owl:NamedIndividual ,
+                :Frequency ;
+       rdfs:label "Daily" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Education
+:Education rdf:type owl:NamedIndividual ,
+                    :DataDomain ;
+           :subDomain "education" ;
+           rdfs:label "Education" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#GeneralInfo
+:GeneralInfo rdf:type owl:NamedIndividual ,
+                      :DataDomain ;
+             :subDomain "general" ;
+             rdfs:label "General Info" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Governament
+:Governament rdf:type owl:NamedIndividual ,
+                      :DataDomain ;
+             :subDomain "government" ;
+             rdfs:label "Government" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Health
+:Health rdf:type owl:NamedIndividual ,
+                 :DataDomain ;
+        :subDomain "health" ;
+        rdfs:label "Health" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Hourly
+:Hourly rdf:type owl:NamedIndividual ,
+                 :Frequency ;
+        rdfs:label "Hourly" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#ModellingOrganization
+:ModellingOrganization rdf:type owl:NamedIndividual ,
+                                :BatchDataExporterTarget .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Monthly
+:Monthly rdf:type owl:NamedIndividual ,
+                  :Frequency ;
+         rdfs:label "Monthly" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#RealEstate
+:RealEstate rdf:type owl:NamedIndividual ,
+                     :DataDomain ;
+            :subDomain "real-estate" ;
+            rdfs:label "Real Estate" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Tourism
+:Tourism rdf:type owl:NamedIndividual ,
+                  :DataDomain ;
+         :subDomain "tourism" ;
+         rdfs:label "Tourism" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Transport
+:Transport rdf:type owl:NamedIndividual ,
+                    :DataDomain ;
+           :subDomain "transport" ;
+           rdfs:label "Transport" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Weekly
+:Weekly rdf:type owl:NamedIndividual ,
+                 :Frequency ;
+        rdfs:label "Weekly" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Yearly
+:Yearly rdf:type owl:NamedIndividual ,
+                 :Frequency ;
+        rdfs:label "Yearly" .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+:ModellingOrganization rdfs:label "Modelling Organization" .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :Cabinet
+                :CabinetOrganization
+                :Institution
+                :Sector
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

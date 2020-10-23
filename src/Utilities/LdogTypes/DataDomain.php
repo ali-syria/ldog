@@ -13,6 +13,14 @@ class DataDomain extends LdogType
 {
     public string $subDomain;
 
+    const EDUCATION= 'Education';
+    const GENERALINFO= 'GeneralInfo';
+    const GOVERNAMENT= 'Governament';
+    const HEALTH= 'Health';
+    const REALESTATE= 'RealEstate';
+    const TOURISM= 'Tourism';
+    const TRANSPORT='Transport';
+
     public function __construct(string $uri, string $label, ?string $description = null,string $subDomain)
     {
         parent::__construct($uri, $label, $description);

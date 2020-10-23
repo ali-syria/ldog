@@ -11,6 +11,10 @@ use Illuminate\Support\Collection;
 
 class DataExporterTarget extends LdogType
 {
+    const ALL_BRANCHES= 'AllBranches';
+    const ALL_DEPARTMENTS= 'AllDepartments';
+    const ALL_SECTORS= 'AllSectors';
+    const MODELLING_ORGANIZATION= 'ModellingOrganization';
 
     public function __construct(string $uri, string $label, ?string $description = null)
     {
