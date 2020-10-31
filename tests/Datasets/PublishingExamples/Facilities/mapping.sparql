@@ -1,0 +1,7 @@
+
+CONSTRUCT{
+ <a> <name> ?f_name_english
+}
+WHERE {
+}
+limit 10

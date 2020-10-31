@@ -15,6 +15,7 @@
         "php": "^7.4",
         "easyrdf/easyrdf": "^1.0",
         "guzzlehttp/guzzle": "^7.0",
+        "league/csv": "^9.6",
         "ml/json-ld": "^1.2",
         "spatie/temporary-directory": "^1.2",
         "symfony/process": "^5.1"

@@ -11,6 +11,8 @@ use AliSyria\LDOG\Tests\TestCase;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use AliSyria\LDOG\UriDereferencer\Dereferencer;
 use EasyRdf\Sparql\Result;
+use ML\JsonLD\JsonLD;
+use ML\JsonLD\NQuads;
 use phpDocumentor\Reflection\Types\True_;
 
 class GraphDbDriverTest extends TestCase
@@ -185,6 +187,30 @@ class GraphDbDriverTest extends TestCase
 
         $this->assertTrue($this->graphDB->isGraphExist($graphUri));
         $this->assertFalse($this->graphDB->isGraphExist($graphUri."#dff"));
+    }
+    public function testFetchNamedGraph()
+    {
+        $graphUri=URI::ontology('transport','vehicle')->getBasueUri();
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+
+        $this->graphDB->rawUpdate(
+            "
+            PREFIX ldog: <$ldogPrefix>
+            
+            INSERT DATA
+                    { 
+                      GRAPH <$graphUri> {
+                                <$graphUri> a ldog:Ontology .                      
+                      }
+                    }"
+        );
+        $nquads = new NQuads();
+        $quads=$nquads->parse($this->graphDB->fetchNamedGraph($graphUri));
+        $jsonLd=JsonLD::getDocument(JsonLD::fromRdf($quads));
+        $graph = $jsonLd->getGraph($graphUri);
+        $node = $graph->getNode($graphUri);
+
+        $this->assertEquals($ldogPrefix.'Ontology',$node->getType()->getId(),'type is correct');
     }
 
     public function rdfMimeTypesProvider():array

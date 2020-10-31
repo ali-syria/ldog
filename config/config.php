@@ -22,4 +22,11 @@ return [
         'driver'=> 'graphdb_lucene',
         'index'=> 'reconcilation',
     ],
+    'storage'=>[
+        'disk'=>'local',
+        'directories'=>[
+            'root'=>'ldog',
+            'conversions'=>'conversions',
+        ],
+    ],
 ];

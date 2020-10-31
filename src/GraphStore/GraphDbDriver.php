@@ -9,7 +9,6 @@ use AliSyria\LDOG\Contracts\GraphStore\GraphManagementContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphUpdateContract;
 use AliSyria\LDOG\Contracts\GraphStore\QueryContract;
 use AliSyria\LDOG\Contracts\GraphStore\ResourceDescriptionContract;
-use AliSyria\LDOG\Facades\GS;
 use EasyRdf\Sparql\Result;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -151,17 +150,27 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
 
     public function isResourceExist(string $uri): bool
     {
-        return GS::getConnection()->jsonQuery("
+        return $this->jsonQuery("
             ASK { <$uri> ?p ?o }
         ")->getBoolean();
     }
 
     public function isGraphExist(string $graphUri): bool
     {
-        return GS::getConnection()->jsonQuery("
+        return $this->jsonQuery("
             ASK { 
                 GRAPH <$graphUri> { ?s ?p ?o }
             }
         ")->getBoolean();
+    }
+
+    public function fetchNamedGraph(string $namedGraphUri,string $mimeType="application/n-quads")
+    {
+        $response= $this->client->withHeaders([
+            'accept'=>$mimeType
+        ])->get("repositories/{$this->repository}/rdf-graphs/service",[
+            'graph'=>$namedGraphUri
+        ]);
+        return $response->body();
     }
 }
