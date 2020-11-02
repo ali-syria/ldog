@@ -4,6 +4,7 @@
 namespace AliSyria\LDOG\ShapesManager;
 
 
+use AliSyria\LDOG\Contracts\ShapesManager\DataShapeContract;
 use AliSyria\LDOG\Contracts\ShapesManager\ShapeImporterContract;
 use AliSyria\LDOG\Exceptions\DataShapeAlreadyExist;
 use AliSyria\LDOG\Facades\GS;
@@ -41,6 +42,29 @@ class ShapeManager implements ShapeImporterContract
         ");
 
         return new DataShape($shapeUri);
+    }
+    public static function retrieve(string $uri): ?DataShapeContract
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+
+        $query= "
+            PREFIX ldog: <$ldogPrefix> 
+            
+            SELECT ?prefix
+            WHERE {
+                    <$uri> a ldog:DataShape ;
+                                 ldog:prefix ?prefix .
+            }
+        ";
+
+        $resultSet=GS::getConnection()->jsonQuery($query);
+
+        foreach ($resultSet as $result)
+        {
+            return new DataShape($uri);
+        }
+
+        return null;
     }
 
     public static function checkIfExist(string $shapeUri): bool

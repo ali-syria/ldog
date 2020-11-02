@@ -11,7 +11,7 @@ use AliSyria\LDOG\Utilities\LdogTypes\DataExporterTarget;
 
 abstract class DataTemplate
 {
-    public string $identifier;
+    public string $uri;
     public string $label;
     public string $description;
     public DataShapeContract $dataShape;
@@ -19,11 +19,11 @@ abstract class DataTemplate
     public DataExporterTarget $dataExporterTarget;
     public DataDomain $dataDomain;
 
-    public function __construct(string $identifier,string $label,string $description,DataShapeContract $dataShape,
+    public function __construct(string $uri,string $label,string $description,DataShapeContract $dataShape,
         ModellingOrganizationContract $modellingOrganization,DataExporterTarget $dataExporterTarget,
         DataDomain $dataDomain)
     {
-        $this->identifier=$identifier;
+        $this->uri=$uri;
         $this->label=$label;
         $this->description=$description;
         $this->dataShape=$dataShape;
@@ -31,4 +31,5 @@ abstract class DataTemplate
         $this->dataExporterTarget=$dataExporterTarget;
         $this->dataDomain=$dataDomain;
     }
+    abstract public static function retrieve(string $uri):?self ;
 }

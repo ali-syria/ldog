@@ -27,8 +27,7 @@ class ReportTemplateTest extends TestCase
             ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl',
                 'http://ldog.com/ontology');
     }
-
-    public function testCreateReportTemplate()
+    private function createReportTemplate():ReportTemplate
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
@@ -46,6 +45,19 @@ class ReportTemplateTest extends TestCase
             $dataShape,$cabinet,$dataExportTarget,$dataDomain,$exportFrequency
         );
 
-        $this->assertInstanceOf(ReportTemplate::class,$reportTemplate);
+        return $reportTemplate;
+    }
+    public function testCreateReportTemplate()
+    {
+
+
+        $this->assertInstanceOf(ReportTemplate::class,$this->createReportTemplate());
+    }
+
+    public function testRetrieveDataCollectionTemplate()
+    {
+        $expectedReportTemplate=$this->createReportTemplate();
+        $this->assertEquals(ReportTemplate::retrieve($expectedReportTemplate->uri),
+            $expectedReportTemplate);
     }
 }

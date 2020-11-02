@@ -113,7 +113,6 @@ abstract class Organization implements OrganizationContract
 
         return new static($organizationUriString,$name,$description,$logoUrl);
     }
-
     public function getName(): string
     {
         return $this->name;

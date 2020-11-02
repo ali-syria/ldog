@@ -8,75 +8,148 @@ use AliSyria\LDOG\Contracts\PublishingPipeline\PublishingPipelineContract;
 use AliSyria\LDOG\Contracts\ShaclValidator\ShaclValidationReportContract;
 use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Facades\GS;
+use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\ShapesManager\DataShape;
+use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
+use AliSyria\LDOG\UriBuilder\UriBuilder;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Csv\Reader;
 use ML\JsonLD\Document as JsonLdDocument;
 use ML\JsonLD\JsonLD;
+use ML\JsonLD\Node;
 use ML\JsonLD\NQuads;
 
 class PublishingPipeline implements PublishingPipelineContract
 {
     public string $id;
+    public DataTemplate $dataTemplate;
     public Reader $dataCsv;
     public JsonLdDocument $configJsonLD;
     public JsonLdDocument $shapeJsonLD;
     public JsonLdDocument $dataJsonLD;
+    private FilesystemAdapter $storage;
+    private Node $nodeShape;
 
-    public DataTemplate $dataTemplate;
-    public DataShape $dataShape;
-    private Filesystem $storage;
-
-    public function __construct(string $id,Reader $dataCsvReader,JsonLdDocument $configJsonLD,
-                                JsonLdDocument $shapeJsonLD,JsonLdDocument $dataJsonLD)
+    private function __construct(string $id,DataTemplate $dataTemplate,Reader $dataCsvReader,
+        JsonLdDocument $configJsonLD,JsonLdDocument $shapeJsonLD,JsonLdDocument $dataJsonLD)
     {
         $this->id=$id;
+        $this->dataTemplate=$dataTemplate;
         $this->dataCsv=$dataCsvReader;
         $this->configJsonLD=$configJsonLD;
         $this->shapeJsonLD=$shapeJsonLD;
         $this->dataJsonLD=$dataJsonLD;
+
+        $this->nodeShape=$this->shapeJsonLD->getGraph($this->dataTemplate->dataShape->getUri())
+            ->getNodesByType(UriBuilder::PREFIX_SHACL.'NodeShape')[0];
+        $this->storage=Storage::disk(config('ldog.storage.disk'));
     }
 
-    public static function initiate(DataTemplate $dataTemplate, string $csvPath): PublishingPipelineContract
+    public static function initiate(DataTemplate $dataTemplate, string $csvPath): self
     {
         $id=Str::uuid();
-        $storage=Storage::disk(config('ldog.storage.disk'));
-        $conversionPath=config('ldog.storage.directories.root')."/".
+
+        $dataCsvReader=self::initiateCsvReader(false,$id,$csvPath);
+        $dataJsonLD=self::initiateDatasetJsonLdDocument(false,$id);
+        $configJsonLD=self::initiateConfigJsonLdDocument(false,$id,$dataTemplate);
+        $shapeJsonLD=self::initiateShapeJsonLdDocument(false,$id,$dataTemplate);
+
+        return new self($id,$dataTemplate,$dataCsvReader,$configJsonLD,$shapeJsonLD,$dataJsonLD);
+    }
+
+    public static function make(string $conversionId): self
+    {
+        $dataTemplate=DataCollectionTemplate::retrieve('http://health.data.example/template/healthFacility');
+        $dataCsvReader=self::initiateCsvReader(true,$conversionId);
+        $dataJsonLD=self::initiateDatasetJsonLdDocument(true,$conversionId);
+        $configJsonLD=self::initiateConfigJsonLdDocument(true,$conversionId);
+        $shapeJsonLD=self::initiateShapeJsonLdDocument(true,$conversionId,$dataTemplate);
+
+        return new self($conversionId,$dataTemplate,$dataCsvReader,$configJsonLD,
+            $shapeJsonLD,$dataJsonLD);
+    }
+
+    public static function getDisk():FilesystemAdapter
+    {
+        return Storage::disk(config('ldog.storage.disk'));
+    }
+    public static function getConversionPath(string $id):string
+    {
+        return config('ldog.storage.directories.root')."/".
             config('ldog.storage.directories.conversions')."/".$id;
-        $storage->putFileAs($conversionPath,new File($csvPath),'dataset.csv');
-        $dataCsvPath=$storage->path($conversionPath."/dataset.csv");
+    }
+    public static function initiateCsvReader(bool $loadFromDisk,string $conversionId,
+       string $csvPath=null):Reader
+    {
+        $disk=self::getDisk();
+        $conversionPath=self::getConversionPath($conversionId);
+        if(!$loadFromDisk)
+        {
+            $disk->putFileAs($conversionPath,new File($csvPath),'dataset.csv');
+        }
+        $dataCsvPath=$disk->path($conversionPath."/dataset.csv");
         $dataCsvReader=Reader::createFromPath($dataCsvPath);
         $dataCsvReader->setHeaderOffset(0);
 
-        $storage->put($conversionPath."/dataset.jsonld","{}");
-        $dataJsonLdPath=$storage->path($conversionPath."/dataset.jsonld");
-        $dataJsonLD=JsonLD::getDocument($dataJsonLdPath);
+        return $dataCsvReader;
+    }
+    public static function initiateDatasetJsonLdDocument(bool $loadFromDisk,string $conversionId):JsonLdDocument
+    {
+        $disk=self::getDisk();
+        $conversionPath=self::getConversionPath($conversionId);
 
-        $storage->put($conversionPath."/config.jsonld","{}");
-        $configJsonLdPath=$storage->path($conversionPath."/config.jsonld");
-        $configJsonLD=JsonLD::getDocument($configJsonLdPath);
+        if(!$loadFromDisk)
+        {
+            $disk->put($conversionPath."/dataset.jsonld","{}");
+        }
+        $dataJsonLdPath=$disk->path($conversionPath."/dataset.jsonld");
 
+        return JsonLD::getDocument($dataJsonLdPath);
+    }
+    public static function initiateConfigJsonLdDocument(bool $loadFromDisk,string $conversionId,DataTemplate $dataTemplate=null):JsonLdDocument
+    {
+        $disk=self::getDisk();
+        $conversionPath=self::getConversionPath($conversionId);
+
+       if(!$loadFromDisk)
+       {
+           $disk->put($conversionPath."/config.jsonld","{}");
+       }
+       $configJsonLdPath=$disk->path($conversionPath."/config.jsonld");
+       $configJsonLd=JsonLD::getDocument($configJsonLdPath);
+        if(!$loadFromDisk)
+        {
+            if(is_null($dataTemplate))
+            {
+                throw new \RuntimeException('dataTemplate is required to initiate config');
+            }
+            $conversionPrefix=UriBuilder::PREFIX_CONVERSION;
+            $graph=$configJsonLd->getGraph();
+            $conversionNode=$graph->createNode(URI::realResource('meta','Conversion',$conversionId)->getResourceUri());
+            $conversionNode->addPropertyValue(UriBuilder::PREFIX_RDF."type",$conversionPrefix."Conversion");
+            $conversionNode->addPropertyValue($conversionPrefix."dataTemplate",$dataTemplate->uri);
+            $disk->put($conversionPath."/config.jsonld",JsonLD::toString($configJsonLd->toJsonLd()));
+        }
+        return $configJsonLd;
+    }
+    public static function initiateShapeJsonLdDocument(bool $loadFromDisk,string $conversionId,DataTemplate $dataTemplate):JsonLdDocument
+    {
+        $disk=self::getDisk();
+        $conversionPath=self::getConversionPath($conversionId);
 
         $nquads = new NQuads();
         $quads=$nquads->parse(GS::getConnection()->fetchNamedGraph($dataTemplate->dataShape->getUri()));
-        $storage->put($conversionPath."/shape.jsonld",JsonLD::toString(JsonLD::fromRdf($quads)));
-        $shapeJsonLdPath=$storage->path($conversionPath."/shape.jsonld");
-        $shapeJsonLD=JsonLD::getDocument($shapeJsonLdPath);
-        $storage->put($conversionPath."/mapping.sparql","");
-        $mappingSparqlPath=$storage->path($conversionPath."/mapping.sparql");
+        if(!$loadFromDisk)
+        {
+            $disk->put($conversionPath."/shape.jsonld",JsonLD::toString(JsonLD::fromRdf($quads)));
+        }
+        $shapeJsonLdPath=$disk->path($conversionPath."/shape.jsonld");
 
-        return new self($id,$dataCsvReader,$configJsonLD,$shapeJsonLD,$dataJsonLD);
-//        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')
-//            ->getProperty("http://www.w3.org/ns/shacl#property");
-//        dd($properties[0]->getProperties()['http://www.w3.org/ns/shacl#name']);
-    }
-
-    public static function make(string $conversionUuid): PublishingPipelineContract
-    {
-        // TODO: Implement make() method.
+        return JsonLD::getDocument($shapeJsonLdPath);
     }
 
     public function generateRawRdf(): void
@@ -123,4 +196,29 @@ class PublishingPipeline implements PublishingPipelineContract
     {
 
     }
+    public function mapColumnsToPredicates(array $mappings):void
+    {
+
+    }
+    public function getShapePredicates():array
+    {
+        $propeties=$this->nodeShape->getProperty(UriBuilder::PREFIX_SHACL."property");
+
+        $predicates=[];
+        foreach ($propeties as $propety)
+        {
+            $predicates[]=$propety->getProperty(UriBuilder::PREFIX_SHACL.'name');
+        }
+
+        return $predicates;
+    }
+    public function getCsvColumnNames():array
+    {
+        return $this->dataCsv->getHeader();
+    }
 }
+//        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')
+//            ->getProperty("http://www.w3.org/ns/shacl#property");
+//        dd($properties[0]->getProperties()['http://www.w3.org/ns/shacl#name']);
+//$storage->put($conversionPath."/mapping.sparql","");
+//$mappingSparqlPath=$storage->path($conversionPath."/mapping.sparql");

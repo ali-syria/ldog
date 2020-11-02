@@ -25,7 +25,7 @@ class DataCollectionTemplateTest extends TestCase
             ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl','http://ldog.com/ontology');
     }
 
-    public function testCreateDataCollectionTemplate()
+    private function createDataCollectionTemplate():DataCollectionTemplate
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
@@ -41,7 +41,17 @@ class DataCollectionTemplateTest extends TestCase
             $identifier,'Health Facilities Template','Health Facilities information in each emirate',
             $dataShape,$cabinet,$dataExportTarget,$dataDomain
         );
+        return $dataCollectionTemplate;
+    }
+    public function testCreateDataCollectionTemplate()
+    {
+        $this->assertInstanceOf(DataCollectionTemplate::class,$this->createDataCollectionTemplate());
+    }
 
-        $this->assertInstanceOf(DataCollectionTemplate::class,$dataCollectionTemplate);
+    public function testRetrieveDataCollectionTemplate()
+    {
+        $expectedDataCollectionTemplate=$this->createDataCollectionTemplate();
+        $this->assertEquals(DataCollectionTemplate::retrieve($expectedDataCollectionTemplate->uri),
+            $expectedDataCollectionTemplate);
     }
 }

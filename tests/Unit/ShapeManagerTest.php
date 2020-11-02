@@ -56,8 +56,19 @@ class ShapeManagerTest extends TestCase
             $this->assertEquals($prefix,$result->prefix->getValue());
             break;
         }
+
+        return $dataShape;
     }
 
+    public function testRetrieveDataShape()
+    {
+        $url=$this->shapeUrl;
+        $prefix='health-facility-shape';
+
+        $expectedDataShape=ShapeManager::importFromUrl($url,'health',$prefix);
+
+        $this->assertEquals($expectedDataShape,ShapeManager::retrieve($expectedDataShape->getUri()));
+    }
     public function testCheckIfShapeExist()
     {
         $graphUri=URI::dataShape('health','health-facility-shape')->getBasueUri();

@@ -10,6 +10,8 @@ use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Contracts\TemplateBuilder\ReportTemplateContract;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
+use AliSyria\LDOG\OrganizationManager\OrganizationFactory;
+use AliSyria\LDOG\ShapesManager\ShapeManager;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use AliSyria\LDOG\Utilities\LdogTypes\DataDomain;
 use AliSyria\LDOG\Utilities\LdogTypes\DataExporterTarget;
@@ -19,11 +21,11 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
 {
     public ReportExportFrequency $exportFrequency;
 
-    public function __construct(string $identifier,string $label, string $description, DataShapeContract $dataShape,
+    public function __construct(string $uri,string $label, string $description, DataShapeContract $dataShape,
                                 ModellingOrganizationContract $modellingOrganization, DataExporterTarget $dataExporterTarget,
                                 DataDomain $dataDomain,ReportExportFrequency $exportFrequency)
     {
-        parent::__construct($identifier,$label, $description, $dataShape, $modellingOrganization, $dataExporterTarget,
+        parent::__construct($uri,$label, $description, $dataShape, $modellingOrganization, $dataExporterTarget,
             $dataDomain);
         $this->exportFrequency=$exportFrequency;
     }
@@ -54,7 +56,47 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
         ";
         GS::getConnection()->rawUpdate($query);
 
-        return new self($identifier,$label,$description,$dataShape,$modellingOrganization,
+        return new self($templateUri,$label,$description,$dataShape,$modellingOrganization,
             $dataExporterTarget,$dataDomain,$exportFrequency);
+    }
+
+    public static function retrieve(string $uri): ?DataTemplate
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $rdfsPrefix=UriBuilder::PREFIX_RDFS;
+
+        $query="
+            PREFIX ldog: <$ldogPrefix>
+            PREFIX rdfs: <$rdfsPrefix>
+            
+            SELECT ?label ?description ?dataShape ?modellingOrganization ?dataExporterTarget ?dataDomain
+                   ?exportFrequency
+            WHERE {
+                    <$uri> a ldog:ReportTemplate;
+                    rdfs:label ?label ;
+                    rdfs:comment ?description ;
+                    ldog:hasShape ?dataShape ; 
+                    ldog:isDataCollectionTemplateOf ?modellingOrganization;
+                    ldog:shouldDataCollectionExportedBy ?dataExporterTarget ;
+                    ldog:dataDomain  ?dataDomain ;
+                    ldog:frequencyOfExport ?exportFrequency .
+            } 
+        ";
+        $resultSet=GS::getConnection()->jsonQuery($query);
+
+        foreach ($resultSet as $result)
+        {
+            $label=$result->label->getValue();
+            $description=optional(optional($result)->description)->getValue();
+            $dataExporterTarget=DataExporterTarget::find($result->dataExporterTarget->getUri());
+            $dataDomain=DataDomain::find($result->dataDomain->getUri());
+            $exportFrequency=ReportExportFrequency::find($result->exportFrequency->getUri());
+            $dataShape=ShapeManager::retrieve($result->dataShape->getUri());
+            $modellingOrganization=OrganizationFactory::retrieveByUri($result->modellingOrganization->getUri());
+            return new self($uri,$label,$description,$dataShape,$modellingOrganization,
+                $dataExporterTarget,$dataDomain,$exportFrequency);
+        }
+
+        return null;
     }
 }
