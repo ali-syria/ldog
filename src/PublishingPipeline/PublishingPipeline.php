@@ -25,14 +25,25 @@ use ML\JsonLD\NQuads;
 
 class PublishingPipeline implements PublishingPipelineContract
 {
+    const CONVERSION_PREFIX=UriBuilder::PREFIX_CONVERSION;
+    const PHASES=[
+        1=>'RawRdfGeneration',
+        2=>'Normalization',
+        3=>'Reconciliation',
+        4=>'Publishing',
+        5=>'LinkToOthersDatasets'
+    ];
+
     public string $id;
+    public string $conversionUri;
     public DataTemplate $dataTemplate;
     public Reader $dataCsv;
     public JsonLdDocument $configJsonLD;
     public JsonLdDocument $shapeJsonLD;
     public JsonLdDocument $dataJsonLD;
-    private FilesystemAdapter $storage;
-    private Node $nodeShape;
+    public FilesystemAdapter $storage;
+    public string $conversionPath;
+    public Node $nodeShape;
 
     private function __construct(string $id,DataTemplate $dataTemplate,Reader $dataCsvReader,
         JsonLdDocument $configJsonLD,JsonLdDocument $shapeJsonLD,JsonLdDocument $dataJsonLD)
@@ -43,7 +54,8 @@ class PublishingPipeline implements PublishingPipelineContract
         $this->configJsonLD=$configJsonLD;
         $this->shapeJsonLD=$shapeJsonLD;
         $this->dataJsonLD=$dataJsonLD;
-
+        $this->conversionPath=self::getConversionPath($id);
+        $this->conversionUri=URI::realResource('meta','Conversion',$id)->getResourceUri();
         $this->nodeShape=$this->shapeJsonLD->getGraph($this->dataTemplate->dataShape->getUri())
             ->getNodesByType(UriBuilder::PREFIX_SHACL.'NodeShape')[0];
         $this->storage=Storage::disk(config('ldog.storage.disk'));
@@ -127,11 +139,16 @@ class PublishingPipeline implements PublishingPipelineContract
             {
                 throw new \RuntimeException('dataTemplate is required to initiate config');
             }
-            $conversionPrefix=UriBuilder::PREFIX_CONVERSION;
             $graph=$configJsonLd->getGraph();
             $conversionNode=$graph->createNode(URI::realResource('meta','Conversion',$conversionId)->getResourceUri());
-            $conversionNode->addPropertyValue(UriBuilder::PREFIX_RDF."type",$conversionPrefix."Conversion");
-            $conversionNode->addPropertyValue($conversionPrefix."dataTemplate",$dataTemplate->uri);
+            $conversionNode->setType(new Node($graph,self::CONVERSION_PREFIX."Conversion"));
+            $conversionNode->addPropertyValue(self::CONVERSION_PREFIX."dataTemplate",$dataTemplate->uri);
+            foreach (self::PHASES as $phase)
+            {
+                $phaseNode=$graph->createNode();
+                $phaseNode->setType(new Node($graph,self::CONVERSION_PREFIX.$phase));
+                $conversionNode->addPropertyValue(self::CONVERSION_PREFIX."hasConversionPhase",$phaseNode);
+            }
             $disk->put($conversionPath."/config.jsonld",JsonLD::toString($configJsonLd->toJsonLd()));
         }
         return $configJsonLd;
@@ -198,7 +215,10 @@ class PublishingPipeline implements PublishingPipelineContract
     }
     public function mapColumnsToPredicates(array $mappings):void
     {
+        $graph=$this->configJsonLD->getGraph();
+        $rawRdfGenerationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'RawRdfGeneration')[0];
 
+        $this->saveConfig();
     }
     public function getShapePredicates():array
     {
@@ -215,6 +235,11 @@ class PublishingPipeline implements PublishingPipelineContract
     public function getCsvColumnNames():array
     {
         return $this->dataCsv->getHeader();
+    }
+
+    private function saveConfig()
+    {
+        $this->storage->put($this->conversionPath."/config.jsonld",JsonLD::toString($this->configJsonLD->toJsonLd()));
     }
 }
 //        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')

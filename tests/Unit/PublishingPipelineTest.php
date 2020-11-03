@@ -69,7 +69,7 @@ class PublishingPipelineTest extends TestCase
         return $pipeline;
     }
 
-    public function testMakePipeline()
+    public function testMakePipeline():PublishingPipeline
     {
         $csvPath=__DIR__."/../Datasets/PublishingExamples/Facilities/Sheryan_Facility_Detail.csv";
         $expectedPipeline=PublishingPipeline::initiate($this->dataCollectionTemplate,$csvPath);
@@ -77,6 +77,8 @@ class PublishingPipelineTest extends TestCase
         $actualPipeline=PublishingPipeline::make($expectedPipeline->id);
 
         $this->assertEquals($expectedPipeline->shapeJsonLD,$actualPipeline->shapeJsonLD);
+
+        return $actualPipeline;
     }
 
     /**
@@ -102,5 +104,13 @@ class PublishingPipelineTest extends TestCase
         $this->assertCount(16,$pipeline->getShapePredicates());
         $this->assertEquals("unique_id",$pipeline->getShapePredicates()[0]->getValue());
         $this->assertEquals("http://www.w3.org/2001/XMLSchema#string",$pipeline->getShapePredicates()[0]->getType());
+    }
+    /**
+     * @depends testMakePipeline
+     */
+    public function testMapColumnsToPredicates(PublishingPipeline $pipeline)
+    {
+        $pipeline->mapColumnsToPredicates([]);
+        dd($pipeline->storage->get($pipeline->conversionPath."/config.jsonld"));
     }
 }
