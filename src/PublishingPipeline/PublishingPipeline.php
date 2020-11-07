@@ -15,13 +15,16 @@ use AliSyria\LDOG\UriBuilder\UriBuilder;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\File;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Csv\Reader;
 use ML\JsonLD\Document as JsonLdDocument;
+use ML\JsonLD\Graph;
 use ML\JsonLD\JsonLD;
 use ML\JsonLD\Node;
 use ML\JsonLD\NQuads;
+use ML\JsonLD\TypedValue;
 
 class PublishingPipeline implements PublishingPipelineContract
 {
@@ -169,9 +172,24 @@ class PublishingPipeline implements PublishingPipelineContract
         return JsonLD::getDocument($shapeJsonLdPath);
     }
 
-    public function generateRawRdf(): void
+    public function generateRawRdf(array $mappings): void
     {
-        // TODO: Implement generateRawRdf() method.
+        $this->mapColumnsToPredicates($mappings);
+        $targetClassUri=$this->getTargetClassUri();
+        $targetClassName=$this->getTargetClassName();
+        $resourceIdentifierPropertyUri=$this->getResourceIdentifierPropertyUri();
+        $resourceIdentifierCsvColumnName=$mappings[$resourceIdentifierPropertyUri];
+
+        $dataGraph=$this->dataJsonLD->getGraph();
+        $shapePredicates=$this->getShapePredicates();
+        foreach ($this->dataCsv->getRecords() as $record)
+        {
+            $resource=$this->generateResourceNode($dataGraph,$targetClassName,
+                $record[$resourceIdentifierCsvColumnName]);
+            $this->attachPredicatesToResource($resource,$record,$mappings,$shapePredicates);
+            $this->attachLabelToResourceFromCsv($resource,$record,$mappings,$shapePredicates);
+        }
+        $this->saveData();
     }
 
     public function normalize(): void
@@ -213,24 +231,113 @@ class PublishingPipeline implements PublishingPipelineContract
     {
 
     }
+
+    public function attachPredicatesToResource(Node $resource,array $record,array $mappings,Collection $shapePredicates)
+    {
+        foreach ($mappings as $predicateUri=>$columnName)
+        {
+            $dataTypeUri=$shapePredicates->where('uri',$predicateUri)->first()->dataType;
+            $resource->addPropertyValue($predicateUri,new TypedValue($record[$columnName],$dataTypeUri));
+        }
+    }
+    public function attachLabelToResourceFromCsv(Node $resource,array $record,array $mappings,Collection $shapePredicates)
+    {
+        $labelExpression=Str::of($this->getResourceLabelExpression());
+        foreach ($shapePredicates as $shapePredicate)
+        {
+            $placeholder="{".$shapePredicate->name."}";
+            if($labelExpression->contains($placeholder))
+            {
+                $textToReplace=$record[$mappings[$shapePredicate->uri]];
+                $labelExpression=$labelExpression->replace($placeholder,$textToReplace);
+            }
+        }
+        $resource->addPropertyValue(UriBuilder::PREFIX_RDFS.'label',(string)$labelExpression);
+    }
+    public function generateResourceNode(Graph $graph,string $targetClassName,string $identifier):Node
+    {
+        $uri=URI::realResource($this->dataTemplate->dataDomain->subDomain,$targetClassName,$identifier)
+            ->getResourceUri();
+
+        return $graph->createNode($uri);
+    }
+    public function getTargetClassUri():string
+    {
+        return $this->nodeShape->getProperty(UriBuilder::PREFIX_SHACL.'targetClass')->getId();
+    }
+    public function getTargetClassName():string
+    {
+        $targetClassUri=$this->getTargetClassUri();
+        return self::extractClassNameFromUri($targetClassUri);
+    }
+    public function getResourceIdentifierPropertyUri():string
+    {
+        return $this->nodeShape->getProperty(UriBuilder::PREFIX_LDOG."resourceIdentifierProperty")
+            ->getId();
+    }
+    public function getResourceLabelExpression():string
+    {
+        return $this->nodeShape->getProperty(UriBuilder::PREFIX_LDOG."resourceLabelExpression")
+            ->getValue();
+    }
+    public static function extractClassNameFromUri(string $classUri):string
+    {
+        if(Str::contains($classUri,'#'))
+        {
+            return Str::after($classUri,'#');
+        }
+        else
+        {
+            return Str::afterLast($classUri,'/');
+        }
+    }
     public function mapColumnsToPredicates(array $mappings):void
     {
         $graph=$this->configJsonLD->getGraph();
         $rawRdfGenerationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'RawRdfGeneration')[0];
 
+        foreach ($mappings as $predicateUri=>$columnName)
+        {
+            $columnPredicateMappingNode=$graph->createNode();
+            $columnPredicateMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."ColumnPredicateMapping"));
+            $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."columnName",$columnName);
+            $predicate=$graph->createNode($predicateUri);
+            $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicate",$predicate);
+            $predicateLabel=$this->getShapePredicates()->where('uri',$predicateUri)->first()->name;
+            $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicateLabel",$predicateLabel);
+            $rawRdfGenerationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasColumnPredicateMapping',$columnPredicateMappingNode);
+        }
         $this->saveConfig();
     }
-    public function getShapePredicates():array
+    public function getShapePredicates():Collection
     {
         $propeties=$this->nodeShape->getProperty(UriBuilder::PREFIX_SHACL."property");
 
         $predicates=[];
-        foreach ($propeties as $propety)
+        foreach ($propeties as $property)
         {
-            $predicates[]=$propety->getProperty(UriBuilder::PREFIX_SHACL.'name');
+            $predicates[]=new Predicate(
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'path')->getId(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'name')->getValue(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'description')->getValue(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'order')->getValue(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'datatype')->getId(),
+                optional($property->getProperty(UriBuilder::PREFIX_SHACL.'class'))->getId(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'minCount')->getValue(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'maxCount')->getValue(),
+                $property->getProperty(UriBuilder::PREFIX_SHACL.'message')->getValue(),
+            );
         }
 
-        return $predicates;
+        return collect($predicates);
+    }
+    public function getShapeObjectPredicates():Collection
+    {
+        return $this->getShapePredicates()->whereNotNull('objectClassUri');
+    }
+    public function getShapeDataPredicates():Collection
+    {
+        return $this->getShapePredicates()->whereNull('objectClassUri');
     }
     public function getCsvColumnNames():array
     {
@@ -240,6 +347,10 @@ class PublishingPipeline implements PublishingPipelineContract
     private function saveConfig()
     {
         $this->storage->put($this->conversionPath."/config.jsonld",JsonLD::toString($this->configJsonLD->toJsonLd()));
+    }
+    private function saveData()
+    {
+        $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($this->dataJsonLD->toJsonLd()));
     }
 }
 //        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')

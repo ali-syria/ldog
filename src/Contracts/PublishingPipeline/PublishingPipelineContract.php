@@ -13,7 +13,7 @@ interface PublishingPipelineContract
     public static function initiate(DataTemplate $dataTemplate,string $csvPath):self;
     public static function make(string $conversionUuid):self;
 
-    public function generateRawRdf():void ;
+    public function generateRawRdf(array $mappings):void ;
     public function normalize():void ;
     public function reconcile():void ;
     public function validate():ShaclValidationReportContract;

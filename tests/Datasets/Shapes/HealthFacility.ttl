@@ -6,14 +6,14 @@
 @prefix hfont: <http://health.data.ae/ontology/HealthFacility#> .
 @prefix address: <http://health.data.ae/ontology/Address#> .
 @prefix contact: <http://health.data.ae/ontology/Contact#> .
-@prefix : <{SHAPE_NAMESPACE}> .
+@prefix : <http://health.data.ae/shape/health-facility-spape#> .
 
 :HealthFacilityShape a sh:NodeShape ;
                      a ldog:DataShape ;
                     sh:closed true;
                     sh:targetClass hfont:HealthFacility ;
                     ldog:resourceIdentifierProperty hfont:uniqueID ;
-                    ldog:resourceLabelExpression "flat number {unique_id}" ;
+                    ldog:resourceLabelExpression "health facility: {name},number: {unique_id}" ;
                     sh:property [
                         sh:path hfont:uniqueID ;
                         sh:name "unique_id" ;
@@ -33,7 +33,6 @@
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:uniqueLang true ;
-                        sh:languageIn ("ar" "en") ;
                         sh:message "name field is required,string" ;
                     ] ;
                     sh:property [
@@ -67,7 +66,6 @@
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:uniqueLang true ;
-                        sh:languageIn ("ar" "en") ;
                         sh:message "address line one field is required,string" ;
                     ] ;
                     sh:property [
@@ -79,7 +77,6 @@
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:uniqueLang true ;
-                        sh:languageIn ("ar" "en") ;
                         sh:message "address line two string" ;
                     ] ;
                     sh:property [
@@ -126,8 +123,8 @@
                     ] ;
                     sh:property [
                         sh:path hfont:status ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
+                        sh:name "status" ;
+                        sh:description "license status of facility" ;
                         sh:order 10 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
@@ -136,20 +133,9 @@
                         sh:message "expiry date field: required,valid date format is " ;
                     ] ;
                     sh:property [
-                        sh:path hfont:expiry_date ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
-                        sh:order 11 ;
-                        sh:datatype xsd:string;
-                        sh:pattern " " ;
-                        sh:minCount 0;
-                        sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
-                    ] ;
-                    sh:property [
                         sh:path hfont:area ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
+                        sh:name "area" ;
+                        sh:description "area of facility" ;
                         sh:order 12 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
@@ -159,8 +145,8 @@
                     ] ;
                     sh:property [
                         sh:path hfont:email ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
+                        sh:name "email" ;
+                        sh:description "email of facility" ;
                         sh:order 13 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
@@ -170,8 +156,8 @@
                     ] ;
                     sh:property [
                         sh:path hfont:latitude ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
+                        sh:name "latitude" ;
+                        sh:description "latitude of facility" ;
                         sh:order 14 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
@@ -181,8 +167,8 @@
                     ] ;
                     sh:property [
                         sh:path hfont:longitude ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
+                        sh:name "longitude" ;
+                        sh:description "longitude of facility" ;
                         sh:order 15 ;
                         sh:datatype xsd:string;
                         sh:pattern " " ;
