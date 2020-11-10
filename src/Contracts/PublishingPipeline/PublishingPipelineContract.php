@@ -6,7 +6,7 @@ namespace AliSyria\LDOG\Contracts\PublishingPipeline;
 
 use AliSyria\LDOG\Contracts\ShaclValidator\ShaclValidationReportContract;
 use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
-use AliSyria\LDOG\ShapesManager\DataShape;
+use Illuminate\Support\Collection;
 
 interface PublishingPipelineContract
 {
@@ -15,7 +15,7 @@ interface PublishingPipelineContract
 
     public function generateRawRdf(array $mappings):void ;
     public function normalize():void ;
-    public function reconcile():void ;
+    public function reconcile(Collection $termResourceMappings):void ;
     public function validate():ShaclValidationReportContract;
     public function publish():void ;
     public function linkToOthersDatasets():void ;

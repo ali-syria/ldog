@@ -197,9 +197,17 @@ class PublishingPipeline implements PublishingPipelineContract
         // TODO: Implement normalize() method.
     }
 
-    public function reconcile(): void
+    public function reconcile(Collection $termResourceMappings): void
     {
-        // TODO: Implement reconcile() method.
+        $this->mapTermsToResources($termResourceMappings);
+        $resourceNodes=$this->dataJsonLD->getGraph()->getNodes();
+        foreach ($resourceNodes as $resourceNode)
+        {
+            foreach ($resourceNode->getProperties() as $property)
+            {
+                $property->getValue();
+            }
+        }
     }
 
     public function validate(): ShaclValidationReportContract
@@ -306,6 +314,24 @@ class PublishingPipeline implements PublishingPipelineContract
             $predicateLabel=$this->getShapePredicates()->where('uri',$predicateUri)->first()->name;
             $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicateLabel",$predicateLabel);
             $rawRdfGenerationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasColumnPredicateMapping',$columnPredicateMappingNode);
+        }
+        $this->saveConfig();
+    }
+    public function mapTermsToResources(Collection $termResourceMappings)
+    {
+        $graph=$this->configJsonLD->getGraph();
+        $reconciliationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'Reconciliation')[0];
+
+        foreach ($termResourceMappings as $termResourceMapping)
+        {
+            $termResourceMappingNode=$graph->createNode();
+            $termResourceMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."TermResourceMapping"));
+            $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."term",$termResourceMapping->term);
+            $resource=$graph->createNode($termResourceMapping->resource);
+            $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."resource",$resource);
+            $matchType=$graph->createNode($termResourceMapping->matchType);
+            $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX.'matchType',$matchType);
+            $reconciliationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasTermResourceMapping',$termResourceMappingNode);
         }
         $this->saveConfig();
     }

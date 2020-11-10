@@ -9,20 +9,24 @@ use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\OrganizationManager\Cabinet;
 use AliSyria\LDOG\PublishingPipeline\PublishingPipeline;
+use AliSyria\LDOG\PublishingPipeline\TermResourceMapping;
 use AliSyria\LDOG\ShapesManager\ShapeManager;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\Tests\TestCase;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use AliSyria\LDOG\Utilities\LdogTypes\DataDomain;
 use AliSyria\LDOG\Utilities\LdogTypes\DataExporterTarget;
+use AliSyria\LDOG\Utilities\LdogTypes\TermResourceMatchType;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use ML\JsonLD\JsonLD;
 use ML\JsonLD\Node;
 
 class PublishingPipelineTest extends TestCase
 {
     protected string $shapeUrl="http://api.eresta.test/shapes/HealthFacility.ttl";
     protected DataCollectionTemplate $dataCollectionTemplate;
-    protected array $mappings=[
+    protected array $columnPredicateMappings=[
         'http://health.data.ae/ontology/HealthFacility#uniqueID'=>'unique_id',
         'http://health.data.ae/ontology/HealthFacility#name'=>'f_name_english',
         'http://health.data.ae/ontology/HealthFacility#category'=>'facility_category_name_english',
@@ -39,6 +43,7 @@ class PublishingPipelineTest extends TestCase
         'http://health.data.ae/ontology/HealthFacility#latitude'=>'x_coordinate',
         'http://health.data.ae/ontology/HealthFacility#longitude'=>'y_coordinate',
     ];
+    public Collection $termResourceMappings;
 
     public function setUp(): void
     {
@@ -51,6 +56,33 @@ class PublishingPipelineTest extends TestCase
             ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/conversion.ttl',
                 'http://ldog.com/ontology/conversion');
         $this->dataCollectionTemplate=$this->getDataCollectionTemplate();
+        $this->termResourceMappings=$this->getTermResourceMappings();
+    }
+    public function getTermResourceMappings():Collection
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $conversionPrefix=UriBuilder::PREFIX_CONVERSION;
+
+        $mappings=[];
+
+        $categories=[
+            'Director','Plastic Surgery','General Dentistry','Internal Medicine','Obstetrics and Gynecology',
+            'Homeopathy','Clinical Dietetics and Nutrition','General Practice'
+        ];
+        foreach ($categories as $category)
+        {
+            $mappings[]=new TermResourceMapping($category,URI::realResource(DataDomain::find($ldogPrefix.DataDomain::HEALTH)->subDomain,'Category',$category)->getResourceUri(),TermResourceMatchType::find($conversionPrefix.TermResourceMatchType::FullMatch));
+        }
+
+        $subCategories=[
+            'General Hospital (>100)','PolyClinic (2spec)','Specialty Clinic','Community (Out Patient ) Pharmacy',
+            'Rehabilitation Center (1 spec)','Home Healthcare Agency','Beauty Center Salon'
+        ];
+        foreach ($subCategories as $subCategory)
+        {
+            $mappings[]=new TermResourceMapping($subCategory,URI::realResource(DataDomain::find($ldogPrefix.DataDomain::HEALTH)->subDomain,'SubCategory',$subCategory)->getResourceUri(),TermResourceMatchType::find($conversionPrefix.TermResourceMatchType::FullMatch));
+        }
+        return collect($mappings);
     }
     private function getDataCollectionTemplate():DataCollectionTemplate
     {
@@ -167,17 +199,17 @@ class PublishingPipelineTest extends TestCase
      */
     public function testMapColumnsToPredicates(PublishingPipeline $pipeline)
     {
-        $pipeline->mapColumnsToPredicates($this->mappings);
+        $pipeline->mapColumnsToPredicates($this->columnPredicateMappings);
         $graph=$pipeline->configJsonLD->getGraph();
         $rawRdfGenerationNode=$graph->getNodesByType(UriBuilder::PREFIX_CONVERSION.'RawRdfGeneration')[0];
 
         $columnPredicateMappingNodes=$rawRdfGenerationNode->getProperty(UriBuilder::PREFIX_CONVERSION."hasColumnPredicateMapping");
-        $this->assertEquals(count($this->mappings),count($columnPredicateMappingNodes));
+        $this->assertEquals(count($this->columnPredicateMappings),count($columnPredicateMappingNodes));
         foreach ($columnPredicateMappingNodes as $columnPredicateMappingNode)
         {
             $predicateUri=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'predicate')->getId();
             $actualColumnName=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'columnName')->getValue();
-            $expectedMappingColumnName=$this->mappings[$predicateUri];
+            $expectedMappingColumnName=$this->columnPredicateMappings[$predicateUri];
             $this->assertEquals($expectedMappingColumnName,$actualColumnName);
         }
 
@@ -186,10 +218,65 @@ class PublishingPipelineTest extends TestCase
     /**
      * @depends testMakePipeline
      */
+    public function testMapTermsToResources(PublishingPipeline $pipeline)
+    {
+        $pipeline->mapTermsToResources($this->termResourceMappings);
+        $graph = $pipeline->configJsonLD->getGraph();
+        $reconciliationNode = $graph->getNodesByType(UriBuilder::PREFIX_CONVERSION . 'Reconciliation')[0];
+
+        $termResourceMappingNodes = $reconciliationNode->getProperty(UriBuilder::PREFIX_CONVERSION . "hasTermResourceMapping");
+
+        $this->assertEquals($this->termResourceMappings->count(), count($termResourceMappingNodes));
+        foreach ($termResourceMappingNodes as $termResourceMappingNode) {
+            $resource = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'resource')->getId();
+            $term = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'term')->getValue();
+            $this->assertEquals($term,$this->termResourceMappings->where('resource',$resource)->first()->term);
+        }
+    }
+    /**
+     * @depends testMakePipeline
+     */
     public function testGenerateRawRdf(PublishingPipeline $pipeline)
     {
-        $pipeline->generateRawRdf($this->mappings);
+        $pipeline->generateRawRdf($this->columnPredicateMappings);
+        $subDomain=$pipeline->dataTemplate->dataDomain->subDomain;
+        $className=$pipeline->getTargetClassName();
+        $prefix='http://health.data.ae/ontology/HealthFacility#';
+        $namePredicate=$prefix.'name';
+        $categoryPredicate=$prefix.'category';
+        $subCategoryPredicate=$prefix.'subCategory';
+        $expiryDatePredicate=$prefix.'expiry_date';
 
+        $firstResourceUri=URI::realResource($subDomain,$className,'0000035')->getResourceUri();
+        $middleResourceUri=URI::realResource($subDomain,$className,'0047751')->getResourceUri();;
+        $lastResourceUri=URI::realResource($subDomain,$className,'0047662')->getResourceUri();;
+
+        $graph=$pipeline->dataJsonLD->getGraph();
+        $firstResource=$graph->getNode($firstResourceUri);
+        $middleResource=$graph->getNode($middleResourceUri);
+        $lastResource=$graph->getNode($lastResourceUri);
+        //First Resource
+        $this->assertEquals('Al Zahra Pvt. Hospital',$firstResource->getProperty($namePredicate)->getValue());
+        $this->assertEquals('Director',$firstResource->getProperty($categoryPredicate)->getValue());
+        $this->assertEquals('General Hospital (>100)',$firstResource->getProperty($subCategoryPredicate)->getValue());
+        $this->assertEquals('2021-02-08',$firstResource->getProperty($expiryDatePredicate)->getValue());
+        //Middle Resource
+        $this->assertEquals('Horizon International School LLC',$middleResource->getProperty($namePredicate)->getValue());
+        $this->assertEquals('Nursing',$middleResource->getProperty($categoryPredicate)->getValue());
+        $this->assertEquals('School clinic',$middleResource->getProperty($subCategoryPredicate)->getValue());
+        $this->assertEquals('2021-01-15',$middleResource->getProperty($expiryDatePredicate)->getValue());
+        //Last Resource
+        $this->assertEquals('First International Training Company',$lastResource->getProperty($namePredicate)->getValue());
+        $this->assertEquals('',$lastResource->getProperty($categoryPredicate)->getValue());
+        $this->assertEquals('Rehabilitation Center (1 spec)',$lastResource->getProperty($subCategoryPredicate)->getValue());
+        $this->assertEquals('2013-03-26',$lastResource->getProperty($expiryDatePredicate)->getValue());
+    }
+    /**
+     * @depends testMakePipeline
+     */
+    public function testReconcile(PublishingPipeline $pipeline)
+    {
+        $pipeline->reconcile($this->termResourceMappings);
     }
     /**
      * @depends testMakePipeline
