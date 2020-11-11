@@ -62,25 +62,26 @@ class PublishingPipelineTest extends TestCase
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
         $conversionPrefix=UriBuilder::PREFIX_CONVERSION;
+        $ontologyPrefix="http://health.data.ae/ontology/HealthFacility#";
 
         $mappings=[];
 
         $categories=[
             'Director','Plastic Surgery','General Dentistry','Internal Medicine','Obstetrics and Gynecology',
-            'Homeopathy','Clinical Dietetics and Nutrition','General Practice'
+            'Homeopathy','Clinical Dietetics and Nutrition','General Practice','Pharmacy','Nursing'
         ];
         foreach ($categories as $category)
         {
-            $mappings[]=new TermResourceMapping($category,URI::realResource(DataDomain::find($ldogPrefix.DataDomain::HEALTH)->subDomain,'Category',$category)->getResourceUri(),TermResourceMatchType::find($conversionPrefix.TermResourceMatchType::FullMatch));
+            $mappings[]=new TermResourceMapping($ontologyPrefix.'category',$category,URI::realResource(DataDomain::find($ldogPrefix.DataDomain::HEALTH)->subDomain,'Category',$category)->getResourceUri(),TermResourceMatchType::find($conversionPrefix.TermResourceMatchType::FullMatch));
         }
 
         $subCategories=[
             'General Hospital (>100)','PolyClinic (2spec)','Specialty Clinic','Community (Out Patient ) Pharmacy',
-            'Rehabilitation Center (1 spec)','Home Healthcare Agency','Beauty Center Salon'
+            'Rehabilitation Center (1 spec)','Home Healthcare Agency','Beauty Center Salon','School clinic'
         ];
         foreach ($subCategories as $subCategory)
         {
-            $mappings[]=new TermResourceMapping($subCategory,URI::realResource(DataDomain::find($ldogPrefix.DataDomain::HEALTH)->subDomain,'SubCategory',$subCategory)->getResourceUri(),TermResourceMatchType::find($conversionPrefix.TermResourceMatchType::FullMatch));
+            $mappings[]=new TermResourceMapping($ontologyPrefix.'subCategory',$subCategory,URI::realResource(DataDomain::find($ldogPrefix.DataDomain::HEALTH)->subDomain,'SubCategory',$subCategory)->getResourceUri(),TermResourceMatchType::find($conversionPrefix.TermResourceMatchType::FullMatch));
         }
         return collect($mappings);
     }
@@ -190,6 +191,7 @@ class PublishingPipelineTest extends TestCase
         $expectedUri=URI::realResource($pipeline->dataTemplate->dataDomain->subDomain,$pipeline->getTargetClassName(),66444)
             ->getResourceUri();
         $expectedNode=new Node($pipeline->dataJsonLD->getGraph(),$expectedUri);
+        $expectedNode->setType(new Node($pipeline->dataJsonLD->getGraph(),$pipeline->getTargetClassUri()));
         $actualNode=$pipeline->generateResourceNode($pipeline->dataJsonLD->getGraph(),
             $pipeline->getTargetClassName(),66444);
         $this->assertEquals($expectedNode,$actualNode);
@@ -228,8 +230,10 @@ class PublishingPipelineTest extends TestCase
 
         $this->assertEquals($this->termResourceMappings->count(), count($termResourceMappingNodes));
         foreach ($termResourceMappingNodes as $termResourceMappingNode) {
+            $predicate = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'predicate')->getId();
             $resource = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'resource')->getId();
             $term = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'term')->getValue();
+            $this->assertEquals($predicate,$this->termResourceMappings->where('resource',$resource)->first()->predicate);
             $this->assertEquals($term,$this->termResourceMappings->where('resource',$resource)->first()->term);
         }
     }
@@ -270,13 +274,46 @@ class PublishingPipelineTest extends TestCase
         $this->assertEquals('',$lastResource->getProperty($categoryPredicate)->getValue());
         $this->assertEquals('Rehabilitation Center (1 spec)',$lastResource->getProperty($subCategoryPredicate)->getValue());
         $this->assertEquals('2013-03-26',$lastResource->getProperty($expiryDatePredicate)->getValue());
+
+        return $pipeline;
     }
     /**
-     * @depends testMakePipeline
+     * @depends testGenerateRawRdf
      */
     public function testReconcile(PublishingPipeline $pipeline)
     {
         $pipeline->reconcile($this->termResourceMappings);
+
+        $subDomain=$pipeline->dataTemplate->dataDomain->subDomain;
+        $className=$pipeline->getTargetClassName();
+        $prefix='http://health.data.ae/ontology/HealthFacility#';
+        $ontologyPrefix="http://health.data.ae/ontology/HealthFacility#";
+        $categoryPredicate=$prefix.'category';
+        $subCategoryPredicate=$prefix.'subCategory';
+
+        $firstResourceUri=URI::realResource($subDomain,$className,'0000035')->getResourceUri();
+        $middleResourceUri=URI::realResource($subDomain,$className,'0047751')->getResourceUri();;
+        $lastResourceUri=URI::realResource($subDomain,$className,'0047662')->getResourceUri();;
+
+        $graph=PublishingPipeline::initiateDatasetJsonLdDocument(true,$pipeline->id)->getGraph();
+        $firstResource=$graph->getNode($firstResourceUri);
+        $middleResource=$graph->getNode($middleResourceUri);
+        $lastResource=$graph->getNode($lastResourceUri);
+
+        $directorResource=$this->termResourceMappings->where('predicate',$ontologyPrefix.'category')->where('term','Director')->first()->resource;
+        $nursingResource=$this->termResourceMappings->where('predicate',$ontologyPrefix.'category')->where('term','Nursing')->first()->resource;
+        $generalHospitalGreaterThan100=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','General Hospital (>100)')->first()->resource;
+        $schoolClinic=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','School clinic')->first()->resource;
+        $rehabilitationCenter1Spec=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','Rehabilitation Center (1 spec)')->first()->resource;
+        //First Resource
+        $this->assertEquals($directorResource,$firstResource->getProperty($categoryPredicate)->getId());
+        $this->assertEquals($generalHospitalGreaterThan100,$firstResource->getProperty($subCategoryPredicate)->getId());
+        //Middle Resource
+        $this->assertEquals($nursingResource,$middleResource->getProperty($categoryPredicate)->getId());
+        $this->assertEquals($schoolClinic,$middleResource->getProperty($subCategoryPredicate)->getId());
+        //Last Resource
+        $this->assertEquals('',$lastResource->getProperty($categoryPredicate)->getValue());
+        $this->assertEquals($rehabilitationCenter1Spec,$lastResource->getProperty($subCategoryPredicate)->getId());
     }
     /**
      * @depends testMakePipeline

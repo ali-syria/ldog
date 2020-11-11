@@ -25,6 +25,7 @@ use ML\JsonLD\JsonLD;
 use ML\JsonLD\Node;
 use ML\JsonLD\NQuads;
 use ML\JsonLD\TypedValue;
+use PHPUnit\Util\Type;
 
 class PublishingPipeline implements PublishingPipelineContract
 {
@@ -200,14 +201,31 @@ class PublishingPipeline implements PublishingPipelineContract
     public function reconcile(Collection $termResourceMappings): void
     {
         $this->mapTermsToResources($termResourceMappings);
-        $resourceNodes=$this->dataJsonLD->getGraph()->getNodes();
+        $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
+        $graph=$dataJsonLd->getGraph();
+        $resourceNodes=$graph->getNodesByType($this->getTargetClassUri());
+
         foreach ($resourceNodes as $resourceNode)
         {
-            foreach ($resourceNode->getProperties() as $property)
+            foreach ($resourceNode->getProperties() as $predicate=>$object)
             {
-                $property->getValue();
+                if(!($object instanceof TypedValue))
+                {
+                    continue;
+                }
+                foreach ($termResourceMappings->where('predicate',$predicate) as $termResourceMapping)
+                {
+                    if($object->getValue()==$termResourceMapping->term)
+                    {
+                        $resourceNode->removeProperty($predicate);
+                        $targetNode=$graph->createNode($termResourceMapping->resource);
+                        $resourceNode->addPropertyValue($predicate,$targetNode);
+                    }
+                }
             }
         }
+
+        $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($dataJsonLd->toJsonLd()));
     }
 
     public function validate(): ShaclValidationReportContract
@@ -266,8 +284,10 @@ class PublishingPipeline implements PublishingPipelineContract
     {
         $uri=URI::realResource($this->dataTemplate->dataDomain->subDomain,$targetClassName,$identifier)
             ->getResourceUri();
+        $node=$graph->createNode($uri);
+        $node->setType(new Node($graph,$this->getTargetClassUri()));
 
-        return $graph->createNode($uri);
+        return $node;
     }
     public function getTargetClassUri():string
     {
@@ -326,6 +346,8 @@ class PublishingPipeline implements PublishingPipelineContract
         {
             $termResourceMappingNode=$graph->createNode();
             $termResourceMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."TermResourceMapping"));
+            $predicate=$graph->createNode($termResourceMapping->predicate);
+            $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicate",$predicate);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."term",$termResourceMapping->term);
             $resource=$graph->createNode($termResourceMapping->resource);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."resource",$resource);
