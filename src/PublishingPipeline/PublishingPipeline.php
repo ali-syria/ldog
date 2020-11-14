@@ -4,6 +4,8 @@
 namespace AliSyria\LDOG\PublishingPipeline;
 
 
+use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
+use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
 use AliSyria\LDOG\Contracts\PublishingPipeline\PublishingPipelineContract;
 use AliSyria\LDOG\Contracts\ShaclValidator\ShaclValidationReportContract;
 use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
@@ -13,6 +15,7 @@ use AliSyria\LDOG\Facades\VAL;
 use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
+use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\File;
@@ -240,7 +243,8 @@ class PublishingPipeline implements PublishingPipelineContract
             $this->storage->path($this->conversionPath."/shape.jsonld"));
     }
 
-    public function publish(): void
+    public function publish(OrganizationContract $organization,EmployeeContract $employee,
+                            Carbon $fromDate=null,Carbon $toDate=null): void
     {
         // TODO: Implement publish() method.
     }
