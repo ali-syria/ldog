@@ -11,6 +11,7 @@ use AliSyria\LDOG\Console\RefreshGraphDbLuceneIndex;
 use AliSyria\LDOG\GraphStore\ConnectionFactory;
 use AliSyria\LDOG\GraphStore\GraphDbDriver;
 use AliSyria\LDOG\GraphStore\GraphStoreManager;
+use AliSyria\LDOG\ShaclValidator\JenaShaclValidator;
 use AliSyria\LDOG\UriBuilder\Factory;
 use AliSyria\LDOG\UriDereferencer\Dereferencer;
 use Illuminate\Http\Request;
@@ -38,6 +39,9 @@ class LdogServiceProvider extends ServiceProvider
         });
         $this->app->singleton('ldog.gs.manager',function($app){
             return $app->make(GraphStoreManager::class);
+        });
+        $this->app->singleton('ldog.validator',function($app){
+            return $app->make(JenaShaclValidator::class);
         });
     }
 

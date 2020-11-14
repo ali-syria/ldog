@@ -37,7 +37,8 @@
             ],
             "aliases": {
                 "URI": "AliSyria\\LDOG\\Facades\\URI",
-                "GS": "AliSyria\\LDOG\\Facades\\GS"
+                "GS": "AliSyria\\LDOG\\Facades\\GS",
+                "VAL": "AliSyria\\LDOG\\Facades\\VAL"
             }
         }
     },

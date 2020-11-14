@@ -19,7 +19,7 @@
                         sh:name "unique_id" ;
                         sh:description "unique id" ;
                         sh:order 1 ;
-                        sh:datatype xsd:integer;
+                        sh:datatype xsd:date;
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:message "unique id field is required,integer" ;

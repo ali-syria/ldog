@@ -8,6 +8,7 @@ use AliSyria\LDOG\Contracts\ShaclValidator\ShaclValidationReportContract;
 use AliSyria\LDOG\Contracts\ShaclValidator\ShaclValidator;
 use EasyRdf\Graph;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

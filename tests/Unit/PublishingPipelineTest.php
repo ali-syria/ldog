@@ -10,6 +10,7 @@ use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\OrganizationManager\Cabinet;
 use AliSyria\LDOG\PublishingPipeline\PublishingPipeline;
 use AliSyria\LDOG\PublishingPipeline\TermResourceMapping;
+use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
 use AliSyria\LDOG\ShapesManager\ShapeManager;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\Tests\TestCase;
@@ -314,6 +315,17 @@ class PublishingPipelineTest extends TestCase
         //Last Resource
         $this->assertEquals('',$lastResource->getProperty($categoryPredicate)->getValue());
         $this->assertEquals($rehabilitationCenter1Spec,$lastResource->getProperty($subCategoryPredicate)->getId());
+
+        return $pipeline;
+    }
+
+    /**
+     * @depends testReconcile
+     */
+    public function testValidate(PublishingPipeline $pipeline)
+    {
+        $validationReport=$pipeline->validate();
+        $this->assertInstanceOf(ShaclValidationReport::class,$validationReport);
     }
     /**
      * @depends testMakePipeline

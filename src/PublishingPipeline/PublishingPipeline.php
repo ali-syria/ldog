@@ -9,6 +9,7 @@ use AliSyria\LDOG\Contracts\ShaclValidator\ShaclValidationReportContract;
 use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
+use AliSyria\LDOG\Facades\VAL;
 use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
@@ -60,7 +61,7 @@ class PublishingPipeline implements PublishingPipelineContract
         $this->dataJsonLD=$dataJsonLD;
         $this->conversionPath=self::getConversionPath($id);
         $this->conversionUri=URI::realResource('meta','Conversion',$id)->getResourceUri();
-        $this->nodeShape=$this->shapeJsonLD->getGraph($this->dataTemplate->dataShape->getUri())
+        $this->nodeShape=$this->shapeJsonLD->getGraph()
             ->getNodesByType(UriBuilder::PREFIX_SHACL.'NodeShape')[0];
         $this->storage=Storage::disk(config('ldog.storage.disk'));
     }
@@ -162,11 +163,16 @@ class PublishingPipeline implements PublishingPipelineContract
         $disk=self::getDisk();
         $conversionPath=self::getConversionPath($conversionId);
 
-        $nquads = new NQuads();
-        $quads=$nquads->parse(GS::getConnection()->fetchNamedGraph($dataTemplate->dataShape->getUri()));
         if(!$loadFromDisk)
         {
+            $nquads = new NQuads();
+            $quads=$nquads->parse(GS::getConnection()->fetchNamedGraph($dataTemplate->dataShape->getUri()));
             $disk->put($conversionPath."/shape.jsonld",JsonLD::toString(JsonLD::fromRdf($quads)));
+            $shapeJsonLdPath=$disk->path($conversionPath."/shape.jsonld");
+            $jsonLdDocument=JsonLD::getDocument($shapeJsonLdPath);
+            $jsonLdDocument->getGraph()->merge($jsonLdDocument->getGraph($dataTemplate->dataShape->getUri()));
+            $jsonLdDocument->removeGraph($dataTemplate->dataShape->getUri());
+            $disk->put($conversionPath."/shape.jsonld",JsonLD::toString($jsonLdDocument->toJsonLd()));
         }
         $shapeJsonLdPath=$disk->path($conversionPath."/shape.jsonld");
 
@@ -230,7 +236,8 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public function validate(): ShaclValidationReportContract
     {
-        // TODO: Implement validate() method.
+        return VAL::validateGraph($this->storage->path($this->conversionPath."/dataset.jsonld"),
+            $this->storage->path($this->conversionPath."/shape.jsonld"));
     }
 
     public function publish(): void
