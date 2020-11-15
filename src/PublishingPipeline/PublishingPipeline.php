@@ -148,7 +148,7 @@ class PublishingPipeline implements PublishingPipelineContract
                 throw new \RuntimeException('dataTemplate is required to initiate config');
             }
             $graph=$configJsonLd->getGraph();
-            $conversionNode=$graph->createNode(URI::realResource('meta','Conversion',$conversionId)->getResourceUri());
+            $conversionNode=$graph->createNode(self::getConversionUri($conversionId));
             $conversionNode->setType(new Node($graph,self::CONVERSION_PREFIX."Conversion"));
             $conversionNode->addPropertyValue(self::CONVERSION_PREFIX."dataTemplate",$dataTemplate->uri);
             foreach (self::PHASES as $phase)
@@ -246,7 +246,7 @@ class PublishingPipeline implements PublishingPipelineContract
     public function publish(OrganizationContract $organization,EmployeeContract $employee,
                             Carbon $fromDate=null,Carbon $toDate=null): void
     {
-        // TODO: Implement publish() method.
+
     }
 
     public function linkToOthersDatasets(): void
@@ -269,6 +269,10 @@ class PublishingPipeline implements PublishingPipelineContract
 
     }
 
+    public static function getConversionUri(string $conversionId):string
+    {
+        return URI::realResource('meta','Conversion',$conversionId)->getResourceUri();
+    }
     public function attachPredicatesToResource(Node $resource,array $record,array $mappings,Collection $shapePredicates)
     {
         foreach ($mappings as $predicateUri=>$columnName)
@@ -402,7 +406,6 @@ class PublishingPipeline implements PublishingPipelineContract
     {
         return $this->dataCsv->getHeader();
     }
-
     private function saveConfig()
     {
         $this->storage->put($this->conversionPath."/config.jsonld",JsonLD::toString($this->configJsonLD->toJsonLd()));

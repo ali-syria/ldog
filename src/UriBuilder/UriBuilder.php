@@ -39,4 +39,13 @@ abstract class UriBuilder implements UriBuilderContract
     {
         return "http://".$this->subdomain.".".$this->domain;
     }
+    public static function convertWindowsPathToLinux($path)
+    {
+        $path = str_replace( '\\', '/', $path );
+        $path = preg_replace( '|(?<=.)/+|', '/', $path );
+        if ( ':' === substr( $path, 1, 1 ) ) {
+            $path = ucfirst( $path );
+        }
+        return $path;
+    }
 }

@@ -1,0 +1,21 @@
+[
+    {
+        "@id":"http://health.data.example/resoucre/health-facility/0000035",
+        "http://health.data.ae/ontology/HealthFacility#uniqueID":[{"@value":35}],
+        "http://health.data.ae/ontology/HealthFacility#name":[{"@value":"Al Zahra Pvt. Hospital"}],
+        "http://health.data.ae/ontology/HealthFacility#category":[{"@value":"Director","@type":"http://www.w3.org/2001/XMLSchema#anyUri"}],
+        "http://health.data.ae/ontology/HealthFacility#subCategory":[{"@value":"General Hospital (>100)","@type":"http://www.w3.org/2001/XMLSchema#anyUri"}],
+        "http://health.data.ae/ontology/HealthFacility#address_line_one":[{"@value":"Al Zahra Pvt Hospital Dubai"}],
+        "http://health.data.ae/ontology/HealthFacility#address_line_two":[{"@value":"Al Barsha First"}],
+        "http://health.data.ae/ontology/Address#postalCode":[{"@value":""}],
+        "http://health.data.ae/ontology/Contact#website":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#anyURI"}],
+        "http://health.data.ae/ontology/Contact#telephone":[{"@value":""}],
+        "http://health.data.ae/ontology/HealthFacility#expiry_date":[{"@value":"2021-02-08"}],
+        "http://health.data.ae/ontology/HealthFacility#status":[{"@value":"FAC_ACT"}],
+        "http://health.data.ae/ontology/HealthFacility#area":[{"@value":"132"}],
+        "http://health.data.ae/ontology/HealthFacility#email":[{"@value":""}],
+        "http://health.data.ae/ontology/HealthFacility#latitude":[{"@value":"90.0"}],
+        "http://health.data.ae/ontology/HealthFacility#longitude":[{"@value":"90.0"}],
+        "http://www.w3.org/2000/01/rdf-schema#label":[{"@value":"health facility: Al Zahra Pvt. Hospital,number: 0000035"}]
+    }
+]

@@ -22,13 +22,15 @@
     </filter>
     <php>
         <env name="GS_OPEN_DRIVER" value="graph_db"/>
-        <env name="GS_OPEN_HOST" value="http://10.0.2.2:7200"/>
+        <env name="GS_OPEN_HOST" value="http://localhost:7200"/>
+<!--        <env name="GS_OPEN_HOST" value="http://10.0.2.2:7200"/>-->
         <env name="GS_OPEN_REPOSITORY" value="test"/>
         <env name="GS_OPEN_USERNAME" value="admin"/>
         <env name="GS_OPEN_PASSWORD" value="root"/>
 
         <env name="GS_SECURE_DRIVER" value="graph_db"/>
-        <env name="GS_SECURE_HOST" value="http://10.0.2.2:7200"/>
+        <env name="GS_SECURE_HOST" value="http://localhost:7200"/>
+<!--        <env name="GS_SECURE_HOST" value="http://10.0.2.2:7200"/>-->
         <env name="GS_SECURE_REPOSITORY" value="test"/>
         <env name="GS_SECURE_USERNAME" value="admin"/>
         <env name="GS_SECURE_PASSWORD" value="root"/>
