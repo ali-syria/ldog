@@ -7,6 +7,7 @@ namespace AliSyria\LDOG\Contracts\BatchImporter;
 use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
 use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
+use AliSyria\LDOG\Facades\URI;
 use Carbon\Carbon;
 
 abstract class BatchImport
@@ -34,6 +35,11 @@ abstract class BatchImport
         $this->employee=$employee;
         $this->fromDate=$fromDate;
         $this->toDate=$toDate;
+    }
+
+    public static function getBatchImportUri(string $conversionId):string
+    {
+        return URI::realResource('meta','BatchImport',$conversionId)->getResourceUri();
     }
 
     abstract public static function retrieve(string $uri):?self ;

@@ -6,6 +6,7 @@ namespace AliSyria\LDOG\Tests\Unit;
 
 use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
 use AliSyria\LDOG\Facades\GS;
+use AliSyria\LDOG\OntologyManager\OntologyManager;
 use AliSyria\LDOG\OrganizationManager\Branch;
 use AliSyria\LDOG\OrganizationManager\Cabinet;
 use AliSyria\LDOG\OrganizationManager\Department;
@@ -23,8 +24,7 @@ class OrganizationFactoryTest extends TestCase
     {
         parent::setUp();
         GS::getConnection()->clearAll();
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl','http://ldog.com/ontology');
+        OntologyManager::importLdogOntology();
     }
 
     public function testRetrieveByUri()

@@ -6,6 +6,7 @@ namespace AliSyria\LDOG\Tests\Unit;
 
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
+use AliSyria\LDOG\OntologyManager\OntologyManager;
 use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
 use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\ShapesManager\ShapeManager;
@@ -21,8 +22,7 @@ class ShapeManagerTest extends TestCase
     {
         parent::setUp();
         GS::getConnection()->clearAll();
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl','http://ldog.com/ontology');
+        OntologyManager::importLdogOntology();
     }
 
     public function testImportShapeFromUrl()

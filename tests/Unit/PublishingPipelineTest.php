@@ -4,10 +4,14 @@
 namespace AliSyria\LDOG\Tests\Unit;
 
 
+use AliSyria\LDOG\Authentication\User;
 use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
+use AliSyria\LDOG\OntologyManager\OntologyManager;
 use AliSyria\LDOG\OrganizationManager\Cabinet;
+use AliSyria\LDOG\OrganizationManager\Employee;
+use AliSyria\LDOG\OrganizationManager\Ministry;
 use AliSyria\LDOG\PublishingPipeline\PublishingPipeline;
 use AliSyria\LDOG\PublishingPipeline\TermResourceMapping;
 use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
@@ -25,7 +29,7 @@ use ML\JsonLD\Node;
 
 class PublishingPipelineTest extends TestCase
 {
-    protected string $shapeUrl="http://api.eresta.test/shapes/HealthFacility.ttl";
+    protected string $shapeUrl;
     protected DataCollectionTemplate $dataCollectionTemplate;
     protected array $columnPredicateMappings=[
         'http://health.data.ae/ontology/HealthFacility#uniqueID'=>'unique_id',
@@ -45,17 +49,17 @@ class PublishingPipelineTest extends TestCase
         'http://health.data.ae/ontology/HealthFacility#longitude'=>'y_coordinate',
     ];
     public Collection $termResourceMappings;
+    public Cabinet $cabinet;
 
     public function setUp(): void
     {
         parent::setUp();
         GS::getConnection()->clearAll();
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl',
-                'http://ldog.com/ontology');
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/conversion.ttl',
-                'http://ldog.com/ontology/conversion');
+        OntologyManager::importLdogOntology();
+        OntologyManager::importConversionOntology();
+        $this->shapeUrl=UriBuilder::convertRelativeFilePathToUrl(__DIR__.'/../Datasets/Shapes/HealthFacility.ttl');
+        $this->cabinet=Cabinet::create(null,'Syrian Cabinet','The Cabinet of Syria',
+            'http://assets.cabinet.sy/logo.png');
         $this->dataCollectionTemplate=$this->getDataCollectionTemplate();
         $this->termResourceMappings=$this->getTermResourceMappings();
     }
@@ -94,13 +98,12 @@ class PublishingPipelineTest extends TestCase
         $dataExportTarget=DataExporterTarget::find($ldogPrefix.DataExporterTarget::MODELLING_ORGANIZATION);
 
         $identifier='HealthFacility';
-        $cabinet=Cabinet::create(null,'Syrian Cabinet','The Cabinet of Syria',
-            'http://assets.cabinet.sy/logo.png');
+
         $dataShape=ShapeManager::importFromUrl($this->shapeUrl,$dataDomain->subDomain,$identifier);
 
         return DataCollectionTemplate::create(
             $identifier,'Health Facilities Template','Health Facilities information in each emirate',
-            $dataShape,$cabinet,$dataExportTarget,$dataDomain
+            $dataShape,$this->cabinet,$dataExportTarget,$dataDomain
         );
     }
     public function testInitiatePipeline():PublishingPipeline
@@ -330,11 +333,15 @@ class PublishingPipelineTest extends TestCase
     }
 
     /**
-     * @depends testValidate
+     * @depends testReconcile
      */
     public function testPublish(PublishingPipeline $pipeline)
     {
-
+        $ministryHealth=Ministry::create($this->cabinet,'Ministry Of Health','The Health Ministry of Syria',
+            'http://assets.cabinet.sy/health/logo.png');
+        $employee=Employee::create($ministryHealth,User::create('ali','secret'),
+            '55556','ali ali','working on it department');
+        $pipeline->publish($ministryHealth,$employee,now()->subDays(20),now()->subDay());
     }
     /**
      * @depends testMakePipeline

@@ -1,0 +1,185 @@
+@prefix : <http://ldog.org/ontologies/2020/11/conversion#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ldog: <http://ldog.org/ontologies/2020/8/framework#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://ldog.org/ontologies/2020/11/conversion> .
+
+<http://ldog.org/ontologies/2020/11/conversion> rdf:type owl:Ontology ;
+                                                 owl:imports <http://ldog.org/ontologies/2020/8/framework> .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://ldog.org/ontologies/2020/11/conversion#basedOnConversion
+:basedOnConversion rdf:type owl:ObjectProperty ;
+                   rdfs:domain ldog:BatchImport ;
+                   rdfs:range :Conversion .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#belongsToConversion
+:belongsToConversion rdf:type owl:ObjectProperty ;
+                     owl:inverseOf :hasConversionPhase ;
+                     rdfs:domain :ConversionPhase ;
+                     rdfs:range :Conversion .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#dataTemplate
+:dataTemplate rdf:type owl:ObjectProperty ;
+              rdfs:domain :Conversion ;
+              rdfs:range ldog:BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#hasColumnPredicateMapping
+:hasColumnPredicateMapping rdf:type owl:ObjectProperty ;
+                           rdfs:domain :RawRdfGeneration ;
+                           rdfs:range :ColumnPredicateMapping .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#hasConversionPhase
+:hasConversionPhase rdf:type owl:ObjectProperty .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#hasTermResourceMapping
+:hasTermResourceMapping rdf:type owl:ObjectProperty ;
+                        rdfs:domain :Reconciliation ;
+                        rdfs:range :TermResourceMapping .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#matchType
+:matchType rdf:type owl:ObjectProperty ;
+           rdfs:domain :TermResourceMapping ;
+           rdfs:range :TermResourceMatchType .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#predicate
+:predicate rdf:type owl:ObjectProperty ;
+           rdfs:domain :ColumnPredicateMapping ,
+                       :TermResourceMapping .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#resource
+:resource rdf:type owl:ObjectProperty ;
+          rdfs:domain :TermResourceMapping ;
+          rdfs:range owl:Thing .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#usedToConvert
+:usedToConvert rdf:type owl:ObjectProperty ;
+               rdfs:domain :Conversion ;
+               rdfs:range ldog:BatchImport .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://ldog.org/ontologies/2020/11/conversion#columnName
+:columnName rdf:type owl:DatatypeProperty ;
+            rdfs:domain :ColumnPredicateMapping ;
+            rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#predicateLabel
+:predicateLabel rdf:type owl:DatatypeProperty ;
+                rdfs:domain :ColumnPredicateMapping ;
+                rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#term
+:term rdf:type owl:DatatypeProperty ;
+      rdfs:domain :TermResourceMapping ;
+      rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://ldog.org/ontologies/2020/11/conversion#ColumnPredicateMapping
+:ColumnPredicateMapping rdf:type owl:Class ;
+                        owl:disjointWith :Conversion .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#Conversion
+:Conversion rdf:type owl:Class ;
+            owl:disjointWith :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#ConversionPhase
+:ConversionPhase rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#LinkToOthersDatasets
+:LinkToOthersDatasets rdf:type owl:Class ;
+                      rdfs:subClassOf :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#Normalization
+:Normalization rdf:type owl:Class ;
+               rdfs:subClassOf :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#Publishing
+:Publishing rdf:type owl:Class ;
+            rdfs:subClassOf :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#RawRdfGeneration
+:RawRdfGeneration rdf:type owl:Class ;
+                  rdfs:subClassOf :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#Reconciliation
+:Reconciliation rdf:type owl:Class ;
+                rdfs:subClassOf :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#TermResourceMapping
+:TermResourceMapping rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#TermResourceMatchType
+:TermResourceMatchType rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#Validation
+:Validation rdf:type owl:Class ;
+            rdfs:subClassOf :ConversionPhase .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://ldog.org/ontologies/2020/11/conversion#FullMatch
+:FullMatch rdf:type owl:NamedIndividual ,
+                    :TermResourceMatchType ;
+           rdfs:label "Full Match" .
+
+
+###  http://ldog.org/ontologies/2020/11/conversion#PartialMatch
+:PartialMatch rdf:type owl:NamedIndividual ,
+                       :TermResourceMatchType ;
+              rdfs:label "Partial Match" .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :LinkToOthersDatasets
+                :Normalization
+                :Publishing
+                :RawRdfGeneration
+                :Reconciliation
+                :Validation
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

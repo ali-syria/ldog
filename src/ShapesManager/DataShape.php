@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\ShapesManager;
 
 
 use AliSyria\LDOG\Contracts\ShapesManager\DataShapeContract;
+use Illuminate\Support\Collection;
 
 class DataShape implements DataShapeContract
 {
@@ -18,5 +19,10 @@ class DataShape implements DataShapeContract
     public function getUri(): string
     {
         return $this->uri;
+    }
+
+    public function getOuterLinkageTargets(): Collection
+    {
+        // TODO: Implement getOuterLinkageTargets() method.
     }
 }

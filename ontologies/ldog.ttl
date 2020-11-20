@@ -75,7 +75,7 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 :hasBatchImport rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf owl:topObjectProperty ;
                 owl:inverseOf :isBatchImportOf ;
-                rdfs:domain :DataSourceOrganization ;
+                rdfs:domain :GovernmentalOrganization ;
                 rdfs:range :BatchImport .
 
 
@@ -233,7 +233,7 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 :isBatchImportOf rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf owl:topObjectProperty ;
                  rdfs:domain :BatchImport ;
-                 rdfs:range :DataSourceOrganization .
+                 rdfs:range :GovernmentalOrganization .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isBatchImportTemplateOf
@@ -359,6 +359,12 @@ owl:sameAs rdf:type owl:AnnotationProperty .
            rdfs:range :BatchImportTemplate .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#outerLinkageTarget
+:outerLinkageTarget rdf:type owl:ObjectProperty ;
+                    rdfs:domain :DataShape ;
+                    rdfs:range :OuterLinkageTarget .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#publishedBy
 :publishedBy rdf:type owl:ObjectProperty ;
              rdfs:domain :BatchImport ;
@@ -423,6 +429,18 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                    rdfs:range <http://www.w3.org/ns/org#Organization> .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#targetLinkageClass
+:targetLinkageClass rdf:type owl:ObjectProperty ;
+                    rdfs:domain :OuterLinkageTarget ;
+                    rdfs:range owl:Thing .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#targetLinkageProperty
+:targetLinkageProperty rdf:type owl:ObjectProperty ;
+                       rdfs:domain :OuterLinkageTarget ;
+                       rdfs:range :TargetLinkageProperty .
+
+
 #################################################################
 #    Data properties
 #################################################################
@@ -451,6 +469,13 @@ owl:sameAs rdf:type owl:AnnotationProperty .
     rdfs:range xsd:string .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#lang
+:lang rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty ;
+      rdfs:domain :TargetLinkageProperty ;
+      rdfs:range xsd:language .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#logo
 :logo rdf:type owl:DatatypeProperty ;
       rdfs:subPropertyOf owl:topDataProperty ;
@@ -471,6 +496,13 @@ owl:sameAs rdf:type owl:AnnotationProperty .
         rdfs:domain :DataShape ,
                     :Ontology ;
         rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#property
+:property rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdfs:domain :TargetLinkageProperty ;
+          rdfs:range xsd:anyURI .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#publishingDate
@@ -501,6 +533,12 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 :resourceLabelExpression rdf:type owl:DatatypeProperty ;
                          rdfs:domain :DataShape ;
                          rdfs:range xsd:string .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#sparqlEndpoint
+:sparqlEndpoint rdf:type owl:DatatypeProperty ;
+                rdfs:domain :OuterLinkageTarget ;
+                rdfs:range xsd:anyURI .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#subDomain
@@ -637,6 +675,10 @@ owl:topDataProperty rdfs:domain :DataShape ;
 :Ontology rdf:type owl:Class .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#OuterLinkageTarget
+:OuterLinkageTarget rdf:type owl:Class .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#Password
 :Password rdf:type owl:Class .
 
@@ -655,6 +697,10 @@ owl:topDataProperty rdfs:domain :DataShape ;
 :Sector rdf:type owl:Class ;
         rdfs:subClassOf :DataSourceOrganization ,
                         :GovernmentalOrganization .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#TargetLinkageProperty
+:TargetLinkageProperty rdf:type owl:Class .
 
 
 ###  http://www.w3.org/ns/org#Organization
@@ -789,6 +835,27 @@ owl:topDataProperty rdfs:domain :DataShape ;
 #################################################################
 #    General axioms
 #################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :BatchDataExporterTarget
+                :BatchImport
+                :BatchImportTemplate
+                :DataDomain
+                :DataShape
+                :DataSourceOrganization
+                :Employee
+                :Frequency
+                :HashAlgorithm
+                :LoginAccount
+                :ModellingOrganization
+                :Ontology
+                :OuterLinkageTarget
+                :Password
+                :TargetLinkageProperty
+                <http://www.w3.org/ns/org#Organization>
+              )
+] .
+
 
 [ rdf:type owl:AllDisjointClasses ;
   owl:members ( :Cabinet

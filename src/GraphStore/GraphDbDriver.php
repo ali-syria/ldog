@@ -89,7 +89,7 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         $result=$this->client->asForm()->post("repositories/{$this->repository}/statements",[
             'update'=>"LOAD  <$sourceIRI> INTO GRAPH <$graphIRI>",
         ]);
-        dd($result->body());
+//        dump($result->body());
         $result->throw();
     }
 
@@ -108,17 +108,18 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         $result->throw();
     }
 
-    public function rawQuery(string $query):string
+    public function rawQuery(string $query,bool $infer=true):string
     {
         $response= $this->client->get("repositories/{$this->repository}",[
-            'query'=>$query
+            'query'=>$query,
+            'infer'=>$infer,
         ]);
         return $response->body();
     }
 
-    public function jsonQuery(string $query): Result
+    public function jsonQuery(string $query,bool $infer=true): Result
     {
-        return new Result($this->rawQuery($query),'application/sparql-results+json');
+        return new Result($this->rawQuery($query,$infer),'application/sparql-results+json');
     }
 
     public function rdfQuery(string $query): array

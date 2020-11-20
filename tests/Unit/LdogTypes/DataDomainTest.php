@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\Tests\Unit\LdogTypes;
 
 
 use AliSyria\LDOG\Facades\GS;
+use AliSyria\LDOG\OntologyManager\OntologyManager;
 use AliSyria\LDOG\Tests\TestCase;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use AliSyria\LDOG\Utilities\LdogTypes\DataDomain;
@@ -15,8 +16,7 @@ class DataDomainTest extends TestCase
     {
         parent::setUp();
         GS::getConnection()->clearAll();
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl','http://ldog.com/ontology');
+        OntologyManager::importLdogOntology();
     }
 
     /**

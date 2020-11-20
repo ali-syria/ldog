@@ -4,6 +4,8 @@
 namespace AliSyria\LDOG\PublishingPipeline;
 
 
+use AliSyria\LDOG\BatchImporter\DataCollection;
+use AliSyria\LDOG\BatchImporter\Report;
 use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
 use AliSyria\LDOG\Contracts\PublishingPipeline\PublishingPipelineContract;
@@ -14,6 +16,7 @@ use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\Facades\VAL;
 use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
+use AliSyria\LDOG\TemplateBuilder\ReportTemplate;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
@@ -246,7 +249,24 @@ class PublishingPipeline implements PublishingPipelineContract
     public function publish(OrganizationContract $organization,EmployeeContract $employee,
                             Carbon $fromDate=null,Carbon $toDate=null): void
     {
+        $conversionPath=self::getConversionPath($this->id);
 
+        if($this->dataTemplate instanceof DataCollectionTemplate)
+        {
+            DataCollection::create($this->id,$this->storage->path($conversionPath."/config.jsonld"),
+                $this->storage->path($conversionPath."/dataset.jsonld")," ",null,$this->dataTemplate,
+                $organization,$employee,$fromDate,$toDate);
+        }
+        elseif ($this->dataTemplate instanceof ReportTemplate)
+        {
+            Report::create($this->id,$conversionPath."/config.jsonld",
+                $conversionPath."/dataset.jsonld"," ",null,$this->dataTemplate,
+                $organization,$employee,$fromDate,$toDate);
+        }
+        else
+        {
+            throw new \RuntimeException('Invalid Template');
+        }
     }
 
     public function linkToOthersDatasets(): void

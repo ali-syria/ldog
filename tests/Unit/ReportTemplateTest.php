@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\Tests\Unit;
 
 
 use AliSyria\LDOG\Facades\GS;
+use AliSyria\LDOG\OntologyManager\OntologyManager;
 use AliSyria\LDOG\OrganizationManager\Cabinet;
 use AliSyria\LDOG\ShapesManager\ShapeManager;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
@@ -17,15 +18,14 @@ use AliSyria\LDOG\Utilities\LdogTypes\ReportExportFrequency;
 
 class ReportTemplateTest extends TestCase
 {
-    protected string $shapeUrl="http://api.eresta.test/shapes/HealthFacility.ttl";
+    protected string $shapeUrl;
 
     public function setUp(): void
     {
         parent::setUp();
         GS::getConnection()->clearAll();
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl',
-                'http://ldog.com/ontology');
+        OntologyManager::importLdogOntology();
+        $this->shapeUrl=UriBuilder::convertRelativeFilePathToUrl(__DIR__.'/../Datasets/Shapes/HealthFacility.ttl');
     }
     private function createReportTemplate():ReportTemplate
     {

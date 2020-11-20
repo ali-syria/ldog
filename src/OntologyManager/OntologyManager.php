@@ -35,6 +35,18 @@ class OntologyManager implements OntologyImporterContract
             }
         ");
     }
+    public static function importLdogOntology()
+    {
+        $ldogFileUrl=UriBuilder::convertRelativeFilePathToUrl(__DIR__.'/../../ontologies/ldog.ttl');
+        GS::getConnection()
+            ->loadIRIintoNamedGraph($ldogFileUrl,'http://ldog.com/ontology');
+    }
+    public static function importConversionOntology()
+    {
+        $conversionPath=UriBuilder::convertRelativeFilePathToUrl(__DIR__.'/../../ontologies/conversion.ttl');
+        GS::getConnection()
+            ->loadIRIintoNamedGraph($conversionPath,'http://ldog.com/ontology/conversion');
+    }
     public static function generateUri(string $sector, string $prefix):string
     {
         return URI::ontology($sector,$prefix)->getBasueUri();

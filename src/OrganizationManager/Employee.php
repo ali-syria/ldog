@@ -4,6 +4,7 @@
 namespace AliSyria\LDOG\OrganizationManager;
 
 
+use AliSyria\LDOG\Authentication\User;
 use AliSyria\LDOG\Contracts\Authentication\AccountManagement;
 use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
@@ -90,6 +91,41 @@ class Employee implements EmployeeContract
                 $organization=OrganizationFactory::retrieveByUri($organizationUri);
                 $employee= new static($organization,$loginAccount,$result->id->getValue(),
                     $result->employee->getUri(),$result->name->getValue(),
+                    $result->description->getValue());
+            }
+            break;
+        }
+
+        return $employee;
+    }
+    public static function retrieveByUri(string $uri):?self
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+
+
+        $resultSet=GS::secureConnection()->jsonQuery("
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT  ?loginAccountUri ?username ?organization ?id ?name ?description
+            WHERE {
+                <$uri> a ldog:Employee ;
+                      ldog:hasLoginAccount ?loginAccountUri ;
+                      ldog:isEmployeeOf ?organization ;
+                      ldog:id ?id ;
+                      ldog:name ?name ;
+                      ldog:description ?description .
+                ?loginAccountUri ldog:username  ?username .                        
+            }
+        ");
+        $employee=null;
+        foreach ($resultSet as $result)
+        {
+            if(optional($result)->loginAccountUri)
+            {
+                $organizationUri=$result->organization->getUri();
+                $organization=OrganizationFactory::retrieveByUri($organizationUri);
+                $employee= new static($organization,User::retrieve($result->username->getValue()),$result->id->getValue(),
+                    $uri,$result->name->getValue(),
                     $result->description->getValue());
             }
             break;

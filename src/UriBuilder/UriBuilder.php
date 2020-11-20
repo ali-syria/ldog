@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\UriBuilder;
 
 
 use AliSyria\LDOG\Contracts\UriBuilder\UriBuilderContract;
+use Illuminate\Support\Str;
 
 abstract class UriBuilder implements UriBuilderContract
 {
@@ -47,5 +48,32 @@ abstract class UriBuilder implements UriBuilderContract
             $path = ucfirst( $path );
         }
         return $path;
+    }
+    public static function convertRelativeFilePathToUrl($path):string
+    {
+        $ontologiesAbsolutePath=realpath($path);
+        $ontologiesAbsolutePathSegments=explode('\\',$ontologiesAbsolutePath);
+        $disk=$ontologiesAbsolutePathSegments[0];
+        $urlEncodedPathes=[];
+        foreach ($ontologiesAbsolutePathSegments as $key=>$ontologiesAbsolutePathSegment)
+        {
+            $urlEncodedPathes[$key]=str_replace(' ','%20',rawurldecode($ontologiesAbsolutePathSegment));
+        }
+
+        $filePath=Str::of('file:///'.$disk.'/');
+        foreach ($urlEncodedPathes as $i=>$urlEncodedPath)
+        {
+            if($i==0)
+            {
+                continue;
+            }
+            $filePath=$filePath->append($urlEncodedPath);
+            if($i!=(count($urlEncodedPathes)-1))
+            {
+                $filePath=$filePath->append('/');
+            }
+        }
+
+        return (string)$filePath;
     }
 }

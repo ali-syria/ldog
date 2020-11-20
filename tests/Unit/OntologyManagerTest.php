@@ -16,8 +16,7 @@ class OntologyManagerTest extends TestCase
     {
         parent::setUp();
         GS::getConnection()->clearAll();
-        GS::getConnection()
-            ->loadIRIintoNamedGraph('http://api.eresta.test/ontology/ldog.ttl','http://ldog.com/ontology');
+        OntologyManager::importLdogOntology();
     }
 
     public function testImportFromUrl()
