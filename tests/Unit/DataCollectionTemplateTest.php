@@ -37,10 +37,11 @@ class DataCollectionTemplateTest extends TestCase
         $cabinet=Cabinet::create(null,'Syrian Cabinet','The Cabinet of Syria',
             'http://assets.cabinet.sy/logo.png');
         $dataShape=ShapeManager::importFromUrl($this->shapeUrl,$dataDomain->subDomain,$identifier);
+        $silkLslSpecs=file_get_contents(__DIR__.'/../Datasets/Silk/spec-LSL.xml');
 
         $dataCollectionTemplate=DataCollectionTemplate::create(
             $identifier,'Health Facilities Template','Health Facilities information in each emirate',
-            $dataShape,$cabinet,$dataExportTarget,$dataDomain
+            $dataShape,$cabinet,$dataExportTarget,$dataDomain,$silkLslSpecs
         );
         return $dataCollectionTemplate;
     }

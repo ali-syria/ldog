@@ -1,0 +1,72 @@
+<Silk>
+
+    <Prefixes>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="dbpedia" namespace="http://dbpedia.org/ontology/" />
+        <Prefix id="fa" namespace="http://health.data.ae/ontology/HealthFacility#" />
+    </Prefixes>
+
+    <DataSources>
+        <Dataset id="dbpedia" type="sparqlEndpoint">
+            <Param name="endpointURI" value="https://dbpedia.org/sparql" />
+            <Param name="graph" value="http://dbpedia.org" />
+        </Dataset>
+
+        <Dataset id="source" type="file">
+            <Param name="file" value="datase.ttl" />
+            <Param name="format" value="text/turtle"/>
+        </Dataset>
+    </DataSources>
+
+
+    <Interlinks>
+        <Interlink id="cities">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="source" var="a">
+                <RestrictTo>
+                    <![CDATA[
+          ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://health.data.example/ontology/health#Facility> ]]> .
+                </RestrictTo>
+            </SourceDataset>
+
+            <TargetDataset dataSource="dbpedia" var="b">
+                <RestrictTo>
+                    <![CDATA[
+          ?b <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/class/yago/WikicatCommunitiesInDubai> ;
+             <http://dbpedia.org/ontology/wikiPageID> 15983287 .
+          ]]>
+                </RestrictTo>
+            </TargetDataset>
+
+
+            <LinkageRule>
+                <Compare metric="levenshteinDistance" threshold="3">
+                    <Input path="?a/fa:address_line_two" />
+                    <Input path="?b/rdfs:label" />
+                </Compare>
+            </LinkageRule>
+
+            <Filter limit="1" />
+
+            <Outputs>
+                <Output id="output_accepted" />
+                <Output id="output_verify" />
+            </Outputs>
+        </Interlink>
+
+    </Interlinks>
+
+    <Outputs>
+        <Dataset id="output_accepted" type="file">
+            <Param name="file" value="accepted_links.nt" />
+            <Param name="format" value="ntriples" />
+        </Dataset>
+        <Dataset id="output_verify" type="file">
+            <Param name="file" value="verify_links.nt" />
+            <Param name="format" value="alignment" />
+        </Dataset>
+    </Outputs>
+
+</Silk>

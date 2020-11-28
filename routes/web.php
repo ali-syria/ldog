@@ -1,10 +1,10 @@
 <?php
 
 use AliSyria\LDOG\Http\Controllers\RealResourceController;
+use AliSyria\LDOG\Http\Controllers\SparqlEndpointController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
-
+Route::get('/sparql',SparqlEndpointController::class);
 Route::domain('{sector}.'.config('ldog.domain'))->group(function(){
     Route::get('resoucre/{concept}/{reference}/{subConcept}/{subReference}',
         [RealResourceController::class,'subResource']);

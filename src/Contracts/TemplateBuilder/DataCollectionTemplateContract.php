@@ -13,5 +13,5 @@ interface DataCollectionTemplateContract
 {
     public static function create(string $identifier,string $label,string $description,DataShapeContract $dataShape,
         ModellingOrganizationContract $modellingOrganization,DataExporterTarget $dataExporterTarget,
-        DataDomain $dataDomain);
+        DataDomain $dataDomain,string $silkLslSpecs=null);
 }

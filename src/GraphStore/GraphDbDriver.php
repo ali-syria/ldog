@@ -175,4 +175,8 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         ]);
         return $response->body();
     }
+    public static function getSparqlEndpoint():string
+    {
+        return config('ldog.graph_stores.open.host')."/repositories/".config('ldog.graph_stores.open.repository');
+    }
 }

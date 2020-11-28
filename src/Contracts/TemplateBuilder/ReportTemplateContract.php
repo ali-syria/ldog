@@ -14,5 +14,5 @@ interface ReportTemplateContract
 {
     public static function create(string $identifier,string $label,string $description,DataShapeContract $dataShape,
         ModellingOrganizationContract $modellingOrganization,DataExporterTarget $dataExporterTarget,
-        DataDomain $dataDomain,ReportExportFrequency $exportFrequency);
+        DataDomain $dataDomain,ReportExportFrequency $exportFrequency,string $silkLslSpecs=null);
 }

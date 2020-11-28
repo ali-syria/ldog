@@ -29,4 +29,7 @@ return [
             'conversions'=>'conversions',
         ],
     ],
+    'silk'=>[
+        'path'=>'D:\Laravel Packages\Binaries\silk\silk-3.2.0\silk-tools\silk-singlemachine\target\scala-2.11\silk.jar',
+    ],
 ];

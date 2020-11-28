@@ -29,15 +29,22 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
 
     public static function create(string $identifier,string $label, string $description, DataShapeContract $dataShape,
          ModellingOrganizationContract $modellingOrganization, DataExporterTarget $dataExporterTarget,
-         DataDomain $dataDomain)
+         DataDomain $dataDomain,string $silkLslSpecs=null)
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
+        $rdfPrefix=UriBuilder::PREFIX_RDF;
         $templateUri=URI::template($dataDomain->subDomain,$identifier)->getUri();
+        $silkLslSpecsTriple="";
+        if(!is_null($silkLslSpecs))
+        {
+            $silkLslSpecsTriple="; ldog:silkLslSpecs '''$silkLslSpecs''' ^^rdf:XMLLiteral";
+        }
 
         $query="
             PREFIX ldog: <$ldogPrefix>
             PREFIX rdfs: <$rdfsPrefix>
+            PREFIX rdf: <$rdfPrefix>
             
             INSERT DATA 
             {
@@ -47,7 +54,8 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
                         ldog:hasShape <{$dataShape->getUri()}> ; 
                         ldog:isDataCollectionTemplateOf <{$modellingOrganization->getUri()}>;
                         ldog:shouldDataCollectionExportedBy <{$dataExporterTarget->uri}> ;
-                        ldog:dataDomain     <{$dataDomain->uri}> .
+                        ldog:dataDomain     <{$dataDomain->uri}> 
+                        $silkLslSpecsTriple .
             }  
         ";
         GS::getConnection()->rawUpdate($query);

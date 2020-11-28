@@ -8,6 +8,7 @@ use EasyRdf\Sparql\Result;
 
 interface QueryContract
 {
+    public static function getSparqlEndpoint():string ;
     public function rawQuery(string $query,bool $infer=true):string;
     public function jsonQuery(string $query,bool $infer=true):Result;
     public function rdfQuery(string $query):array;
