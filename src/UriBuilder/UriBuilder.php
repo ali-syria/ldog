@@ -51,8 +51,12 @@ abstract class UriBuilder implements UriBuilderContract
     }
     public static function convertRelativeFilePathToUrl($path):string
     {
-        $ontologiesAbsolutePath=realpath($path);
-        $ontologiesAbsolutePathSegments=explode('\\',$ontologiesAbsolutePath);
+        $absolutePath=realpath($path);
+        return self::convertAbsoluteFilePathToUrl($absolutePath);
+    }
+    public static function convertAbsoluteFilePathToUrl($absolutePath):string
+    {
+        $ontologiesAbsolutePathSegments=explode('\\',$absolutePath);
         $disk=$ontologiesAbsolutePathSegments[0];
         $urlEncodedPathes=[];
         foreach ($ontologiesAbsolutePathSegments as $key=>$ontologiesAbsolutePathSegment)

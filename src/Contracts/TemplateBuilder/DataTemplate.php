@@ -18,10 +18,11 @@ abstract class DataTemplate
     public ModellingOrganizationContract $modellingOrganization;
     public DataExporterTarget $dataExporterTarget;
     public DataDomain $dataDomain;
+    public ?string $silkLslSpecs=null;
 
     public function __construct(string $uri,string $label,string $description,DataShapeContract $dataShape,
         ModellingOrganizationContract $modellingOrganization,DataExporterTarget $dataExporterTarget,
-        DataDomain $dataDomain)
+        DataDomain $dataDomain,string $silkLslSpecs=null)
     {
         $this->uri=$uri;
         $this->label=$label;
@@ -30,6 +31,7 @@ abstract class DataTemplate
         $this->modellingOrganization=$modellingOrganization;
         $this->dataExporterTarget=$dataExporterTarget;
         $this->dataDomain=$dataDomain;
+        $this->silkLslSpecs=$silkLslSpecs;
     }
     abstract public static function retrieve(string $uri):?self ;
 }

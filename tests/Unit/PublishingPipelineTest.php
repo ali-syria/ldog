@@ -100,10 +100,11 @@ class PublishingPipelineTest extends TestCase
         $identifier='HealthFacility';
 
         $dataShape=ShapeManager::importFromUrl($this->shapeUrl,$dataDomain->subDomain,$identifier);
+        $silkLslSpecs=file_get_contents(__DIR__.'/../Datasets/Silk/spec-LSL.xml');
 
         return DataCollectionTemplate::create(
             $identifier,'Health Facilities Template','Health Facilities information in each emirate',
-            $dataShape,$this->cabinet,$dataExportTarget,$dataDomain
+            $dataShape,$this->cabinet,$dataExportTarget,$dataDomain,$silkLslSpecs
         );
     }
     public function testInitiatePipeline():PublishingPipeline
@@ -120,7 +121,7 @@ class PublishingPipelineTest extends TestCase
         $disk->assertExists($conversionsDirectory.$pipeline->id.'/dataset.jsonld');
         $disk->assertExists($conversionsDirectory.$pipeline->id.'/config.jsonld');
         $disk->assertExists($conversionsDirectory.$pipeline->id.'/shape.jsonld');
-//        $disk->assertExists($conversionsDirectory.$pipeline->id.'/mapping.sparql');
+        $disk->assertExists($conversionsDirectory.$pipeline->id.'/silk-linkage-specs.xml');
 
         return $pipeline;
     }
@@ -333,15 +334,33 @@ class PublishingPipelineTest extends TestCase
     }
 
     /**
-     * @depends testReconcile
+     * @depends testGenerateRawRdf
      */
     public function testPublish(PublishingPipeline $pipeline)
     {
+//        Storage::fake(config('ldog.storage.disk'));
+//        $disk=Storage::disk(config('ldog.storage.disk'));
+//        $conversionsDirectory=config('ldog.storage.directories.root')."/".config('ldog.storage.directories.conversions')."/";
+//        $csvPath=__DIR__."/../Datasets/PublishingExamples/Facilities/Sheryan_Facility_Detail.csv";
+//
+//        $pipeline=PublishingPipeline::initiate($this->dataCollectionTemplate,$csvPath);
+//        $pipeline=PublishingPipeline::make($pipeline->id);
+//        $pipeline->generateRawRdf($this->columnPredicateMappings);
+        $pipeline=PublishingPipeline::make($pipeline->id);
         $ministryHealth=Ministry::create($this->cabinet,'Ministry Of Health','The Health Ministry of Syria',
             'http://assets.cabinet.sy/health/logo.png');
         $employee=Employee::create($ministryHealth,User::create('ali','secret'),
             '55556','ali ali','working on it department');
         $pipeline->publish($ministryHealth,$employee,now()->subDays(20),now()->subDay());
+//        $pipeline->linkToOthersDatasets();
+    }
+//
+    /**
+     * @depends testGenerateRawRdf
+     */
+    public function testLinkToOthersDatasets(PublishingPipeline $pipeline)
+    {
+        $pipeline->linkToOthersDatasets();
     }
     /**
      * @depends testMakePipeline

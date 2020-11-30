@@ -21,10 +21,10 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
 {
     public function __construct(string $uri,string $label, string $description, DataShapeContract $dataShape,
          ModellingOrganizationContract $modellingOrganization, DataExporterTarget $dataExporterTarget,
-         DataDomain $dataDomain)
+         DataDomain $dataDomain,string $silkLslSpecs=null)
     {
         parent::__construct($uri,$label, $description, $dataShape, $modellingOrganization, $dataExporterTarget,
-            $dataDomain);
+            $dataDomain,$silkLslSpecs);
     }
 
     public static function create(string $identifier,string $label, string $description, DataShapeContract $dataShape,
@@ -61,7 +61,7 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
         GS::getConnection()->rawUpdate($query);
 
         return new self($templateUri,$label,$description,$dataShape,$modellingOrganization,
-            $dataExporterTarget,$dataDomain);
+            $dataExporterTarget,$dataDomain,$silkLslSpecs);
     }
 
     public static function retrieve(string $uri): ?DataTemplate
@@ -74,6 +74,7 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
             PREFIX rdfs: <$rdfsPrefix>
             
             SELECT ?label ?description ?dataShape ?modellingOrganization ?dataExporterTarget ?dataDomain
+                   ?silkLslSpecs
             WHERE {
                     <$uri> a ldog:DataCollectionTemplate;
                     rdfs:label ?label ;
@@ -82,6 +83,9 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
                     ldog:isDataCollectionTemplateOf ?modellingOrganization;
                     ldog:shouldDataCollectionExportedBy ?dataExporterTarget ;
                     ldog:dataDomain  ?dataDomain .
+                    OPTIONAL {
+                        <$uri> ldog:silkLslSpecs ?silkLslSpecs .
+                    }                    
             } 
         ";
         $resultSet=GS::getConnection()->jsonQuery($query);
@@ -95,7 +99,7 @@ class DataCollectionTemplate extends DataTemplate implements DataCollectionTempl
             $dataShape=ShapeManager::retrieve($result->dataShape->getUri());
             $modellingOrganization=OrganizationFactory::retrieveByUri($result->modellingOrganization->getUri());
             return new self($uri,$label,$description,$dataShape,$modellingOrganization,
-                $dataExporterTarget,$dataDomain);
+                $dataExporterTarget,$dataDomain,optional(optional($result)->silkLslSpecs)->getValue());
         }
         return null;
     }

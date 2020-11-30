@@ -14,6 +14,7 @@ use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\Facades\VAL;
+use AliSyria\LDOG\OuterLinkage\SilkOutLinker;
 use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\TemplateBuilder\ReportTemplate;
@@ -54,10 +55,12 @@ class PublishingPipeline implements PublishingPipelineContract
     public JsonLdDocument $dataJsonLD;
     public FilesystemAdapter $storage;
     public string $conversionPath;
+    public ?string $silkLslSpecsPath;
     public Node $nodeShape;
 
     private function __construct(string $id,DataTemplate $dataTemplate,Reader $dataCsvReader,
-        JsonLdDocument $configJsonLD,JsonLdDocument $shapeJsonLD,JsonLdDocument $dataJsonLD)
+        JsonLdDocument $configJsonLD,JsonLdDocument $shapeJsonLD,JsonLdDocument $dataJsonLD,
+        string $silkLslSpecsPath=null)
     {
         $this->id=$id;
         $this->dataTemplate=$dataTemplate;
@@ -70,6 +73,7 @@ class PublishingPipeline implements PublishingPipelineContract
         $this->nodeShape=$this->shapeJsonLD->getGraph()
             ->getNodesByType(UriBuilder::PREFIX_SHACL.'NodeShape')[0];
         $this->storage=Storage::disk(config('ldog.storage.disk'));
+        $this->silkLslSpecsPath=$silkLslSpecsPath;
     }
 
     public static function initiate(DataTemplate $dataTemplate, string $csvPath): self
@@ -80,8 +84,10 @@ class PublishingPipeline implements PublishingPipelineContract
         $dataJsonLD=self::initiateDatasetJsonLdDocument(false,$id);
         $configJsonLD=self::initiateConfigJsonLdDocument(false,$id,$dataTemplate);
         $shapeJsonLD=self::initiateShapeJsonLdDocument(false,$id,$dataTemplate);
+        $silkLslSpecsPath=self::initiateSilkLslSpecs(false,$id,$dataTemplate);
 
-        return new self($id,$dataTemplate,$dataCsvReader,$configJsonLD,$shapeJsonLD,$dataJsonLD);
+        return new self($id,$dataTemplate,$dataCsvReader,$configJsonLD,$shapeJsonLD,$dataJsonLD,
+            $silkLslSpecsPath);
     }
 
     public static function make(string $conversionId): self
@@ -91,9 +97,10 @@ class PublishingPipeline implements PublishingPipelineContract
         $dataJsonLD=self::initiateDatasetJsonLdDocument(true,$conversionId);
         $configJsonLD=self::initiateConfigJsonLdDocument(true,$conversionId);
         $shapeJsonLD=self::initiateShapeJsonLdDocument(true,$conversionId,$dataTemplate);
+        $silkLslSpecsPath=self::initiateSilkLslSpecs(true,$conversionId,$dataTemplate);
 
         return new self($conversionId,$dataTemplate,$dataCsvReader,$configJsonLD,
-            $shapeJsonLD,$dataJsonLD);
+            $shapeJsonLD,$dataJsonLD,$silkLslSpecsPath);
     }
 
     public static function getDisk():FilesystemAdapter
@@ -184,6 +191,24 @@ class PublishingPipeline implements PublishingPipelineContract
 
         return JsonLD::getDocument($shapeJsonLdPath);
     }
+    public static function initiateSilkLslSpecs(bool $loadFromDisk,string $conversionId,DataTemplate $dataTemplate):?string
+    {
+        if(is_null($dataTemplate->silkLslSpecs))
+        {
+            return null;
+        }
+        $disk=self::getDisk();
+        $conversionPath=self::getConversionPath($conversionId);
+
+        if(!$loadFromDisk)
+        {
+            $disk->put($conversionPath."/silk-linkage-specs.xml",$dataTemplate->silkLslSpecs);
+        }
+        $silkLinkageSpecsPath=$conversionPath."/silk-linkage-specs.xml";
+
+        return $silkLinkageSpecsPath;
+    }
+
 
     public function generateRawRdf(array $mappings): void
     {
@@ -202,7 +227,8 @@ class PublishingPipeline implements PublishingPipelineContract
             $this->attachPredicatesToResource($resource,$record,$mappings,$shapePredicates);
             $this->attachLabelToResourceFromCsv($resource,$record,$mappings,$shapePredicates);
         }
-        $this->saveData();
+        $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($this->dataJsonLD->toJsonLd()));
+        //$this->saveData();
     }
 
     public function normalize(): void
@@ -271,7 +297,7 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public function linkToOthersDatasets(): void
     {
-        // TODO: Implement linkToOthersDatasets() method.
+        (new SilkOutLinker(config('ldog.storage.disk'),$this->silkLslSpecsPath))->performLinkage();
     }
 
     private function mapCsvColumnNamesToShapeProperties(): void

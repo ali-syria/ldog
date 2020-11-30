@@ -13,9 +13,8 @@
             <Param name="graph" value="http://dbpedia.org" />
         </Dataset>
 
-        <Dataset id="source" type="file">
-            <Param name="file" value="datase.ttl" />
-            <Param name="format" value="text/turtle"/>
+        <Dataset id="source" type="sparqlEndpoint">
+            <Param name="endpointURI" value="http://localhost:7200/repositories/test" />
         </Dataset>
     </DataSources>
 

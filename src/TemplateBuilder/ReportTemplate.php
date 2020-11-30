@@ -23,10 +23,10 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
 
     public function __construct(string $uri,string $label, string $description, DataShapeContract $dataShape,
                                 ModellingOrganizationContract $modellingOrganization, DataExporterTarget $dataExporterTarget,
-                                DataDomain $dataDomain,ReportExportFrequency $exportFrequency)
+                                DataDomain $dataDomain,ReportExportFrequency $exportFrequency,string $silkLslSpecs=null)
     {
         parent::__construct($uri,$label, $description, $dataShape, $modellingOrganization, $dataExporterTarget,
-            $dataDomain);
+            $dataDomain,$silkLslSpecs);
         $this->exportFrequency=$exportFrequency;
     }
 
@@ -66,7 +66,7 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
         GS::getConnection()->rawUpdate($query);
 
         return new self($templateUri,$label,$description,$dataShape,$modellingOrganization,
-            $dataExporterTarget,$dataDomain,$exportFrequency);
+            $dataExporterTarget,$dataDomain,$exportFrequency,$silkLslSpecs);
     }
 
     public static function retrieve(string $uri): ?DataTemplate
@@ -79,7 +79,7 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
             PREFIX rdfs: <$rdfsPrefix>
             
             SELECT ?label ?description ?dataShape ?modellingOrganization ?dataExporterTarget ?dataDomain
-                   ?exportFrequency
+                   ?exportFrequency ?silkLslSpecs
             WHERE {
                     <$uri> a ldog:ReportTemplate;
                     rdfs:label ?label ;
@@ -89,6 +89,9 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
                     ldog:shouldDataCollectionExportedBy ?dataExporterTarget ;
                     ldog:dataDomain  ?dataDomain ;
                     ldog:frequencyOfExport ?exportFrequency .
+                    OPTIONAL {
+                        <$uri> ldog:silkLslSpecs ?silkLslSpecs .
+                    }
             } 
         ";
         $resultSet=GS::getConnection()->jsonQuery($query);
@@ -103,7 +106,7 @@ class ReportTemplate extends DataTemplate implements ReportTemplateContract
             $dataShape=ShapeManager::retrieve($result->dataShape->getUri());
             $modellingOrganization=OrganizationFactory::retrieveByUri($result->modellingOrganization->getUri());
             return new self($uri,$label,$description,$dataShape,$modellingOrganization,
-                $dataExporterTarget,$dataDomain,$exportFrequency);
+                $dataExporterTarget,$dataDomain,$exportFrequency,optional(optional($result)->silkLslSpecs)->getValue());
         }
 
         return null;
