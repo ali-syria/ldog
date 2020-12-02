@@ -233,7 +233,30 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public function normalize(): void
     {
-        // TODO: Implement normalize() method.
+        $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
+        $graph=$dataJsonLd->getGraph();
+        $resourceNodes=$graph->getNodesByType($this->getTargetClassUri());
+
+        foreach ($resourceNodes as $resourceNode)
+        {
+            foreach ($resourceNode->getProperties() as $predicate=>$object)
+            {
+                if(!($object instanceof TypedValue))
+                {
+                    continue;
+                }
+                $shapePredicate=$this->getShapePredicates()->where('uri',$predicate)->first();
+                if(is_null($shapePredicate->normalizedByFunction))
+                {
+                    return;
+                }
+                $resourceNode->removeProperty($predicate);
+                $targetNode=$graph->createNode($termResourceMapping->resource);
+                $resourceNode->addPropertyValue($predicate,$targetNode);
+            }
+        }
+
+        $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($dataJsonLd->toJsonLd()));
     }
 
     public function reconcile(Collection $termResourceMappings): void
@@ -435,6 +458,7 @@ class PublishingPipeline implements PublishingPipelineContract
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'minCount')->getValue(),
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'maxCount')->getValue(),
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'message')->getValue(),
+                optional($property->getProperty(UriBuilder::PREFIX_LDOG.'normalizedBy'))->getId(),
             );
         }
 

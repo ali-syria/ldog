@@ -9,7 +9,9 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @base <http://ldog.org/ontologies/2020/8/framework> .
 
-<http://ldog.org/ontologies/2020/8/framework> rdf:type owl:Ontology .
+<http://ldog.org/ontologies/2020/8/framework> rdf:type owl:Ontology ;
+                                               owl:imports rdf: ,
+                                                           sh: .
 
 #################################################################
 #    Annotation properties
@@ -174,6 +176,12 @@ owl:sameAs rdf:type owl:AnnotationProperty .
              owl:inverseOf :isOntologyOf ;
              rdfs:domain :BatchImportTemplate ;
              rdfs:range :Ontology .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#hasParameter
+:hasParameter rdf:type owl:ObjectProperty ;
+              rdfs:domain :NormalizationFunction ;
+              rdfs:range rdf:Seq .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasPassword
@@ -357,6 +365,13 @@ owl:sameAs rdf:type owl:AnnotationProperty .
            rdfs:subPropertyOf owl:topObjectProperty ;
            rdfs:domain :DataShape ;
            rdfs:range :BatchImportTemplate .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#normalizedBy
+:normalizedBy rdf:type owl:ObjectProperty ;
+              rdfs:domain sh:PropertyShape ;
+              rdfs:range :NormalizationFunction ,
+                         rdf:Seq .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#outerLinkageTarget
@@ -671,6 +686,10 @@ owl:topDataProperty rdfs:domain :DataShape ;
 :ModellingOrganization rdf:type owl:Class .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#NormalizationFunction
+:NormalizationFunction rdf:type owl:Class .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#Ontology
 :Ontology rdf:type owl:Class .
 
@@ -741,6 +760,11 @@ owl:topDataProperty rdfs:domain :DataShape ;
         rdfs:label <http://ldog.org/ontologies/2020/8/Bcrypt> .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#Capitalize
+:Capitalize rdf:type owl:NamedIndividual ,
+                     :NormalizationFunction .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#Daily
 :Daily rdf:type owl:NamedIndividual ,
                 :Frequency ;
@@ -781,6 +805,11 @@ owl:topDataProperty rdfs:domain :DataShape ;
         rdfs:label "Hourly" .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#Lowercase
+:Lowercase rdf:type owl:NamedIndividual ,
+                    :NormalizationFunction .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#ModellingOrganization
 :ModellingOrganization rdf:type owl:NamedIndividual ,
                                 :BatchDataExporterTarget .
@@ -811,6 +840,11 @@ owl:topDataProperty rdfs:domain :DataShape ;
                     :DataDomain ;
            :subDomain "transport" ;
            rdfs:label "Transport" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#Uppercase
+:Uppercase rdf:type owl:NamedIndividual ,
+                    :NormalizationFunction .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Weekly

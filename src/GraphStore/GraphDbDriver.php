@@ -60,6 +60,7 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
             'query'=>$query,
             'limit'=>$limit
         ]);
+
         $response->throw();
         return $response->json();
     }

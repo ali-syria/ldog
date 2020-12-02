@@ -138,110 +138,110 @@ class PublishingPipelineTest extends TestCase
         return $actualPipeline;
     }
 
-    /**
-     * @depends  testInitiatePipeline
-     */
-    public function testGetCsvColumnNames(PublishingPipeline $pipeline)
-    {
-        $expectedCsvHeader=[
-            "unique_id","f_name_english","f_name_arabic","facility_category_name_english",
-            "facility_category_name_arabic","facilitysubcategorynameenglish","facilitysubcategorynamearabic",
-            "address_line_one","address_line_two_english","address_line_two_arabic","po_box","website",
-            "telephone_1","telephone_2","fax","expiry_date","status","area_id","x_coordinate","y_coordinate",
-            "email","area_english","area_arabic"
-        ];
-        $this->assertEquals($expectedCsvHeader,$pipeline->getCsvColumnNames());
-    }
+//    /**
+//     * @depends  testInitiatePipeline
+//     */
+//    public function testGetCsvColumnNames(PublishingPipeline $pipeline)
+//    {
+//        $expectedCsvHeader=[
+//            "unique_id","f_name_english","f_name_arabic","facility_category_name_english",
+//            "facility_category_name_arabic","facilitysubcategorynameenglish","facilitysubcategorynamearabic",
+//            "address_line_one","address_line_two_english","address_line_two_arabic","po_box","website",
+//            "telephone_1","telephone_2","fax","expiry_date","status","area_id","x_coordinate","y_coordinate",
+//            "email","area_english","area_arabic"
+//        ];
+//        $this->assertEquals($expectedCsvHeader,$pipeline->getCsvColumnNames());
+//    }
 
-    /**
-     * @depends testInitiatePipeline
-     */
-    public function testGetShapePredicates(PublishingPipeline $pipeline)
-    {
-        $this->assertCount(15,$pipeline->getShapePredicates()->toArray());
-        $this->assertEquals("unique_id",$pipeline->getShapePredicates()->first()->name);
-        $this->assertEquals("http://www.w3.org/2001/XMLSchema#integer",$pipeline->getShapePredicates()
-            ->first()->dataType);
-    }
+//    /**
+//     * @depends testInitiatePipeline
+//     */
+//    public function testGetShapePredicates(PublishingPipeline $pipeline)
+//    {
+//        $this->assertCount(15,$pipeline->getShapePredicates()->toArray());
+//        $this->assertEquals("unique_id",$pipeline->getShapePredicates()->first()->name);
+//        $this->assertEquals("http://www.w3.org/2001/XMLSchema#integer",$pipeline->getShapePredicates()
+//            ->first()->dataType);
+//    }
+//
+//    /**
+//     * @depends testInitiatePipeline
+//     */
+//    public function testGetShapeObjectPredicates(PublishingPipeline $pipeline)
+//    {
+//        $prefix='http://health.data.ae/ontology/HealthFacility#';
+//        $this->assertEquals(2,$pipeline->getShapeObjectPredicates()->count());
+//        $this->assertEqualsCanonicalizing([$prefix.'HealthFacilityCategory',$prefix.'HealthFacilitySubCategory'],
+//            $pipeline->getShapeObjectPredicates()->pluck('objectClassUri')->toArray());
+//    }
 
-    /**
-     * @depends testInitiatePipeline
-     */
-    public function testGetShapeObjectPredicates(PublishingPipeline $pipeline)
-    {
-        $prefix='http://health.data.ae/ontology/HealthFacility#';
-        $this->assertEquals(2,$pipeline->getShapeObjectPredicates()->count());
-        $this->assertEqualsCanonicalizing([$prefix.'HealthFacilityCategory',$prefix.'HealthFacilitySubCategory'],
-            $pipeline->getShapeObjectPredicates()->pluck('objectClassUri')->toArray());
-    }
+//    /**
+//     * @depends testInitiatePipeline
+//     */
+//    public function testGetShapeDataPredicates(PublishingPipeline $pipeline)
+//    {
+//        $this->assertEquals(13,$pipeline->getShapeDataPredicates()->count());
+//        $this->assertEqualsCanonicalizing([
+//            'unique_id','name','address line one','address line two','postal code','website',
+//            'telephone','expiry date','status','area','email','latitude','longitude'
+//        ],
+//        $pipeline->getShapeDataPredicates()->pluck('name')->toArray());
+//    }
 
-    /**
-     * @depends testInitiatePipeline
-     */
-    public function testGetShapeDataPredicates(PublishingPipeline $pipeline)
-    {
-        $this->assertEquals(13,$pipeline->getShapeDataPredicates()->count());
-        $this->assertEqualsCanonicalizing([
-            'unique_id','name','address line one','address line two','postal code','website',
-            'telephone','expiry date','status','area','email','latitude','longitude'
-        ],
-        $pipeline->getShapeDataPredicates()->pluck('name')->toArray());
-    }
-
-    /**
-     * @depends testMakePipeline
-     */
-    public function testGenerateResourceNode(PublishingPipeline $pipeline)
-    {
-        $expectedUri=URI::realResource($pipeline->dataTemplate->dataDomain->subDomain,$pipeline->getTargetClassName(),66444)
-            ->getResourceUri();
-        $expectedNode=new Node($pipeline->dataJsonLD->getGraph(),$expectedUri);
-        $expectedNode->setType(new Node($pipeline->dataJsonLD->getGraph(),$pipeline->getTargetClassUri()));
-        $actualNode=$pipeline->generateResourceNode($pipeline->dataJsonLD->getGraph(),
-            $pipeline->getTargetClassName(),66444);
-        $this->assertEquals($expectedNode,$actualNode);
-    }
-    /**
-     * @depends testMakePipeline
-     */
-    public function testMapColumnsToPredicates(PublishingPipeline $pipeline)
-    {
-        $pipeline->mapColumnsToPredicates($this->columnPredicateMappings);
-        $graph=$pipeline->configJsonLD->getGraph();
-        $rawRdfGenerationNode=$graph->getNodesByType(UriBuilder::PREFIX_CONVERSION.'RawRdfGeneration')[0];
-
-        $columnPredicateMappingNodes=$rawRdfGenerationNode->getProperty(UriBuilder::PREFIX_CONVERSION."hasColumnPredicateMapping");
-        $this->assertEquals(count($this->columnPredicateMappings),count($columnPredicateMappingNodes));
-        foreach ($columnPredicateMappingNodes as $columnPredicateMappingNode)
-        {
-            $predicateUri=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'predicate')->getId();
-            $actualColumnName=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'columnName')->getValue();
-            $expectedMappingColumnName=$this->columnPredicateMappings[$predicateUri];
-            $this->assertEquals($expectedMappingColumnName,$actualColumnName);
-        }
-
-        return $pipeline;
-    }
-    /**
-     * @depends testMakePipeline
-     */
-    public function testMapTermsToResources(PublishingPipeline $pipeline)
-    {
-        $pipeline->mapTermsToResources($this->termResourceMappings);
-        $graph = $pipeline->configJsonLD->getGraph();
-        $reconciliationNode = $graph->getNodesByType(UriBuilder::PREFIX_CONVERSION . 'Reconciliation')[0];
-
-        $termResourceMappingNodes = $reconciliationNode->getProperty(UriBuilder::PREFIX_CONVERSION . "hasTermResourceMapping");
-
-        $this->assertEquals($this->termResourceMappings->count(), count($termResourceMappingNodes));
-        foreach ($termResourceMappingNodes as $termResourceMappingNode) {
-            $predicate = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'predicate')->getId();
-            $resource = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'resource')->getId();
-            $term = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'term')->getValue();
-            $this->assertEquals($predicate,$this->termResourceMappings->where('resource',$resource)->first()->predicate);
-            $this->assertEquals($term,$this->termResourceMappings->where('resource',$resource)->first()->term);
-        }
-    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testGenerateResourceNode(PublishingPipeline $pipeline)
+//    {
+//        $expectedUri=URI::realResource($pipeline->dataTemplate->dataDomain->subDomain,$pipeline->getTargetClassName(),66444)
+//            ->getResourceUri();
+//        $expectedNode=new Node($pipeline->dataJsonLD->getGraph(),$expectedUri);
+//        $expectedNode->setType(new Node($pipeline->dataJsonLD->getGraph(),$pipeline->getTargetClassUri()));
+//        $actualNode=$pipeline->generateResourceNode($pipeline->dataJsonLD->getGraph(),
+//            $pipeline->getTargetClassName(),66444);
+//        $this->assertEquals($expectedNode,$actualNode);
+//    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testMapColumnsToPredicates(PublishingPipeline $pipeline)
+//    {
+//        $pipeline->mapColumnsToPredicates($this->columnPredicateMappings);
+//        $graph=$pipeline->configJsonLD->getGraph();
+//        $rawRdfGenerationNode=$graph->getNodesByType(UriBuilder::PREFIX_CONVERSION.'RawRdfGeneration')[0];
+//
+//        $columnPredicateMappingNodes=$rawRdfGenerationNode->getProperty(UriBuilder::PREFIX_CONVERSION."hasColumnPredicateMapping");
+//        $this->assertEquals(count($this->columnPredicateMappings),count($columnPredicateMappingNodes));
+//        foreach ($columnPredicateMappingNodes as $columnPredicateMappingNode)
+//        {
+//            $predicateUri=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'predicate')->getId();
+//            $actualColumnName=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'columnName')->getValue();
+//            $expectedMappingColumnName=$this->columnPredicateMappings[$predicateUri];
+//            $this->assertEquals($expectedMappingColumnName,$actualColumnName);
+//        }
+//
+//        return $pipeline;
+//    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testMapTermsToResources(PublishingPipeline $pipeline)
+//    {
+//        $pipeline->mapTermsToResources($this->termResourceMappings);
+//        $graph = $pipeline->configJsonLD->getGraph();
+//        $reconciliationNode = $graph->getNodesByType(UriBuilder::PREFIX_CONVERSION . 'Reconciliation')[0];
+//
+//        $termResourceMappingNodes = $reconciliationNode->getProperty(UriBuilder::PREFIX_CONVERSION . "hasTermResourceMapping");
+//
+//        $this->assertEquals($this->termResourceMappings->count(), count($termResourceMappingNodes));
+//        foreach ($termResourceMappingNodes as $termResourceMappingNode) {
+//            $predicate = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'predicate')->getId();
+//            $resource = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'resource')->getId();
+//            $term = $termResourceMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION . 'term')->getValue();
+//            $this->assertEquals($predicate,$this->termResourceMappings->where('resource',$resource)->first()->predicate);
+//            $this->assertEquals($term,$this->termResourceMappings->where('resource',$resource)->first()->term);
+//        }
+//    }
     /**
      * @depends testMakePipeline
      */
@@ -282,125 +282,132 @@ class PublishingPipelineTest extends TestCase
 
         return $pipeline;
     }
-    /**
-     * @depends testGenerateRawRdf
-     */
-    public function testReconcile(PublishingPipeline $pipeline)
-    {
-        $pipeline->reconcile($this->termResourceMappings);
-
-        $subDomain=$pipeline->dataTemplate->dataDomain->subDomain;
-        $className=$pipeline->getTargetClassName();
-        $prefix='http://health.data.ae/ontology/HealthFacility#';
-        $ontologyPrefix="http://health.data.ae/ontology/HealthFacility#";
-        $categoryPredicate=$prefix.'category';
-        $subCategoryPredicate=$prefix.'subCategory';
-
-        $firstResourceUri=URI::realResource($subDomain,$className,'0000035')->getResourceUri();
-        $middleResourceUri=URI::realResource($subDomain,$className,'0047751')->getResourceUri();;
-        $lastResourceUri=URI::realResource($subDomain,$className,'0047662')->getResourceUri();;
-
-        $graph=PublishingPipeline::initiateDatasetJsonLdDocument(true,$pipeline->id)->getGraph();
-        $firstResource=$graph->getNode($firstResourceUri);
-        $middleResource=$graph->getNode($middleResourceUri);
-        $lastResource=$graph->getNode($lastResourceUri);
-
-        $directorResource=$this->termResourceMappings->where('predicate',$ontologyPrefix.'category')->where('term','Director')->first()->resource;
-        $nursingResource=$this->termResourceMappings->where('predicate',$ontologyPrefix.'category')->where('term','Nursing')->first()->resource;
-        $generalHospitalGreaterThan100=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','General Hospital (>100)')->first()->resource;
-        $schoolClinic=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','School clinic')->first()->resource;
-        $rehabilitationCenter1Spec=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','Rehabilitation Center (1 spec)')->first()->resource;
-        //First Resource
-        $this->assertEquals($directorResource,$firstResource->getProperty($categoryPredicate)->getId());
-        $this->assertEquals($generalHospitalGreaterThan100,$firstResource->getProperty($subCategoryPredicate)->getId());
-        //Middle Resource
-        $this->assertEquals($nursingResource,$middleResource->getProperty($categoryPredicate)->getId());
-        $this->assertEquals($schoolClinic,$middleResource->getProperty($subCategoryPredicate)->getId());
-        //Last Resource
-        $this->assertEquals('',$lastResource->getProperty($categoryPredicate)->getValue());
-        $this->assertEquals($rehabilitationCenter1Spec,$lastResource->getProperty($subCategoryPredicate)->getId());
-
-        return $pipeline;
-    }
-
-    /**
-     * @depends testReconcile
-     */
-    public function testValidate(PublishingPipeline $pipeline)
-    {
-      //  $validationReport=$pipeline->validate();
-      //  $this->assertInstanceOf(ShaclValidationReport::class,$validationReport);
-        return $pipeline;
-    }
-
-    /**
-     * @depends testGenerateRawRdf
-     */
-    public function testPublish(PublishingPipeline $pipeline)
-    {
-//        Storage::fake(config('ldog.storage.disk'));
-//        $disk=Storage::disk(config('ldog.storage.disk'));
-//        $conversionsDirectory=config('ldog.storage.directories.root')."/".config('ldog.storage.directories.conversions')."/";
-//        $csvPath=__DIR__."/../Datasets/PublishingExamples/Facilities/Sheryan_Facility_Detail.csv";
+//    /**
+//     * @depends testGenerateRawRdf
+//     */
+//    public function testReconcile(PublishingPipeline $pipeline)
+//    {
+//        $pipeline->reconcile($this->termResourceMappings);
 //
-//        $pipeline=PublishingPipeline::initiate($this->dataCollectionTemplate,$csvPath);
+//        $subDomain=$pipeline->dataTemplate->dataDomain->subDomain;
+//        $className=$pipeline->getTargetClassName();
+//        $prefix='http://health.data.ae/ontology/HealthFacility#';
+//        $ontologyPrefix="http://health.data.ae/ontology/HealthFacility#";
+//        $categoryPredicate=$prefix.'category';
+//        $subCategoryPredicate=$prefix.'subCategory';
+//
+//        $firstResourceUri=URI::realResource($subDomain,$className,'0000035')->getResourceUri();
+//        $middleResourceUri=URI::realResource($subDomain,$className,'0047751')->getResourceUri();;
+//        $lastResourceUri=URI::realResource($subDomain,$className,'0047662')->getResourceUri();;
+//
+//        $graph=PublishingPipeline::initiateDatasetJsonLdDocument(true,$pipeline->id)->getGraph();
+//        $firstResource=$graph->getNode($firstResourceUri);
+//        $middleResource=$graph->getNode($middleResourceUri);
+//        $lastResource=$graph->getNode($lastResourceUri);
+//
+//        $directorResource=$this->termResourceMappings->where('predicate',$ontologyPrefix.'category')->where('term','Director')->first()->resource;
+//        $nursingResource=$this->termResourceMappings->where('predicate',$ontologyPrefix.'category')->where('term','Nursing')->first()->resource;
+//        $generalHospitalGreaterThan100=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','General Hospital (>100)')->first()->resource;
+//        $schoolClinic=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','School clinic')->first()->resource;
+//        $rehabilitationCenter1Spec=$this->termResourceMappings->where('predicate',$ontologyPrefix.'subCategory')->where('term','Rehabilitation Center (1 spec)')->first()->resource;
+//        //First Resource
+//        $this->assertEquals($directorResource,$firstResource->getProperty($categoryPredicate)->getId());
+//        $this->assertEquals($generalHospitalGreaterThan100,$firstResource->getProperty($subCategoryPredicate)->getId());
+//        //Middle Resource
+//        $this->assertEquals($nursingResource,$middleResource->getProperty($categoryPredicate)->getId());
+//        $this->assertEquals($schoolClinic,$middleResource->getProperty($subCategoryPredicate)->getId());
+//        //Last Resource
+//        $this->assertEquals('',$lastResource->getProperty($categoryPredicate)->getValue());
+//        $this->assertEquals($rehabilitationCenter1Spec,$lastResource->getProperty($subCategoryPredicate)->getId());
+//
+//        return $pipeline;
+//    }
+//
+//    /**
+//     * @depends testReconcile
+//     */
+//    public function testValidate(PublishingPipeline $pipeline)
+//    {
+//      //  $validationReport=$pipeline->validate();
+//      //  $this->assertInstanceOf(ShaclValidationReport::class,$validationReport);
+//        return $pipeline;
+//    }
+
+    /**
+     * @depends testMakePipeline
+     */
+    public function testNormalize(PublishingPipeline $pipeline)
+    {
+        $pipeline->normalize();
+    }
+//    /**
+//     * @depends testGenerateRawRdf
+//     */
+//    public function testPublish(PublishingPipeline $pipeline)
+//    {
+////        Storage::fake(config('ldog.storage.disk'));
+////        $disk=Storage::disk(config('ldog.storage.disk'));
+////        $conversionsDirectory=config('ldog.storage.directories.root')."/".config('ldog.storage.directories.conversions')."/";
+////        $csvPath=__DIR__."/../Datasets/PublishingExamples/Facilities/Sheryan_Facility_Detail.csv";
+////
+////        $pipeline=PublishingPipeline::initiate($this->dataCollectionTemplate,$csvPath);
+////        $pipeline=PublishingPipeline::make($pipeline->id);
+////        $pipeline->generateRawRdf($this->columnPredicateMappings);
 //        $pipeline=PublishingPipeline::make($pipeline->id);
-//        $pipeline->generateRawRdf($this->columnPredicateMappings);
-        $pipeline=PublishingPipeline::make($pipeline->id);
-        $ministryHealth=Ministry::create($this->cabinet,'Ministry Of Health','The Health Ministry of Syria',
-            'http://assets.cabinet.sy/health/logo.png');
-        $employee=Employee::create($ministryHealth,User::create('ali','secret'),
-            '55556','ali ali','working on it department');
-        $pipeline->publish($ministryHealth,$employee,now()->subDays(20),now()->subDay());
+//        $ministryHealth=Ministry::create($this->cabinet,'Ministry Of Health','The Health Ministry of Syria',
+//            'http://assets.cabinet.sy/health/logo.png');
+//        $employee=Employee::create($ministryHealth,User::create('ali','secret'),
+//            '55556','ali ali','working on it department');
+//        $pipeline->publish($ministryHealth,$employee,now()->subDays(20),now()->subDay());
+////        $pipeline->linkToOthersDatasets();
+//    }
+////
+//    /**
+//     * @depends testGenerateRawRdf
+//     */
+//    public function testLinkToOthersDatasets(PublishingPipeline $pipeline)
+//    {
 //        $pipeline->linkToOthersDatasets();
-    }
+//    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testGetTargetClassUri(PublishingPipeline $pipeline)
+//    {
+//        $this->assertEquals('http://health.data.ae/ontology/HealthFacility#HealthFacility',
+//            $pipeline->getTargetClassUri());
+//    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testGetTargetClassName(PublishingPipeline $pipeline)
+//    {
+//        $this->assertEquals('HealthFacility',
+//            $pipeline->getTargetClassName());
+//    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testGetResourceIdentifierPropertyUri(PublishingPipeline $pipeline)
+//    {
+//        $this->assertEquals('http://health.data.ae/ontology/HealthFacility#uniqueID',
+//            $pipeline->getResourceIdentifierPropertyUri());
+//    }
+//    /**
+//     * @depends testMakePipeline
+//     */
+//    public function testGetResourceLabelExpression(PublishingPipeline $pipeline)
+//    {
+//        $this->assertEquals('health facility: {name},number: {unique_id}',
+//            $pipeline->getResourceLabelExpression());
+//    }
 //
-    /**
-     * @depends testGenerateRawRdf
-     */
-    public function testLinkToOthersDatasets(PublishingPipeline $pipeline)
-    {
-        $pipeline->linkToOthersDatasets();
-    }
-    /**
-     * @depends testMakePipeline
-     */
-    public function testGetTargetClassUri(PublishingPipeline $pipeline)
-    {
-        $this->assertEquals('http://health.data.ae/ontology/HealthFacility#HealthFacility',
-            $pipeline->getTargetClassUri());
-    }
-    /**
-     * @depends testMakePipeline
-     */
-    public function testGetTargetClassName(PublishingPipeline $pipeline)
-    {
-        $this->assertEquals('HealthFacility',
-            $pipeline->getTargetClassName());
-    }
-    /**
-     * @depends testMakePipeline
-     */
-    public function testGetResourceIdentifierPropertyUri(PublishingPipeline $pipeline)
-    {
-        $this->assertEquals('http://health.data.ae/ontology/HealthFacility#uniqueID',
-            $pipeline->getResourceIdentifierPropertyUri());
-    }
-    /**
-     * @depends testMakePipeline
-     */
-    public function testGetResourceLabelExpression(PublishingPipeline $pipeline)
-    {
-        $this->assertEquals('health facility: {name},number: {unique_id}',
-            $pipeline->getResourceLabelExpression());
-    }
-
-    public function testExtractClassNameFromUri()
-    {
-        $hashClassUri='http://health.data.ae/ontology/HealthFacility#HealthFacility';
-        $this->assertEquals('HealthFacility',PublishingPipeline::extractClassNameFromUri($hashClassUri));
-
-        $slashClassUri='http://health.data.ae/ontology/HealthFacility/HealthFacility';
-        $this->assertEquals('HealthFacility',PublishingPipeline::extractClassNameFromUri($slashClassUri));
-    }
+//    public function testExtractClassNameFromUri()
+//    {
+//        $hashClassUri='http://health.data.ae/ontology/HealthFacility#HealthFacility';
+//        $this->assertEquals('HealthFacility',PublishingPipeline::extractClassNameFromUri($hashClassUri));
+//
+//        $slashClassUri='http://health.data.ae/ontology/HealthFacility/HealthFacility';
+//        $this->assertEquals('HealthFacility',PublishingPipeline::extractClassNameFromUri($slashClassUri));
+//    }
 }
