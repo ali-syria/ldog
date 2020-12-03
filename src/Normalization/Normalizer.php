@@ -10,10 +10,9 @@ use Illuminate\Support\Str;
 class Normalizer implements NormalizerContract
 {
 
-    public static function handle(?string $input, string $normalizationFunctionUri): ?string
+    public static function handle(?string $input, string $normalizationFunction): ?string
     {
-        $targetMethod=self::extractTargetMethod($normalizationFunctionUri);
-        return Norm::{$targetMethod}($input);
+        return Norm::{$normalizationFunction}($input);
     }
     public static function extractTargetMethod(string $normalizationFunctionUri):string
     {

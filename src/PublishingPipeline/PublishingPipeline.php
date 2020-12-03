@@ -14,6 +14,7 @@ use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\Facades\VAL;
+use AliSyria\LDOG\Normalization\Normalizer;
 use AliSyria\LDOG\OuterLinkage\SilkOutLinker;
 use AliSyria\LDOG\ShapesManager\DataShape;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
@@ -231,7 +232,7 @@ class PublishingPipeline implements PublishingPipelineContract
         //$this->saveData();
     }
 
-    public function normalize(): void
+    public function normalize():void
     {
         $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
         $graph=$dataJsonLd->getGraph();
@@ -251,10 +252,10 @@ class PublishingPipeline implements PublishingPipelineContract
                     return;
                 }
                 $resourceNode->removeProperty($predicate);
-                $targetNode=$graph->createNode($termResourceMapping->resource);
-                $resourceNode->addPropertyValue($predicate,$targetNode);
+                $resourceNode->addPropertyValue($predicate,Normalizer::handle($object->getValue(),$shapePredicate->normalizedByFunction));
             }
         }
+
 
         $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($dataJsonLd->toJsonLd()));
     }

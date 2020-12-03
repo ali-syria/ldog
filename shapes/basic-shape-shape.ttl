@@ -77,7 +77,13 @@ ldog:BasicPropertyShape
         sh:path sh:message ;
         sh:minCount 1 ;
         sh:maxCount 1 ;       
+    ] ;
+    sh:property [
+        sh:path ldog:normalizedBy ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
     ] .
+
 
  
     

@@ -333,12 +333,19 @@ class PublishingPipelineTest extends TestCase
 //        return $pipeline;
 //    }
 
-    /**
-     * @depends testMakePipeline
-     */
-    public function testNormalize(PublishingPipeline $pipeline)
+
+    public function testNormalize()
     {
-        $pipeline->normalize();
+        Storage::fake(config('ldog.storage.disk'));
+        $disk=Storage::disk(config('ldog.storage.disk'));
+        $conversionsDirectory=config('ldog.storage.directories.root')."/".config('ldog.storage.directories.conversions')."/";
+        $csvPath=__DIR__."/../Datasets/PublishingExamples/Facilities/Sheryan_Facility_Detail.csv";
+
+        $pipeline=PublishingPipeline::initiate($this->dataCollectionTemplate,$csvPath);
+        $pipeline=PublishingPipeline::make($pipeline->id);
+        $pipeline->generateRawRdf($this->columnPredicateMappings);
+        $pipeline=PublishingPipeline::make($pipeline->id);
+        dd($pipeline->normalize());
     }
 //    /**
 //     * @depends testGenerateRawRdf

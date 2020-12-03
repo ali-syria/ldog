@@ -11,5 +11,5 @@ interface NormalizerContract
      * @param string $normalizationFunctionUri
      * @return string|null
      */
-    public static function handle(?string $input, string $normalizationFunctionUri):?string ;
+    public static function handle(?string $input, string $normalizationFunction):?string ;
 }
