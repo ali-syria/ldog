@@ -68,7 +68,7 @@ class LdogServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('ldog.php')
         ],'config');
 
-        $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../resources/views','ldog');
 
         $this->publishes([
