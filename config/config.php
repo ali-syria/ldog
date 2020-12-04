@@ -32,4 +32,13 @@ return [
     'silk'=>[
         'path'=>'D:\Laravel Packages\Binaries\silk\silk-3.2.0\silk-tools\silk-singlemachine\target\scala-2.11\silk.jar',
     ],
+    'cabinet'=>[
+        'name'=>env('CABINET_NAME'),
+        'description'=>env('CABINET_DESCRIPTION'),
+        'logoUrl'=>env('CABINET_LOGO_URL'),
+        'admin_name'=>env('CABINET_ADMIN_NAME'),
+        'admin_description'=>env('CABINET_ADMIN_DESCRIPTION'),
+        'admin_username'=>env('CABINET_ADMIN_USERNAME'),
+        'admin_password'=>env('CABINET_ADMIN_PASSWORD'),
+    ],
 ];
