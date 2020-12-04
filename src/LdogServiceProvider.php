@@ -23,7 +23,7 @@ class LdogServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php','ldog');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php','config');
 
         $this->app->singleton('ldog.uri',function($app){
             return $app->make(Factory::class);
