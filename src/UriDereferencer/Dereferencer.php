@@ -90,7 +90,7 @@ class Dereferencer implements DereferencerContract
             'results'=>$resultSet
         ])
             ->withHeaders([
-                'Content-Type'=>$mimeType
+                'Content-Type'=>'text/html'
             ]);
     }
 
@@ -136,7 +136,7 @@ class Dereferencer implements DereferencerContract
             'results'=>$resultSet
         ])
             ->withHeaders([
-                'Content-Type'=>$mimeType
+                'Content-Type'=>'text/html'
             ]);
     }
 

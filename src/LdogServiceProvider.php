@@ -62,7 +62,7 @@ class LdogServiceProvider extends ServiceProvider
         Auth::provider('ldog',function($app, array $config){
             return new GraphUserProvider();
         });
-        
+
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../resources/views','ldog');
 
