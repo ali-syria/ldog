@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\Console;
 
 
 use AliSyria\LDOG\Authentication\User;
+use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\OntologyManager\OntologyManager;
 use AliSyria\LDOG\OrganizationManager\Cabinet;
 use AliSyria\LDOG\OrganizationManager\Employee;
@@ -18,6 +19,12 @@ class Init extends Command
 
     public function handle()
     {
+        if(!$this->confirm('Do you agree to clear all repositories?'))
+        {
+            $this->info('exit');
+            return;
+        }
+        GS::getConnection()->clearAll();
         $this->info('Initializing The Platform ...');
         OntologyManager::importLdogOntology();
         $this->info('Ldog ontology has been imported successfully!');

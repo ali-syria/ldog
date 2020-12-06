@@ -59,6 +59,10 @@ class LdogServiceProvider extends ServiceProvider
             RefreshGraphDbLuceneIndex::class,
         ]);
 
+        Auth::provider('ldog',function($app, array $config){
+            return new GraphUserProvider();
+        });
+
         if(!$this->app->runningInConsole())
         {
             return;
@@ -75,8 +79,5 @@ class LdogServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views'=> resource_path('views/vendor/ldog')
         ],'views');
 
-        Auth::provider('ldog',function($app, array $config){
-            return new GraphUserProvider();
-        });
     }
 }
