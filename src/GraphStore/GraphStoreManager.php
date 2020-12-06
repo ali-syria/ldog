@@ -29,6 +29,8 @@ class GraphStoreManager
     }
     public function getConnection():ConnectionContract
     {
+        $this->connection= app('ldog.gs.open');
+        
         return $this->connection;
     }
 }
