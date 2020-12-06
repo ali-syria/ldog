@@ -24,7 +24,8 @@ class Init extends Command
             $this->info('exit');
             return;
         }
-        GS::getConnection()->clearAll();
+        GS::openConnection()->clearAll();
+        GS::secureConnection()->clearAll();
         $this->info('Initializing The Platform ...');
         OntologyManager::importLdogOntology();
         $this->info('Ldog ontology has been imported successfully!');
