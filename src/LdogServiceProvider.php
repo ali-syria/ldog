@@ -31,13 +31,13 @@ class LdogServiceProvider extends ServiceProvider
         $this->app->singleton('graph_db',function($app){
             return $app->make(GraphDbDriver::class);
         });
-        $this->app->singleton('ldog.gs.open',function($app){
+        $this->app->bind('ldog.gs.open',function($app){
             return ConnectionFactory::make('open');
         });
-        $this->app->singleton('ldog.gs.secure',function($app){
+        $this->app->bind('ldog.gs.secure',function($app){
             return ConnectionFactory::make('secure');
         });
-        $this->app->bind('ldog.gs.manager',function($app){
+        $this->app->singleton('ldog.gs.manager',function($app){
             return $app->make(GraphStoreManager::class);
         });
         $this->app->singleton('ldog.validator',function($app){
