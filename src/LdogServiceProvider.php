@@ -37,7 +37,7 @@ class LdogServiceProvider extends ServiceProvider
         $this->app->singleton('ldog.gs.secure',function($app){
             return ConnectionFactory::make('secure');
         });
-        $this->app->singleton('ldog.gs.manager',function($app){
+        $this->app->make('ldog.gs.manager',function($app){
             return $app->make(GraphStoreManager::class);
         });
         $this->app->singleton('ldog.validator',function($app){
