@@ -81,7 +81,7 @@ class Employee implements EmployeeContract
                       ldog:name ?name ;
                       ldog:description ?description .    
             }
-        ");
+        ",false);
         $employee=null;
         foreach ($resultSet as $result)
         {
