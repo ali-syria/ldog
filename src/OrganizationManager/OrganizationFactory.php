@@ -34,8 +34,12 @@ class OrganizationFactory implements OrganizationFactoryContract
         $organization=null;
         foreach ($resultSet as $result)
         {
+            if(in_array(optional($result)->class,[$ldogPrefix.'ModellingOrganization',$ldogPrefix.'DataSourceOrganization']))
+            {
+                continue;
+            }
             if(optional($result)->class)
-            {dd($result->class->getUri());
+            {
                 $class=self::resolveLdogClassUriToClass($result->class->getUri());
                 $organization= new $class($uri,$result->name->getValue(),$result->description->getValue(),
                     optional(optional($result)->logo)->getValue());
