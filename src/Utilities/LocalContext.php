@@ -16,7 +16,7 @@ class LocalContext
 
     private function __construct()
     {
-        $this->user=auth()->user();dd($this->user);
+        $this->user=auth()->user();
         $this->employee=Employee::retrieveByLoginAccount($this->user);
         $this->organization=$this->employee->getOrganization();
     }
