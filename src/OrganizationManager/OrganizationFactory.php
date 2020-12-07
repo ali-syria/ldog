@@ -30,7 +30,7 @@ class OrganizationFactory implements OrganizationFactoryContract
                           ldog:description ?description .
                   OPTIONAL {<$uri> ldog:logo ?logo  . }                         
             }                                       
-        ");
+        ",false);
         $organization=null;
         foreach ($resultSet as $result)
         {
@@ -49,7 +49,7 @@ class OrganizationFactory implements OrganizationFactoryContract
     public static function resolveLdogClassUriToClass(string $uri): string
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
-dd($uri);
+
         switch ($uri)
         {
             case $ldogPrefix."Cabinet":
