@@ -30,12 +30,12 @@ class OrganizationFactory implements OrganizationFactoryContract
                           ldog:description ?description .
                   OPTIONAL {<$uri> ldog:logo ?logo  . }                         
             }                                       
-        ",false);dd($uri);
+        ",false);
         $organization=null;
         foreach ($resultSet as $result)
         {
             if(optional($result)->class)
-            {
+            {dd($result->class->getUri());
                 $class=self::resolveLdogClassUriToClass($result->class->getUri());
                 $organization= new $class($uri,$result->name->getValue(),$result->description->getValue(),
                     optional(optional($result)->logo)->getValue());
