@@ -20,7 +20,7 @@ class OrganizationFactory implements OrganizationFactoryContract
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             
             SELECT ?class ?name ?description ?logo
