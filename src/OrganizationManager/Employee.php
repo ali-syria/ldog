@@ -81,7 +81,19 @@ class Employee implements EmployeeContract
                       ldog:name ?name ;
                       ldog:description ?description .    
             }
-        ");dd($loginAccountUri,$resultSet);
+        ");dd($loginAccountUri,$resultSet,"
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT ?employee ?organization ?id ?name ?description
+            WHERE {
+                ?employee a ldog:Employee ;
+                      ldog:hasLoginAccount <$loginAccountUri>;
+                      ldog:isEmployeeOf ?organization ;
+                      ldog:id ?id ;
+                      ldog:name ?name ;
+                      ldog:description ?description .    
+            }
+        ");
         $employee=null;
         foreach ($resultSet as $result)
         {
