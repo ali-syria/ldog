@@ -24,15 +24,15 @@
     "autoload": {
         "psr-4": {
             "AliSyria\\LDOG\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "AliSyria\\LDOG\\Tests\\": "tests"
         },
         "files": [
             "src/Utilities/helpers.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AliSyria\\LDOG\\Tests\\": "tests"
+        }
     },
     "extra": {
         "laravel": {
