@@ -31,7 +31,7 @@
             "AliSyria\\LDOG\\Tests\\": "tests"
         },
         "files": [
-
+            "src/Utilities/helpers.php"
         ]
     },
     "extra": {
