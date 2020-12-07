@@ -30,7 +30,7 @@ class OrganizationFactory implements OrganizationFactoryContract
                           ldog:description ?description .
                   OPTIONAL {<$uri> ldog:logo ?logo  . }                         
             }                                       
-        ",false);
+        ",false);dd($result->class->getUri());
         $organization=null;
         foreach ($resultSet as $result)
         {
