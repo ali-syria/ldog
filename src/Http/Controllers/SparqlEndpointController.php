@@ -12,6 +12,10 @@ class SparqlEndpointController
 {
     public function __invoke(Request $req)
     {
+        if($req->header('Accept')=='text/html')
+        {
+            return view('sparql.endpoint');
+        }
         $endpoint=GS::getConnection()::getSparqlEndpoint();
         $response=Http::asForm()->withHeaders([
             'Accept'=>$req->header('Accept'),
