@@ -14,7 +14,7 @@ class SparqlEndpointController
     {
         if($req->wantsHTML())
         {
-            return view('sparql.endpoint');
+            return view('ldog::sparql.endpoint');
         }
         $endpoint=GS::getConnection()::getSparqlEndpoint();
         $response=Http::asForm()->withHeaders([
