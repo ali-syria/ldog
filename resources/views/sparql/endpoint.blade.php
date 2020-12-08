@@ -19,6 +19,9 @@
             requestConfig: { endpoint: "{{ route('ldog.sparql') }}" },
             copyEndpointOnNewTab: false
         });
+        const yasqe=yasgui.getTab().yasqe;
+        yasqe.addPrefixes({ ldog: "{{ \AliSyria\LDOG\UriBuilder\UriBuilder::PREFIX_LDOG }}" });
+        yasqe.addPrefixes({ conv: "{{ \AliSyria\LDOG\UriBuilder\UriBuilder::PREFIX_CONVERSION }}" });
     </script>
 </body>
 </html>
