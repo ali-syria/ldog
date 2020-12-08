@@ -12,7 +12,7 @@ class SparqlEndpointController
 {
     public function __invoke(Request $req)
     {
-        if($req->header('Accept')=='text/html')
+        if($req->wantsHTML())
         {
             return view('sparql.endpoint');
         }

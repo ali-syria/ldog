@@ -53,6 +53,12 @@ class LdogServiceProvider extends ServiceProvider
             return isset($acceptable[0]) && Str::contains($acceptable[0],
                     Dereferencer::getRDFmimeTypes());
         });
+        Request::macro('wantsHTML',function(){
+            $acceptable = $this->getAcceptableContentTypes();
+
+            return isset($acceptable[0]) && Str::contains($acceptable[0],
+                    Dereferencer::getHTMLmimeTypes());
+        });
         $this->commands([
             Init::class,
             InitGraphDbLuceneReconciliator::class,
