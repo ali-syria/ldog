@@ -16,6 +16,7 @@ use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 abstract class Organization implements OrganizationContract

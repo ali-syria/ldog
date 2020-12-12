@@ -31,7 +31,16 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         $this->password=$config['password'];
 
         $this->initializeClient();
-        $this->authenticate($this->username,$this->password);
+        if($connectionConfigKey!='open')
+        {
+            $this->authenticate($this->username,$this->password);
+        }
+        else
+        {
+            $this->client->withHeaders([
+                'Accept'=>'application/sparql-results+json'
+            ]);
+        }
 
         return $this;
     }
@@ -111,10 +120,12 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
 
     public function rawQuery(string $query,bool $infer=true):string
     {
-        $response= $this->client->get("repositories/{$this->repository}",[
-            'query'=>$query,
-            'infer'=>$infer,
-        ]);
+        $data['query']=$query;
+        if(!$infer)
+        {
+            $data['infer']=false;
+        }
+        $response= $this->client->get("repositories/{$this->repository}",$data);
         return $response->body();
     }
 
