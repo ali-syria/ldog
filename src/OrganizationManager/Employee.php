@@ -103,18 +103,17 @@ class Employee implements EmployeeContract
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
 
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             
-            SELECT  ?loginAccountUri ?username ?organization ?id ?name ?description
+            SELECT  ?loginAccountUri ?organization ?id ?name ?description
             WHERE {
                 <$uri> a ldog:Employee ;
                       ldog:hasLoginAccount ?loginAccountUri ;
                       ldog:isEmployeeOf ?organization ;
                       ldog:id ?id ;
                       ldog:name ?name ;
-                      ldog:description ?description .
-                ?loginAccountUri ldog:username  ?username .                        
+                      ldog:description ?description .                       
             }
         ");
         $employee=null;
@@ -126,6 +125,40 @@ class Employee implements EmployeeContract
                 $organization=OrganizationFactory::retrieveByUri($organizationUri);
                 $employee= new static($organization,User::retrieve($result->username->getValue()),$result->id->getValue(),
                     $uri,$result->name->getValue(),
+                    $result->description->getValue());
+            }
+            break;
+        }
+
+        return $employee;
+    }
+    public static function retrieveByOrganization(string $uri):?self
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+
+
+        $resultSet=GS::openConnection()->jsonQuery("
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT  ?employee ?loginAccountUri ?organization ?id ?name ?description
+            WHERE {
+                ?employee a ldog:Employee ;
+                      ldog:hasLoginAccount ?loginAccountUri ;
+                      ldog:isEmployeeOf <$uri> ;
+                      ldog:id ?id ;
+                      ldog:name ?name ;
+                      ldog:description ?description .                        
+            }
+        ");
+        $employee=null;
+        foreach ($resultSet as $result)
+        {
+            if(optional($result)->employee)
+            {
+                $organizationUri=$uri;
+                $organization=OrganizationFactory::retrieveByUri($organizationUri);
+                $employee= new static($organization,User::retrieve(basename($result->loginAccountUri->getUri())),$result->id->getValue(),
+                    $result->employee->getUri(),$result->name->getValue(),
                     $result->description->getValue());
             }
             break;
