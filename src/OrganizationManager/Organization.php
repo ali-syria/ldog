@@ -131,7 +131,7 @@ abstract class Organization implements OrganizationContract
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
         $organizationUri=$this->getUri();
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             
             SELECT ?parentOrganization ?class ?name ?description ?logo
@@ -163,7 +163,7 @@ abstract class Organization implements OrganizationContract
         $ldogPrefix=UriBuilder::PREFIX_LDOG;
         $organizationUri=$this->getUri();
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             
             SELECT ?childOrganization ?class ?name ?description ?logo
