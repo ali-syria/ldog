@@ -124,7 +124,7 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 ###  http://ldog.org/ontologies/2020/8/framework#hasDepartment
 :hasDepartment rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf :hasSector ;
-               owl:inverseOf :isDepartmentOF ;
+               owl:inverseOf :isDepartmentOf ;
                rdfs:domain :GovernmentalOrganization ;
                rdfs:range :Department .
 
@@ -281,8 +281,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                             rdfs:range :ModellingOrganization .
 
 
-###  http://ldog.org/ontologies/2020/8/framework#isDepartmentOF
-:isDepartmentOF rdf:type owl:ObjectProperty ;
+###  http://ldog.org/ontologies/2020/8/framework#isDepartmentOf
+:isDepartmentOf rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf :isSectorOf ;
                 rdfs:domain :Department ;
                 rdfs:range :GovernmentalOrganization .

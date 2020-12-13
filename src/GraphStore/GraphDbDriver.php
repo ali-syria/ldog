@@ -31,16 +31,7 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         $this->password=$config['password'];
 
         $this->initializeClient();
-        if($connectionConfigKey!='open')
-        {
-            $this->authenticate($this->username,$this->password);
-        }
-        else
-        {
-            $this->client->withHeaders([
-                'Accept'=>'application/sparql-results+json'
-            ]);
-        }
+        $this->authenticate($this->username,$this->password);
 
         return $this;
     }

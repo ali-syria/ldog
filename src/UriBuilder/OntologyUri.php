@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\UriBuilder;
 
 
 use AliSyria\LDOG\Contracts\UriBuilder\OntologyUriContract;
+use Illuminate\Support\Str;
 
 class OntologyUri extends UriBuilder implements OntologyUriContract
 {
@@ -17,7 +18,7 @@ class OntologyUri extends UriBuilder implements OntologyUriContract
     }
     public function setName(string $name)
     {
-        $this->name=$name;
+        $this->name=Str::of($name)->trim();
     }
     public function getBasueUri(): string
     {
@@ -26,6 +27,6 @@ class OntologyUri extends UriBuilder implements OntologyUriContract
 
     public function getResourceUri(string $resouce): string
     {
-        return $this->getBasueUri().$resouce;
+        return $this->getBasueUri().Str::of($resouce)->trim();
     }
 }

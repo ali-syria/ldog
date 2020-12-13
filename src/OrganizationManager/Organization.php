@@ -91,7 +91,7 @@ abstract class Organization implements OrganizationContract
         {
             $parentOrganizationUri=$parentOrganization->getUri();
             $ldogParentProperty=self::getLdogParentProperty();
-            $parentQuery="<$organizationUriString> ldog:$ldogParentProperty <$parentOrganizationUri>.";
+            $parentQuery="<$organizationUriString> ldog:$ldogParentProperty <$parentOrganizationUri> .";
         }
 
         $query="
@@ -106,9 +106,7 @@ abstract class Organization implements OrganizationContract
                                        ldog:name '$name' ;
                                        ldog:description '$description' ;
                                        ldog:logo '$logoUrl'^^xsd:anyURI .
-                    $parentQuery                                       
-                }
-            }  
+                    $parentQuery } }  
         ";
         GS::getConnection()->rawUpdate($query);
 
@@ -195,7 +193,16 @@ abstract class Organization implements OrganizationContract
 
         return new Collection($organizations);
     }
-
+    public function departments()
+    {
+        return $this->childOrganizations()
+            ->filter(fn(Organization $org)=>$org instanceof Department);
+    }
+    public function branches()
+    {
+        return $this->childOrganizations()
+            ->filter(fn(Organization $org)=>$org instanceof Branch);
+    }
     public function employees(): Collection
     {
         $ldogPrefix=UriBuilder::PREFIX_LDOG;

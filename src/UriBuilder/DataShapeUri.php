@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\UriBuilder;
 
 
 use AliSyria\LDOG\Contracts\UriBuilder\DataShapeUriContract;
+use Illuminate\Support\Str;
 
 class DataShapeUri extends UriBuilder implements DataShapeUriContract
 {
@@ -18,7 +19,7 @@ class DataShapeUri extends UriBuilder implements DataShapeUriContract
     }
     public function setName(string $name)
     {
-        $this->name=$name;
+        $this->name=Str::of($name)->trim();
     }
     public function getBasueUri(): string
     {
@@ -27,6 +28,6 @@ class DataShapeUri extends UriBuilder implements DataShapeUriContract
 
     public function getResourceUri(string $resouce): string
     {
-        return $this->getBasueUri().$resouce;
+        return $this->getBasueUri().Str::of($resouce)->trim();
     }
 }

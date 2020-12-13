@@ -29,19 +29,19 @@ class RealResourceUri extends UriBuilder implements RealResourceUriContract
 
     public function setConcept(string $concept)
     {
-        $this->concept=Str::of($concept)->kebab();
+        $this->concept=Str::of($concept)->trim()->kebab();
     }
     public function setReference(string $reference)
     {
-        $this->reference=$reference;
+        $this->reference=Str::of($reference)->trim();
     }
     public function setSubConcept(string $subConcept)
     {
-        $this->subConcept=Str::of($subConcept)->kebab();
+        $this->subConcept=Str::of($subConcept)->trim()->kebab();
     }
     public function setSubReference(string $subReference)
     {
-        $this->subReference=$subReference;
+        $this->subReference=Str::of($subReference)->trim();
     }
 
     public function getResourcePath(): string
