@@ -57,7 +57,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 ###  http://ldog.org/ontologies/2020/8/framework#dataDomain
 :dataDomain rdf:type owl:ObjectProperty ;
             rdfs:domain :BatchImport ,
-                        :BatchImportTemplate ;
+                        :BatchImportTemplate ,
+                        :Ontology ;
             rdfs:range :DataDomain .
 
 
@@ -504,6 +505,12 @@ owl:sameAs rdf:type owl:AnnotationProperty .
       rdfs:range xsd:string ;
       rdfs:comment "name of anything" ;
       rdfs:label "name" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#namespace
+:namespace rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Ontology ;
+           rdfs:range xsd:anyURI .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#prefix

@@ -9,13 +9,16 @@ use AliSyria\LDOG\Exceptions\OntologyAlreadyExist;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
+use AliSyria\LDOG\Utilities\LdogTypes\DataDomain;
+use Illuminate\Support\Collection;
 
 class OntologyManager implements OntologyImporterContract
 {
 
-    public static function importFromUrl(string $url, string $sector, string $prefix, string $namespace):void
+    public static function importFromUrl(string $url,DataDomain $dataDomain, string $prefix,
+                                         string $namespace,string $description):void
     {
-        $ontlogyUri=self::generateUri($sector,$prefix);
+        $ontlogyUri=self::generateUri($dataDomain->subDomain,$prefix);
 
         throw_if(self::checkIfExist($ontlogyUri),
             new OntologyAlreadyExist('an ontology with same prefix already exists'));
@@ -28,10 +31,11 @@ class OntologyManager implements OntologyImporterContract
             PREFIX ldog: <$ldogPrefix> 
             
             INSERT DATA {
-                GRAPH <$ontlogyUri> {
-                    <$namespace> a ldog:Ontology ;
-                                 ldog:prefix '$prefix' .
-                }
+                    <$ontlogyUri> a ldog:Ontology ;
+                                 ldog:prefix '$prefix' ;
+                                 ldog:namespace '$namespace' ;
+                                 ldog:description '$description' ;
+                                 ldog:dataDomain     <{$dataDomain->uri}> .
             }
         ");
     }
@@ -54,5 +58,35 @@ class OntologyManager implements OntologyImporterContract
     public static function checkIfExist(string $ontologyUri):bool
     {
         return GS::getConnection()->isGraphExist($ontologyUri);
+    }
+    public static function getAll():Collection
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $query="
+            PREFIX ldog: <$ldogPrefix> 
+            
+            SELECT ?ontlogy ?prefix ?namespace ?description ?dataDomain
+            WHERE {
+                    ?ontlogy a ldog:Ontology ;
+                     ldog:prefix ?prefix ;
+                     ldog:namespace ?namespace ;
+                     ldog:description ?description ;
+                     ldog:dataDomain  ?dataDomain .
+            }
+        ";
+        $resultSet=GS::openConnection()->jsonQuery($query);
+
+        $ontologies=[];
+        foreach ($resultSet as $result)
+        {
+            if(optional($result)->ontlogy)
+            {
+                $ontologies[]= new Ontology($result->ontlogy->getUri(),$result->prefix->getValue(),
+                    $result->namespace->getValue(),$result->description->getValue(),
+                    DataDomain::find($result->dataDomain->getUri()));
+            }
+        }
+
+        return collect($ontologies);
     }
 }

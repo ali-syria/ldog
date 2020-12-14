@@ -27,7 +27,7 @@ class DataExporterTarget extends LdogType
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
         $dataExporterTargetClass=$ldogPrefix."BatchDataExporterTarget";
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             PREFIX rdfs: <$rdfsPrefix>
             

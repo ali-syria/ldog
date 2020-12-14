@@ -27,7 +27,7 @@ class ReportExportFrequency extends LdogType
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
         $reportExportFrequencyClass=$ldogPrefix."Frequency";
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             PREFIX rdfs: <$rdfsPrefix>
             

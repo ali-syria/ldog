@@ -12,6 +12,7 @@ use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\ShaclValidator\JenaShaclValidator;
 use AliSyria\LDOG\ShaclValidator\ShaclValidationReport;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
+use AliSyria\LDOG\Utilities\LdogTypes\DataDomain;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -19,9 +20,9 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 class ShapeManager implements ShapeImporterContract
 {
 
-    public static function importFromUrl(string $url, string $dataSubDomain,string $prefix): DataShape
+    public static function importFromUrl(string $url,DataDomain $dataDomain,string $prefix): DataShape
     {
-        $shapeUri=self::generateUri($dataSubDomain,$prefix);
+        $shapeUri=self::generateUri($dataDomain->subDomain,$prefix);
 
         throw_if(self::checkIfExist($shapeUri),
             new DataShapeAlreadyExist('a shape with same prefix already exists'));

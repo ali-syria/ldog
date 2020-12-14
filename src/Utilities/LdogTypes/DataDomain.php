@@ -33,7 +33,7 @@ class DataDomain extends LdogType
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
         $dataDomainClass=$ldogPrefix."DataDomain";
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX ldog: <$ldogPrefix>
             PREFIX rdfs: <$rdfsPrefix>
             

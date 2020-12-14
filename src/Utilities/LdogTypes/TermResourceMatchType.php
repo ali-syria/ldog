@@ -25,7 +25,7 @@ class TermResourceMatchType extends LdogType
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
         $termResourceMatchTypeClass=$conversionPrefix."TermResourceMatchType";
 
-        $resultSet=GS::secureConnection()->jsonQuery("
+        $resultSet=GS::openConnection()->jsonQuery("
             PREFIX conv: <$conversionPrefix>
             PREFIX rdfs: <$rdfsPrefix>
             
