@@ -18,7 +18,7 @@ class DataTemplateUri extends UriBuilder implements DataTemplateUriContract
     }
     public function setName(string $name)
     {
-        $this->name=(string)Str::of($name)->trim(' ')->trim()->camel();
+        $this->name=(string)Str::of($name)->trim(' ')->trim()->kebab();
     }
     public function getUri(): string
     {

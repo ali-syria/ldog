@@ -10,6 +10,7 @@ use AliSyria\LDOG\Contracts\OrganizationManager\OrganizationContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\WeakOrganizationContract;
 use AliSyria\LDOG\Contracts\UriBuilder\RealResourceUriContract;
 use AliSyria\LDOG\Facades\URI;
+use Illuminate\Support\Collection;
 
 abstract class Sector extends Organization implements HasParentContract,WeakOrganizationContract,
     DataSourceOrganizationContract
@@ -19,5 +20,10 @@ abstract class Sector extends Organization implements HasParentContract,WeakOrga
         return URI::realResource('organizations',$parent::getLdogClass(),
             static::generateId($parent->getName()),static::getLdogClass(),
             static::generateId($name));
+    }
+
+    public function exportTargets(): Collection
+    {
+        return collect([]);
     }
 }

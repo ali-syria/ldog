@@ -23,6 +23,6 @@ abstract class ShaclValidator
     }
     final public function basicShapeValidation(string $shapeGraphPath):ShaclValidationReportContract
     {
-        return $this->validateGraph($shapeGraphPath,$this->basicShapeShapePath);
+        return $this->validateGraph($shapeGraphPath,realpath($this->basicShapeShapePath));
     }
 }

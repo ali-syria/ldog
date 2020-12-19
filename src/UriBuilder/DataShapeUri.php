@@ -19,7 +19,7 @@ class DataShapeUri extends UriBuilder implements DataShapeUriContract
     }
     public function setName(string $name)
     {
-        $this->name=Str::of($name)->trim();
+        $this->name=Str::of($name)->trim(' ')->trim()->kebab();
     }
     public function getBasueUri(): string
     {

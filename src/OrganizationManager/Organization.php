@@ -5,6 +5,7 @@ namespace AliSyria\LDOG\OrganizationManager;
 
 
 use AliSyria\LDOG\Authentication\User;
+use AliSyria\LDOG\BatchImporter\DataCollection;
 use AliSyria\LDOG\Contracts\OrganizationManager\EmployeeContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\HasParentContract;
 use AliSyria\LDOG\Contracts\OrganizationManager\ModellingOrganizationContract;
@@ -14,6 +15,8 @@ use AliSyria\LDOG\Contracts\UriBuilder\RealResourceUriContract;
 use AliSyria\LDOG\Exceptions\OrganizationAlreadyExist;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
+use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
+use AliSyria\LDOG\TemplateBuilder\ReportTemplate;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -202,6 +205,42 @@ abstract class Organization implements OrganizationContract
     {
         return $this->childOrganizations()
             ->filter(fn(Organization $org)=>$org instanceof Branch);
+    }
+    public function dataTemplates():Collection
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $organizationUri=$this->getUri();
+
+        $resultSet=GS::openConnection()->jsonQuery("
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT ?dataTemplate ?class
+            WHERE {
+                  ?dataTemplate ldog:isDataCollectionTemplateOf <$organizationUri> ;
+                                 a ?class .                                       
+            }                                       
+        ");
+        $dataTemplates=[];
+        foreach ($resultSet as $result)
+        {
+            $classUri=$result->class->getUri();
+            $templateUri=$result->dataTemplate->getUri();
+
+            if($classUri==$ldogPrefix.'ReportTemplate')
+            {
+                $dataTemplates[]=ReportTemplate::retrieve($templateUri);
+            }
+            elseif($classUri==$ldogPrefix.'DataCollectionTemplate')
+            {
+                $dataTemplates[]=DataCollectionTemplate::retrieve($templateUri);
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        return new Collection($dataTemplates);
     }
     public function employees(): Collection
     {
