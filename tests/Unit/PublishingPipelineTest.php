@@ -138,55 +138,55 @@ class PublishingPipelineTest extends TestCase
         return $actualPipeline;
     }
 
-//    /**
-//     * @depends  testInitiatePipeline
-//     */
-//    public function testGetCsvColumnNames(PublishingPipeline $pipeline)
-//    {
-//        $expectedCsvHeader=[
-//            "unique_id","f_name_english","f_name_arabic","facility_category_name_english",
-//            "facility_category_name_arabic","facilitysubcategorynameenglish","facilitysubcategorynamearabic",
-//            "address_line_one","address_line_two_english","address_line_two_arabic","po_box","website",
-//            "telephone_1","telephone_2","fax","expiry_date","status","area_id","x_coordinate","y_coordinate",
-//            "email","area_english","area_arabic"
-//        ];
-//        $this->assertEquals($expectedCsvHeader,$pipeline->getCsvColumnNames());
-//    }
+    /**
+     * @depends  testInitiatePipeline
+     */
+    public function testGetCsvColumnNames(PublishingPipeline $pipeline)
+    {
+        $expectedCsvHeader=[
+            "unique_id","f_name_english","f_name_arabic","facility_category_name_english",
+            "facility_category_name_arabic","facilitysubcategorynameenglish","facilitysubcategorynamearabic",
+            "address_line_one","address_line_two_english","address_line_two_arabic","po_box","website",
+            "telephone_1","telephone_2","fax","expiry_date","status","area_id","x_coordinate","y_coordinate",
+            "email","area_english","area_arabic"
+        ];
+        $this->assertEquals($expectedCsvHeader,$pipeline->getCsvColumnNames());
+    }
 
-//    /**
-//     * @depends testInitiatePipeline
-//     */
-//    public function testGetShapePredicates(PublishingPipeline $pipeline)
-//    {
-//        $this->assertCount(15,$pipeline->getShapePredicates()->toArray());
-//        $this->assertEquals("unique_id",$pipeline->getShapePredicates()->first()->name);
-//        $this->assertEquals("http://www.w3.org/2001/XMLSchema#integer",$pipeline->getShapePredicates()
-//            ->first()->dataType);
-//    }
-//
-//    /**
-//     * @depends testInitiatePipeline
-//     */
-//    public function testGetShapeObjectPredicates(PublishingPipeline $pipeline)
-//    {
-//        $prefix='http://health.data.ae/ontology/HealthFacility#';
-//        $this->assertEquals(2,$pipeline->getShapeObjectPredicates()->count());
-//        $this->assertEqualsCanonicalizing([$prefix.'HealthFacilityCategory',$prefix.'HealthFacilitySubCategory'],
-//            $pipeline->getShapeObjectPredicates()->pluck('objectClassUri')->toArray());
-//    }
+    /**
+     * @depends testInitiatePipeline
+     */
+    public function testGetShapePredicates(PublishingPipeline $pipeline)
+    {
+        $this->assertCount(15,$pipeline->getShapePredicates()->toArray());
+        $this->assertEquals("unique_id",$pipeline->getShapePredicates()->first()->name);
+        $this->assertEquals("http://www.w3.org/2001/XMLSchema#integer",$pipeline->getShapePredicates()
+            ->first()->dataType);
+    }
 
-//    /**
-//     * @depends testInitiatePipeline
-//     */
-//    public function testGetShapeDataPredicates(PublishingPipeline $pipeline)
-//    {
-//        $this->assertEquals(13,$pipeline->getShapeDataPredicates()->count());
-//        $this->assertEqualsCanonicalizing([
-//            'unique_id','name','address line one','address line two','postal code','website',
-//            'telephone','expiry date','status','area','email','latitude','longitude'
-//        ],
-//        $pipeline->getShapeDataPredicates()->pluck('name')->toArray());
-//    }
+    /**
+     * @depends testInitiatePipeline
+     */
+    public function testGetShapeObjectPredicates(PublishingPipeline $pipeline)
+    {
+        $prefix='http://health.data.ae/ontology/HealthFacility#';
+        $this->assertEquals(2,$pipeline->getShapeObjectPredicates()->count());
+        $this->assertEqualsCanonicalizing([$prefix.'HealthFacilityCategory',$prefix.'HealthFacilitySubCategory'],
+            $pipeline->getShapeObjectPredicates()->pluck('objectClassUri')->toArray());
+    }
+
+    /**
+     * @depends testInitiatePipeline
+     */
+    public function testGetShapeDataPredicates(PublishingPipeline $pipeline)
+    {
+        $this->assertEquals(13,$pipeline->getShapeDataPredicates()->count());
+        $this->assertEqualsCanonicalizing([
+            'unique_id','name','address line one','address line two','postal code','website',
+            'telephone','expiry date','status','area','email','latitude','longitude'
+        ],
+        $pipeline->getShapeDataPredicates()->pluck('name')->toArray());
+    }
 
 //    /**
 //     * @depends testMakePipeline
@@ -201,27 +201,27 @@ class PublishingPipelineTest extends TestCase
 //            $pipeline->getTargetClassName(),66444);
 //        $this->assertEquals($expectedNode,$actualNode);
 //    }
-//    /**
-//     * @depends testMakePipeline
-//     */
-//    public function testMapColumnsToPredicates(PublishingPipeline $pipeline)
-//    {
-//        $pipeline->mapColumnsToPredicates($this->columnPredicateMappings);
-//        $graph=$pipeline->configJsonLD->getGraph();
-//        $rawRdfGenerationNode=$graph->getNodesByType(UriBuilder::PREFIX_CONVERSION.'RawRdfGeneration')[0];
-//
-//        $columnPredicateMappingNodes=$rawRdfGenerationNode->getProperty(UriBuilder::PREFIX_CONVERSION."hasColumnPredicateMapping");
-//        $this->assertEquals(count($this->columnPredicateMappings),count($columnPredicateMappingNodes));
-//        foreach ($columnPredicateMappingNodes as $columnPredicateMappingNode)
-//        {
-//            $predicateUri=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'predicate')->getId();
-//            $actualColumnName=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'columnName')->getValue();
-//            $expectedMappingColumnName=$this->columnPredicateMappings[$predicateUri];
-//            $this->assertEquals($expectedMappingColumnName,$actualColumnName);
-//        }
-//
-//        return $pipeline;
-//    }
+    /**
+     * @depends testMakePipeline
+     */
+    public function testMapColumnsToPredicates(PublishingPipeline $pipeline)
+    {
+        $pipeline->mapColumnsToPredicates($this->columnPredicateMappings);
+        $graph=$pipeline->configJsonLD->getGraph();
+        $rawRdfGenerationNode=$graph->getNodesByType(UriBuilder::PREFIX_CONVERSION.'RawRdfGeneration')[0];
+
+        $columnPredicateMappingNodes=$rawRdfGenerationNode->getProperty(UriBuilder::PREFIX_CONVERSION."hasColumnPredicateMapping");
+        $this->assertEquals(count($this->columnPredicateMappings),count($columnPredicateMappingNodes));
+        foreach ($columnPredicateMappingNodes as $columnPredicateMappingNode)
+        {
+            $predicateUri=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'predicate')->getId();
+            $actualColumnName=$columnPredicateMappingNode->getProperty(UriBuilder::PREFIX_CONVERSION.'columnName')->getValue();
+            $expectedMappingColumnName=$this->columnPredicateMappings[$predicateUri];
+            $this->assertEquals($expectedMappingColumnName,$actualColumnName);
+        }
+
+        return $pipeline;
+    }
 //    /**
 //     * @depends testMakePipeline
 //     */

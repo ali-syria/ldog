@@ -18,6 +18,7 @@ use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\TemplateBuilder\ReportTemplate;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
+use AliSyria\LDOG\Utilities\LdogTypes\DataExporterTarget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -195,6 +196,83 @@ abstract class Organization implements OrganizationContract
         }
 
         return new Collection($organizations);
+    }
+    public function dataTemplatesForExport(): Collection
+    {
+        $ldogPrefix=UriBuilder::PREFIX_LDOG;
+        $modellingOrganizationUri=$this->getUri();
+        $isModellingOrganization=in_array(ModellingOrganizationContract::class,class_implements(static::class));
+        $isBranch=$this instanceof Branch;
+        $isDepartment=$this instanceof Department;
+//        $exportTargets=DataExporterTarget::all();
+
+        if(!$isModellingOrganization)
+        {
+            $modellingOrganizationUri=$this->parentOrganization()->getUri();
+        }
+        $query="
+            PREFIX ldog: <$ldogPrefix>
+            
+            SELECT ?dataTemplate ?templateClass ?exportTarget
+            WHERE {
+                  ?dataTemplate ldog:isDataCollectionTemplateOf <$modellingOrganizationUri> ;
+                                 a ?templateClass ;
+                                 ldog:shouldBatchExportedBy ?exportTarget .                                      
+            }   
+        ";
+
+        $resultSet=GS::openConnection()->jsonQuery($query);
+
+        $dataTemplates=[];
+        foreach ($resultSet as $result)
+        {
+            $classUri=$result->templateClass->getUri();
+            $templateUri=$result->dataTemplate->getUri();
+            $exportTarget=$result->exportTarget->getUri();
+            if($isModellingOrganization)
+            {
+                if($exportTarget!==$ldogPrefix.DataExporterTarget::MODELLING_ORGANIZATION)
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                if($isBranch && !in_array($exportTarget,[
+                        $ldogPrefix.DataExporterTarget::ALL_SECTORS,
+                        $ldogPrefix.DataExporterTarget::ALL_BRANCHES,
+                    ]))
+                {
+                    continue;
+                }
+                elseif ($isDepartment && !in_array($exportTarget,[
+                        $ldogPrefix.DataExporterTarget::ALL_SECTORS,
+                        $ldogPrefix.DataExporterTarget::ALL_DEPARTMENTS,
+                    ]))
+                {
+                    continue;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            if($classUri==$ldogPrefix.'ReportTemplate')
+            {
+                $dataTemplates[]=ReportTemplate::retrieve($templateUri);
+            }
+            elseif($classUri==$ldogPrefix.'DataCollectionTemplate')
+            {
+                $dataTemplates[]=DataCollectionTemplate::retrieve($templateUri);
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        return new Collection($dataTemplates);
     }
     public function departments()
     {

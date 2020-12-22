@@ -23,6 +23,7 @@ interface OrganizationContract
     public function employees():Collection;
     public function exportTargets():Collection;
     public function dataTemplates():Collection;
+    public function dataTemplatesForExport():Collection;
 
     public static function create(?OrganizationContract $parentOrganization,string $name,
          string $description,string $logoUrl=null):self;

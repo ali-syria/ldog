@@ -93,10 +93,13 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public static function make(string $conversionId): self
     {
-        $dataTemplate=DataCollectionTemplate::retrieve('http://health.data.example/template/healthFacility');
         $dataCsvReader=self::initiateCsvReader(true,$conversionId);
         $dataJsonLD=self::initiateDatasetJsonLdDocument(true,$conversionId);
         $configJsonLD=self::initiateConfigJsonLdDocument(true,$conversionId);
+        $dataTemplateUri=$configJsonLD->getGraph()->getNode(self::getConversionUri($conversionId))
+            ->getProperty(self::CONVERSION_PREFIX."dataTemplate")
+            ->getValue();
+        $dataTemplate=DataCollectionTemplate::retrieve($dataTemplateUri);
         $shapeJsonLD=self::initiateShapeJsonLdDocument(true,$conversionId,$dataTemplate);
         $silkLslSpecsPath=self::initiateSilkLslSpecs(true,$conversionId,$dataTemplate);
 
@@ -164,7 +167,7 @@ class PublishingPipeline implements PublishingPipelineContract
             $conversionNode->addPropertyValue(self::CONVERSION_PREFIX."dataTemplate",$dataTemplate->uri);
             foreach (self::PHASES as $phase)
             {
-                $phaseNode=$graph->createNode();
+                $phaseNode=$graph->createNode(self::getConversionUri($conversionId)."/phase/$phase");
                 $phaseNode->setType(new Node($graph,self::CONVERSION_PREFIX.$phase));
                 $conversionNode->addPropertyValue(self::CONVERSION_PREFIX."hasConversionPhase",$phaseNode);
             }
@@ -409,9 +412,10 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$this->configJsonLD->getGraph();
         $rawRdfGenerationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'RawRdfGeneration')[0];
 
+        $i=1;
         foreach ($mappings as $predicateUri=>$columnName)
         {
-            $columnPredicateMappingNode=$graph->createNode();
+            $columnPredicateMappingNode=$graph->createNode(self::getConversionUri($this->id)."/ColumnPredicateMapping-".$i);
             $columnPredicateMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."ColumnPredicateMapping"));
             $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."columnName",$columnName);
             $predicate=$graph->createNode($predicateUri);
@@ -419,6 +423,7 @@ class PublishingPipeline implements PublishingPipelineContract
             $predicateLabel=$this->getShapePredicates()->where('uri',$predicateUri)->first()->name;
             $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicateLabel",$predicateLabel);
             $rawRdfGenerationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasColumnPredicateMapping',$columnPredicateMappingNode);
+            $i++;
         }
         $this->saveConfig();
     }
@@ -427,9 +432,10 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$this->configJsonLD->getGraph();
         $reconciliationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'Reconciliation')[0];
 
+        $i=1;
         foreach ($termResourceMappings as $termResourceMapping)
         {
-            $termResourceMappingNode=$graph->createNode();
+            $termResourceMappingNode=$graph->createNode(self::getConversionUri($this->id)."/TermResourceMapping-".$i);
             $termResourceMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."TermResourceMapping"));
             $predicate=$graph->createNode($termResourceMapping->predicate);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicate",$predicate);
@@ -439,6 +445,7 @@ class PublishingPipeline implements PublishingPipelineContract
             $matchType=$graph->createNode($termResourceMapping->matchType);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX.'matchType',$matchType);
             $reconciliationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasTermResourceMapping',$termResourceMappingNode);
+            $i++;
         }
         $this->saveConfig();
     }
