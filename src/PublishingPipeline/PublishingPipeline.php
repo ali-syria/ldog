@@ -250,9 +250,9 @@ class PublishingPipeline implements PublishingPipelineContract
                     continue;
                 }
                 $shapePredicate=$this->getShapePredicates()->where('uri',$predicate)->first();
-                if(is_null($shapePredicate->normalizedByFunction))
+                if(is_null(optional($shapePredicate)->normalizedByFunction))
                 {
-                    return;
+                    continue;
                 }
                 $resourceNode->removeProperty($predicate);
                 $resourceNode->addPropertyValue($predicate,Normalizer::handle($object->getValue(),$shapePredicate->normalizedByFunction));
@@ -491,6 +491,12 @@ class PublishingPipeline implements PublishingPipelineContract
     private function saveData()
     {
         $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($this->dataJsonLD->toJsonLd()));
+    }
+    public function getResourceNodes()
+    {
+        $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
+        $graph=$dataJsonLd->getGraph();
+        return $graph->getNodesByType($this->getTargetClassUri());
     }
 }
 //        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')
