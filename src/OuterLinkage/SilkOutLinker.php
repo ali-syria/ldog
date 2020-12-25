@@ -29,7 +29,7 @@ class SilkOutLinker implements LinkerContract
     {
         exec("java -DconfigFile=\"$this->silkSlsSpecsPath\" -jar \"$this->silkPath\" ",$output,$return);
         if($return > 0)
-        {dump($output);
+        {
             throw new \RuntimeException('error during executing silk lsl specs:'.$this->silkSlsSpecsPath);
         }
 

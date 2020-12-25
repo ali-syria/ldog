@@ -5,6 +5,7 @@
         <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
         <Prefix id="dbpedia" namespace="http://dbpedia.org/ontology/" />
         <Prefix id="fa" namespace="http://health.data.ae/ontology/HealthFacility#" />
+        <Prefix id="hfont" namespace="http://health.data.ae/ontology/HealthFacility#" />
     </Prefixes>
 
     <DataSources>
@@ -26,15 +27,14 @@
             <SourceDataset dataSource="source" var="a">
                 <RestrictTo>
                     <![CDATA[
-          ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://health.data.example/ontology/health#Facility> ]]> .
+          ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://health.data.ae/ontology/HealthFacility#HealthFacility> ]]> .
                 </RestrictTo>
             </SourceDataset>
 
             <TargetDataset dataSource="dbpedia" var="b">
                 <RestrictTo>
                     <![CDATA[
-          ?b <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/class/yago/WikicatCommunitiesInDubai> ;
-             <http://dbpedia.org/ontology/wikiPageID> 15983287 .
+          ?b <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/class/yago/WikicatCommunitiesInDubai> .
           ]]>
                 </RestrictTo>
             </TargetDataset>
@@ -42,7 +42,7 @@
 
             <LinkageRule>
                 <Compare metric="levenshteinDistance" threshold="3">
-                    <Input path="?a/fa:address_line_two" />
+                    <Input path="?a/hfont:area" />
                     <Input path="?b/rdfs:label" />
                 </Compare>
             </LinkageRule>

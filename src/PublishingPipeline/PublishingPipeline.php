@@ -14,6 +14,7 @@ use AliSyria\LDOG\Contracts\TemplateBuilder\DataTemplate;
 use AliSyria\LDOG\Facades\GS;
 use AliSyria\LDOG\Facades\URI;
 use AliSyria\LDOG\Facades\VAL;
+use AliSyria\LDOG\Jobs\LinkToOthersDatasetsJob;
 use AliSyria\LDOG\Normalization\Normalizer;
 use AliSyria\LDOG\OuterLinkage\SilkOutLinker;
 use AliSyria\LDOG\ShapesManager\DataShape;
@@ -324,12 +325,9 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public function linkToOthersDatasets(): void
     {
-        (new SilkOutLinker(config('ldog.storage.disk'),$this->silkLslSpecsPath))->performLinkage();
-    }
-
-    private function mapCsvColumnNamesToShapeProperties(): void
-    {
-
+        LinkToOthersDatasetsJob::dispatch(config('ldog.storage.disk'),$this->silkLslSpecsPath)
+            ->onConnection(config('ldog.silk.queue_connection'))
+            ->onQueue(config('ldog.silk.queue_name'));
     }
 
     private function updateObjectValue(string $predicate,$oldTerm,$newTerm):void
