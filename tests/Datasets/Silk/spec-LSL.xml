@@ -4,7 +4,6 @@
         <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
         <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
         <Prefix id="dbpedia" namespace="http://dbpedia.org/ontology/" />
-        <Prefix id="fa" namespace="http://health.data.ae/ontology/HealthFacility#" />
         <Prefix id="hfont" namespace="http://health.data.ae/ontology/HealthFacility#" />
     </Prefixes>
 
@@ -15,7 +14,7 @@
         </Dataset>
 
         <Dataset id="source" type="sparqlEndpoint">
-            <Param name="endpointURI" value="http://localhost:7200/repositories/test" />
+            <Param name="endpointURI" value="http://localhost:7200/repositories/open" />
         </Dataset>
     </DataSources>
 
@@ -27,7 +26,7 @@
             <SourceDataset dataSource="source" var="a">
                 <RestrictTo>
                     <![CDATA[
-          ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://health.data.ae/ontology/HealthFacility#HealthFacility> ]]> .
+          ?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://health.data.ae/ontology/HealthFacility#HealthFacility> . ]]>
                 </RestrictTo>
             </SourceDataset>
 
@@ -41,7 +40,7 @@
 
 
             <LinkageRule>
-                <Compare metric="levenshteinDistance" threshold="3">
+                <Compare metric="levenshteinDistance" threshold="1">
                     <Input path="?a/hfont:area" />
                     <Input path="?b/rdfs:label" />
                 </Compare>

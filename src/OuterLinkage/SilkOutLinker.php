@@ -22,7 +22,7 @@ class SilkOutLinker implements LinkerContract
         $this->silkPath=config('ldog.silk.path');
         $this->disk=Storage::disk($diskName);
         $this->silkSlsSpecsPath=$this->disk->path($silkSlsSpecsRelativePath);
-        $this->linkesNtriplesFilePath=dirname($this->silkSlsSpecsPath)."accepted_links.nt";
+        $this->linkesNtriplesFilePath=dirname($this->silkSlsSpecsPath)."/accepted_links.nt";
     }
 
     public function performLinkage()

@@ -28,7 +28,7 @@ class LinkToOthersDatasetsJob implements ShouldQueue
 
     public function handle()
     {
-        (new SilkOutLinker($this->diskName,$this->silkLslSpecsPath))
+        (new SilkOutLinker($this->diskName,$this->silkSlsSpecsRelativePath))
             ->performLinkage();
     }
 }
