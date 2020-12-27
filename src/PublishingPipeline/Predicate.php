@@ -33,4 +33,8 @@ class Predicate
         $this->validationMessage=$validationMessage;
         $this->normalizedByFunction=$normalizedByFunctionUri ? Normalizer::extractTargetMethod($normalizedByFunctionUri):null;
     }
+    public function isObjectPredicate():bool
+    {
+        return filled($this->objectClassUri);
+    }
 }

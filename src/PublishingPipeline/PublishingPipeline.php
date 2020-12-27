@@ -325,6 +325,10 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public function linkToOthersDatasets(): void
     {
+        if(blank($this->silkLslSpecsPath))
+        {
+            return;
+        }
         LinkToOthersDatasetsJob::dispatch(config('ldog.storage.disk'),$this->silkLslSpecsPath)
             ->onConnection(config('ldog.silk.queue_connection'))
             ->onQueue(config('ldog.silk.queue_name'));
@@ -450,7 +454,10 @@ class PublishingPipeline implements PublishingPipelineContract
     public function getShapePredicates():Collection
     {
         $propeties=$this->nodeShape->getProperty(UriBuilder::PREFIX_SHACL."property");
-
+        if(!is_array($propeties))
+        {
+            $propeties=[$propeties];
+        }
         $predicates=[];
         foreach ($propeties as $property)
         {
@@ -478,9 +485,41 @@ class PublishingPipeline implements PublishingPipelineContract
     {
         return $this->getShapePredicates()->whereNull('objectClassUri');
     }
+    public function getShapeObjectPredicateClassResources(Predicate $predicate):Collection
+    {
+        if(!$predicate->isObjectPredicate())
+        {
+            return collect([]);
+        }
+        return GS::getConnection()->getClassResourceLabels($predicate->objectClassUri);
+    }
     public function getCsvColumnNames():array
     {
         return $this->dataCsv->getHeader();
+    }
+    public function getCsvColumnIndex(string $column):int
+    {
+        return array_flip($this->dataCsv->getHeader())[$column];
+    }
+    public function getCsvDistinctColumnValues(string $column):array
+    {
+        $columnIndex=$this->getCsvColumnIndex($column);
+        return array_values(array_unique(iterator_to_array($this->dataCsv->skipEmptyRecords()->fetchColumn($columnIndex),false)));
+    }
+    public function getCsvColumnNameForPredicate(Predicate $predicate):string
+    {
+        $graph=$this->configJsonLD->getGraph();
+        $columnPredicateMappings=$graph->getNodesByType(self::CONVERSION_PREFIX.'ColumnPredicateMapping');
+        $columnName=null;
+        foreach ($columnPredicateMappings as $columnPredicateMapping)
+        {
+            if($columnPredicateMapping->getProperty(self::CONVERSION_PREFIX."predicate")->getId()==$predicate->uri)
+            {
+                $columnName= $columnPredicateMapping->getProperty(self::CONVERSION_PREFIX."columnName")->getValue();
+                break;
+            }
+        }
+        return  $columnName;
     }
     private function saveConfig()
     {

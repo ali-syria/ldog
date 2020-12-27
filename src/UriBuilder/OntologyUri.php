@@ -18,7 +18,7 @@ class OntologyUri extends UriBuilder implements OntologyUriContract
     }
     public function setName(string $name)
     {
-        $this->name=Str::of($name)->trim();
+        $this->name=Str::of($name)->trim(' ')->trim()->slug();
     }
     public function getBasueUri(): string
     {
@@ -27,6 +27,6 @@ class OntologyUri extends UriBuilder implements OntologyUriContract
 
     public function getResourceUri(string $resouce): string
     {
-        return $this->getBasueUri().Str::of($resouce)->trim();
+        return $this->getBasueUri().Str::of($resouce)->trim()->slug();
     }
 }

@@ -38,7 +38,12 @@ class DataCollection extends BatchImport implements DataCollectionContract
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
         $fromDateStr=(string) $fromDate;
         $toDateStr=(string) $toDate;
-
+        $dateInsert='';
+        if($fromDateStr && $toDateStr)
+        {
+            $dateInsert="ldog:fromDate '$fromDateStr' ;
+                        ldog:toDate '$toDateStr'";
+        }
         $query="
             PREFIX ldog: <$ldogPrefix>
             PREFIX conv: <$conversionPrefix>
@@ -53,14 +58,13 @@ class DataCollection extends BatchImport implements DataCollectionContract
                         conv:basedOnConversion <{$conversionUri}> ;
                         ldog:publisher <{$organization->getUri()}> ;
                         ldog:publishedBy <{$employee->getUri()}> ;
-                        ldog:fromDate '$fromDateStr' ;
-                        ldog:toDate '$toDateStr' .
+                        $dateInsert .
             }
         ";
         GS::getConnection()->rawUpdate($query);
 
         return new self($batchImportUri,$label,$description,$dataTemplate,$conversionUri,
-            $organization,$employee,$fromDate->setMicro(0),$toDate->setMicro(0));
+            $organization,$employee,optional($fromDate)->setMicro(0),optional($toDate)->setMicro(0));
     }
 
     public static function retrieve(string $uri): ?self

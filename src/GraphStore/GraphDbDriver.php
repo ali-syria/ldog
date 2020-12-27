@@ -9,8 +9,10 @@ use AliSyria\LDOG\Contracts\GraphStore\GraphManagementContract;
 use AliSyria\LDOG\Contracts\GraphStore\GraphUpdateContract;
 use AliSyria\LDOG\Contracts\GraphStore\QueryContract;
 use AliSyria\LDOG\Contracts\GraphStore\ResourceDescriptionContract;
+use AliSyria\LDOG\UriBuilder\UriBuilder;
 use EasyRdf\Sparql\Result;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContract,GraphManagementContract
@@ -181,5 +183,28 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
     public static function getSparqlEndpoint():string
     {
         return config('ldog.graph_stores.open.host')."/repositories/".config('ldog.graph_stores.open.repository');
+    }
+
+    public function getClassResourceLabels(string $classUri): Collection
+    {
+        $rdfsPrefix=UriBuilder::PREFIX_RDFS;
+
+        $resultSet=$this->jsonQuery("
+            PREFIX rdfs: <$rdfsPrefix>
+            
+            SELECT ?uri ?label
+            WHERE {
+                  ?uri a  <$classUri> .
+                  OPTIONAL {?uri rdfs:label ?label  . }                         
+            }                                       
+        ");
+        $labels=[];
+        foreach ($resultSet as $result)
+        {
+            $labels[]=new ResourceLabel(
+                $result->uri->getUri(),optional(optional($result)->label)->getValue());
+        }
+
+        return collect($labels);
     }
 }
