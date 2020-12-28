@@ -124,7 +124,7 @@ class GraphDbLuceneDriverTest extends TestCase
             }
         ");
         $term=$this->graphDbLucene->match('DamAscus',$topograhyPrefix."City");
-        $this->assertEquals($damascusUri,$term->getResourceUri());
+        $this->assertEquals($damascusUri,$term->getUri());
         $this->assertEquals('damascus',$term->getLable());
         $this->assertEquals(1.0,$term->getScore());
     }

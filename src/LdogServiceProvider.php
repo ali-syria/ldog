@@ -11,6 +11,7 @@ use AliSyria\LDOG\Console\RefreshGraphDbLuceneIndex;
 use AliSyria\LDOG\GraphStore\ConnectionFactory;
 use AliSyria\LDOG\GraphStore\GraphDbDriver;
 use AliSyria\LDOG\GraphStore\GraphStoreManager;
+use AliSyria\LDOG\Reconciliation\GraphDbLuceneDriver;
 use AliSyria\LDOG\ShaclValidator\JenaShaclValidator;
 use AliSyria\LDOG\UriBuilder\Factory;
 use AliSyria\LDOG\UriDereferencer\Dereferencer;
@@ -23,7 +24,7 @@ class LdogServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php','config');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php','ldog');
 
         $this->app->singleton('ldog.uri',function($app){
             return $app->make(Factory::class);
@@ -42,6 +43,9 @@ class LdogServiceProvider extends ServiceProvider
         });
         $this->app->singleton('ldog.validator',function($app){
             return $app->make(JenaShaclValidator::class);
+        });
+        $this->app->singleton('ldog.reconciliation',function($app){
+            return $app->make(GraphDbLuceneDriver::class);
         });
     }
 

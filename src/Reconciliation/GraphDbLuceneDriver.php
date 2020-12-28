@@ -127,6 +127,6 @@ class GraphDbLuceneDriver implements ReconciliatorContract
                 $result->score->getValue());
         }
 
-        return new Collection($terms);
+        return (new Collection($terms))->sortByDesc('score');
     }
 }

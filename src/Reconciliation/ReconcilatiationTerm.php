@@ -10,20 +10,20 @@ use Illuminate\Support\Collection;
 class ReconcilatiationTerm implements ReconcilatiationTermContract
 {
 
-    private string $resourceUri;
-    private string $label;
-    private float $score;
+    public string $uri;
+    public string $label;
+    public float $score;
 
     public function __construct(string $resourceUri,string $label,float $score)
     {
-        $this->resourceUri=$resourceUri;
+        $this->uri=$resourceUri;
         $this->label=$label;
         $this->score=$score;
     }
 
-    public function getResourceUri(): string
+    public function getUri(): string
     {
-        return $this->resourceUri;
+        return $this->uri;
     }
 
     public function getLable(): string
