@@ -16,7 +16,7 @@
                     ldog:resourceLabelExpression "health facility: {name},number: {unique_id}" ;
                     sh:property [
                         sh:path hfont:uniqueID ;
-                        sh:name "unique_id" ;
+                        sh:name "unique id" ;
                         sh:description "unique id" ;
                         sh:order 1 ;
                         sh:datatype xsd:integer;

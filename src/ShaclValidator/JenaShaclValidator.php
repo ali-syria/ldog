@@ -22,7 +22,7 @@ class JenaShaclValidator extends ShaclValidator
 
     public function validateGraph(string $dataGraphPath, string $shapGraphPath): ShaclValidationReportContract
     {
-        exec("shacl validate --shapes=".$shapGraphPath." --data=".$dataGraphPath,$output,$retur);
+        exec("shacl validate --shapes=\"".$shapGraphPath."\" --data=\"".$dataGraphPath."\"",$output,$retur);
 //        dd(implode(" ",$output));
 //        $validationProcess=new Process(['shacl validate','--shapes',$shapGraphPath,'--data',$dataGraphPath]);
 //        $validationProcess->run();
@@ -32,7 +32,6 @@ class JenaShaclValidator extends ShaclValidator
 //        }
 //
 //        dd($validationProcess->getOutput());
-
         $graph=new Graph(null);
         $graph->parse(implode(" ",$output),'turtle',null);
         $format = \EasyRdf\Format::getFormat('jsonld');
