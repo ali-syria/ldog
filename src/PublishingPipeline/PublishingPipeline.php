@@ -535,6 +535,11 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$dataJsonLd->getGraph();
         return $graph->getNodesByType($this->getTargetClassUri());
     }
+    public function getResourceNode(string $uri)
+    {
+        $graph=$this->dataJsonLD->getGraph();
+        return $graph->getNode($uri);
+    }
 }
 //        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')
 //            ->getProperty("http://www.w3.org/ns/shacl#property");
