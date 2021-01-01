@@ -47,7 +47,14 @@ class ShaclValidationResult implements ShaclValidationResultContract
 
     public function getValue(): string
     {
-        return $this->result['http://www.w3.org/ns/shacl#value'][0]['@value'];
+        if(isset($this->result['http://www.w3.org/ns/shacl#value'][0]['@value']))
+        {
+            return $this->result['http://www.w3.org/ns/shacl#value'][0]['@value'];
+        }
+        else
+        {
+            return $this->result['http://www.w3.org/ns/shacl#value'][0]['@id'];
+        }
     }
 
     public function getSourceConstraintComponent(): string

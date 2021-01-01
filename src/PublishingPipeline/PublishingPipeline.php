@@ -540,6 +540,28 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$this->dataJsonLD->getGraph();
         return $graph->getNode($uri);
     }
+    public function getObjectOccurences(string $predicateUri,string $value):Collection
+    {
+        return collect($this->getResourceNodes())->filter(function($resource,$key)use($predicateUri,$value){
+            $object=collect($resource->getProperties())
+                ->filter(function($property,$key)use($predicateUri){
+                    return $key==$predicateUri;
+                })->first();
+
+            if($object instanceof TypedValue)
+            {
+                return Str::lower($object->getValue())==Str::lower($value);
+            }
+            else
+            {
+                return $object->getId()==$value;
+            }
+        });
+    }
+    public function getObjectOccurencesCount(string $predicateUri,string $value):int
+    {
+        return $this->getObjectOccurences($predicateUri,$value)->count();
+    }
 }
 //        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')
 //            ->getProperty("http://www.w3.org/ns/shacl#property");
