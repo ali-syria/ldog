@@ -58,25 +58,36 @@ ldog:BasicPropertyShape
         sh:minCount 1 ;
         sh:maxCount 1 ;
     ] ;     
-    sh:property [
-        sh:path sh:datatype ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;        
-    ] ;
+    sh:or (
+        [
+            sh:property [
+                        sh:path sh:datatype ;
+                        sh:minCount 1 ;
+                        sh:maxCount 1 ;
+                    ] ;
+        ]
+        [
+            sh:property [
+                        sh:path sh:class ;
+                        sh:minCount 1 ;
+                        sh:maxCount 1 ;
+                    ] ;
+        ]
+    );
     sh:property [
         sh:path sh:minCount ;
         sh:minCount 1 ;
-        sh:maxCount 1 ;        
-    ] ;  
+        sh:maxCount 1 ;
+    ] ;
     sh:property [
         sh:path sh:maxCount ;
         sh:minCount 1 ;
-        sh:maxCount 1 ;        
-    ] ;          
+        sh:maxCount 1 ;
+    ] ;
     sh:property [
         sh:path sh:message ;
         sh:minCount 1 ;
-        sh:maxCount 1 ;       
+        sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path ldog:normalizedBy ;
@@ -85,5 +96,4 @@ ldog:BasicPropertyShape
     ] .
 
 
- 
-    
+

@@ -12,14 +12,14 @@ class Predicate
     public string $name;
     public ?string $description;
     public int $order;
-    public string $dataType;
+    public ?string $dataType;
     public ?string $objectClassUri;
     public int $minCount;
     public int $maxCount;
     public string $validationMessage;
     public ?string $normalizedByFunction;
 
-    public function __construct(string $uri,string $name,?string $description,int $order,string $dataType,
+    public function __construct(string $uri,string $name,?string $description,int $order,?string $dataType,
         ?string $objectClassUri,int $minCount,int $maxCount,string $validationMessage,string $normalizedByFunctionUri=null)
     {
         $this->uri=$uri;

@@ -15,6 +15,26 @@
                     ldog:resourceIdentifierProperty hfont:uniqueID ;
                     ldog:resourceLabelExpression "health facility: {name},number: {unique_id}" ;
                     sh:property [
+                        sh:path rdf:type ;
+                        sh:name "Type" ;
+                        sh:description "Type" ;
+                        sh:order 1 ;
+                        sh:class hfont:HealthFacility;
+                        sh:minCount 1;
+                        sh:maxCount 1;
+                        sh:message "type" ;
+                    ] ;
+                    sh:property [
+                        sh:path rdfs:label ;
+                        sh:name "Label" ;
+                        sh:description "Label" ;
+                        sh:order 1 ;
+                        sh:datatype xsd:string;
+                        sh:minCount 1;
+                        sh:maxCount 1;
+                        sh:message "label" ;
+                    ] ;
+                    sh:property [
                         sh:path hfont:uniqueID ;
                         sh:name "unique id" ;
                         sh:description "unique id" ;
@@ -41,7 +61,6 @@
                         sh:name "category" ;
                         sh:description "category of facility" ;
                         sh:order 3 ;
-                        sh:datatype xsd:anyUri ;
                         sh:class hfont:HealthFacilityCategory ;
                         sh:minCount 1;
                         sh:maxCount 1;
@@ -52,7 +71,6 @@
                         sh:name "sub category" ;
                         sh:description "sub category of facility" ;
                         sh:order 4 ;
-                        sh:datatype xsd:anyUri  ;
                         sh:class hfont:HealthFacilitySubCategory ;
                         sh:minCount 1;
                         sh:maxCount 1;
@@ -106,7 +124,6 @@
                         sh:description "telephone of facility" ;
                         sh:order 9 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "telephone field format " ;
@@ -117,7 +134,6 @@
                         sh:description "license expiry date of facility" ;
                         sh:order 10 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "expiry date field: required,valid date format is " ;
@@ -128,10 +144,9 @@
                         sh:description "license status of facility" ;
                         sh:order 10 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
+                        sh:message "invalid status " ;
                     ] ;
                     sh:property [
                         sh:path hfont:area ;
@@ -139,10 +154,9 @@
                         sh:description "area of facility" ;
                         sh:order 12 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
+                        sh:message "invalid area" ;
                     ] ;
                     sh:property [
                         sh:path hfont:email ;
@@ -150,10 +164,9 @@
                         sh:description "email of facility" ;
                         sh:order 13 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
+                        sh:message "invalid email" ;
                     ] ;
                     sh:property [
                         sh:path hfont:latitude ;
@@ -161,10 +174,9 @@
                         sh:description "latitude of facility" ;
                         sh:order 14 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
+                        sh:message "invalid latitude" ;
                     ] ;
                     sh:property [
                         sh:path hfont:longitude ;
@@ -172,10 +184,9 @@
                         sh:description "longitude of facility" ;
                         sh:order 15 ;
                         sh:datatype xsd:string;
-                        sh:pattern " " ;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
+                        sh:message "invalid longitude " ;
                     ] .
 
                                                       

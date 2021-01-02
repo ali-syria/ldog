@@ -266,6 +266,7 @@ class PublishingPipeline implements PublishingPipelineContract
 
     public function reconcile(Collection $termResourceMappings): void
     {
+        $shapeObjectPredicates=$this->getShapeObjectPredicates();
         $this->mapTermsToResources($termResourceMappings);
         $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
         $graph=$dataJsonLd->getGraph();
@@ -285,6 +286,7 @@ class PublishingPipeline implements PublishingPipelineContract
                     {
                         $resourceNode->removeProperty($predicate);
                         $targetNode=$graph->createNode($termResourceMapping->resource);
+                        $targetNode->setType($shapeObjectPredicates->where('uri',$termResourceMapping->resource)->first()->objectClassUri);
                         $resourceNode->addPropertyValue($predicate,$targetNode);
                     }
                 }
@@ -353,6 +355,10 @@ class PublishingPipeline implements PublishingPipelineContract
         foreach ($mappings as $predicateUri=>$columnName)
         {
             $dataTypeUri=$shapePredicates->where('uri',$predicateUri)->first()->dataType;
+            if(blank($dataTypeUri))
+            {
+                continue;
+            }
             $resource->addPropertyValue($predicateUri,new TypedValue($record[$columnName],$dataTypeUri));
         }
     }
@@ -461,12 +467,17 @@ class PublishingPipeline implements PublishingPipelineContract
         $predicates=[];
         foreach ($propeties as $property)
         {
+            $path=$property->getProperty(UriBuilder::PREFIX_SHACL.'path')->getId();
+            if(in_array($path,[UriBuilder::PREFIX_RDF.'type',UriBuilder::PREFIX_RDFS.'label']))
+            {
+                continue;
+            }
             $predicates[]=new Predicate(
-                $property->getProperty(UriBuilder::PREFIX_SHACL.'path')->getId(),
+                $path,
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'name')->getValue(),
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'description')->getValue(),
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'order')->getValue(),
-                $property->getProperty(UriBuilder::PREFIX_SHACL.'datatype')->getId(),
+                optional($property->getProperty(UriBuilder::PREFIX_SHACL.'datatype'))->getId(),
                 optional($property->getProperty(UriBuilder::PREFIX_SHACL.'class'))->getId(),
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'minCount')->getValue(),
                 $property->getProperty(UriBuilder::PREFIX_SHACL.'maxCount')->getValue(),
@@ -540,7 +551,7 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$this->dataJsonLD->getGraph();
         return $graph->getNode($uri);
     }
-    public function getObjectOccurences(string $predicateUri,string $value):Collection
+    public function getObjectOccurences(string $predicateUri,?string $value):Collection
     {
         return collect($this->getResourceNodes())->filter(function($resource,$key)use($predicateUri,$value){
             $object=collect($resource->getProperties())
@@ -548,17 +559,25 @@ class PublishingPipeline implements PublishingPipelineContract
                     return $key==$predicateUri;
                 })->first();
 
+            if(is_null($object))
+            {
+                return false;
+            }
             if($object instanceof TypedValue)
             {
                 return Str::lower($object->getValue())==Str::lower($value);
             }
-            else
+            elseif($object instanceof Node)
             {
                 return $object->getId()==$value;
             }
+            else
+            {
+                return false;
+            }
         });
     }
-    public function getObjectOccurencesCount(string $predicateUri,string $value):int
+    public function getObjectOccurencesCount(string $predicateUri,?string $value):int
     {
         return $this->getObjectOccurences($predicateUri,$value)->count();
     }

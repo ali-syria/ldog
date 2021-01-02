@@ -45,15 +45,19 @@ class ShaclValidationResult implements ShaclValidationResultContract
         return $this->result['http://www.w3.org/ns/shacl#resultPath'][0]['@id'];
     }
 
-    public function getValue(): string
+    public function getValue(): ?string
     {
         if(isset($this->result['http://www.w3.org/ns/shacl#value'][0]['@value']))
         {
             return $this->result['http://www.w3.org/ns/shacl#value'][0]['@value'];
         }
-        else
+        elseif(isset($this->result['http://www.w3.org/ns/shacl#value'][0]['@id']))
         {
             return $this->result['http://www.w3.org/ns/shacl#value'][0]['@id'];
+        }
+        else
+        {
+            return null;
         }
     }
 

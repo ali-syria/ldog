@@ -82,7 +82,7 @@ class ShapeManager implements ShapeImporterContract
     {
         $shapeGraphContent=file_get_contents($shapeUrl);
 
-        $temporaryDirectory=(new TemporaryDirectory())->name(Str::uuid())->create();
+        $temporaryDirectory=(new TemporaryDirectory())->location('C:\Users\ASUS\AppData\Local\Temp')->name(Str::uuid())->create();
         $shapeFileName=Str::uuid().'.ttl';
         $shapeFilePath=$temporaryDirectory->path($shapeFileName);
 

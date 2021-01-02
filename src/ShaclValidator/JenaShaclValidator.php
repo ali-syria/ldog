@@ -35,7 +35,7 @@ class JenaShaclValidator extends ShaclValidator
             throw new ProcessFailedException($validationProcess);
         }
 //
-//        dd($validationProcess->getOutput());
+//        dd($validationProcess->getOutput());dd($validationProcess->getErrorOutput());
         $graph=new Graph(null);
         $graph->parse($validationProcess->getOutput(),'turtle',null);
         $format = \EasyRdf\Format::getFormat('jsonld');
