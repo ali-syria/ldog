@@ -10,30 +10,11 @@
 
 :HealthFacilityShape a sh:NodeShape ;
                      a ldog:DataShape ;
-                    sh:closed true;
+                    #sh:closed true;
+                    #sh:ignoredProperties (rdf:type rdfs:label) ;
                     sh:targetClass hfont:HealthFacility ;
                     ldog:resourceIdentifierProperty hfont:uniqueID ;
-                    ldog:resourceLabelExpression "health facility: {name},number: {unique_id}" ;
-                    sh:property [
-                        sh:path rdf:type ;
-                        sh:name "Type" ;
-                        sh:description "Type" ;
-                        sh:order 1 ;
-                        sh:class hfont:HealthFacility;
-                        sh:minCount 1;
-                        sh:maxCount 1;
-                        sh:message "type" ;
-                    ] ;
-                    sh:property [
-                        sh:path rdfs:label ;
-                        sh:name "Label" ;
-                        sh:description "Label" ;
-                        sh:order 1 ;
-                        sh:datatype xsd:string;
-                        sh:minCount 1;
-                        sh:maxCount 1;
-                        sh:message "label" ;
-                    ] ;
+                    ldog:resourceLabelExpression "health facility: {name},number: {unique id}" ;
                     sh:property [
                         sh:path hfont:uniqueID ;
                         sh:name "unique id" ;

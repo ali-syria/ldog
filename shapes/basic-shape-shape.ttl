@@ -13,12 +13,18 @@ ldog:BasicShapeShape
         sh:maxCount 2 ;
         sh:hasValue ldog:DataShape;
     ] ;
-    sh:property [
-        sh:path sh:closed ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;   
-        sh:hasValue true;    
-    ] ;
+#    sh:property [
+#        sh:path sh:closed ;
+#        sh:minCount 1 ;
+#        sh:maxCount 1 ;
+#        sh:hasValue true;
+#    ] ;
+#    sh:property [
+#        sh:path sh:ignoredProperties ;
+#        sh:minCount 1 ;
+#        sh:maxCount 1 ;
+#        sh:hasValue (rdf:type rdfs:label) ;
+#    ] ;
     sh:property [
         sh:path sh:targetClass ;
         sh:minCount 1 ;

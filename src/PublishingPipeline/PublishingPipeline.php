@@ -225,7 +225,7 @@ class PublishingPipeline implements PublishingPipelineContract
 
         $dataGraph=$this->dataJsonLD->getGraph();
         $shapePredicates=$this->getShapePredicates();
-        foreach ($this->dataCsv->getRecords() as $record)
+        foreach ($this->dataCsv->skipEmptyRecords()->getRecords() as $record)
         {
             $resource=$this->generateResourceNode($dataGraph,$targetClassName,
                 $record[$resourceIdentifierCsvColumnName]);
@@ -274,20 +274,22 @@ class PublishingPipeline implements PublishingPipelineContract
 
         foreach ($resourceNodes as $resourceNode)
         {
-            foreach ($resourceNode->getProperties() as $predicate=>$object)
+            $resourceProperties=$resourceNode->getProperties();
+            foreach ($shapeObjectPredicates as $shapeObjectPredicate)
             {
-                if(!($object instanceof TypedValue))
+                $object=$resourceProperties[$shapeObjectPredicate->uri] ?? null;
+                if(!is_null($object)&&!($object instanceof TypedValue))
                 {
                     continue;
                 }
-                foreach ($termResourceMappings->where('predicate',$predicate) as $termResourceMapping)
+                foreach ($termResourceMappings->where('predicate',$shapeObjectPredicate->uri) as $termResourceMapping)
                 {
-                    if($object->getValue()==$termResourceMapping->term)
+                    if(optional($object)->getValue()==$termResourceMapping->term)
                     {
-                        $resourceNode->removeProperty($predicate);
+                        $resourceNode->removeProperty($shapeObjectPredicate->uri);
                         $targetNode=$graph->createNode($termResourceMapping->resource);
-                        $targetNode->setType($shapeObjectPredicates->where('uri',$termResourceMapping->resource)->first()->objectClassUri);
-                        $resourceNode->addPropertyValue($predicate,$targetNode);
+                        $targetNode->setType(new Node($graph,$shapeObjectPredicates->where('uri',$termResourceMapping->predicate)->first()->objectClassUri));
+                        $resourceNode->addPropertyValue($shapeObjectPredicate->uri,$targetNode);
                     }
                 }
             }
@@ -336,12 +338,17 @@ class PublishingPipeline implements PublishingPipelineContract
             ->onQueue(config('ldog.silk.queue_name'));
     }
 
-    private function updateObjectValue(string $predicate,$oldTerm,$newTerm):void
+    public function updateObjectValue(Node $resource,string $predicateUri,$oldTerm,$newTerm):void
     {
-
+        $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
+        $graph=$dataJsonLd->getGraph();
+        $resourceNode=$graph->getNode($resource->getId());
+        $resourceNode->removeProperty($predicateUri);
+        $resourceNode->addPropertyValue($predicateUri,$newTerm);
+        $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($dataJsonLd->toJsonLd()));
     }
 
-    private function bulkUpdateObjectValues(string $predicate,$oldTerm,$newTerm):void
+    public function bulkUpdateObjectValues(string $predicate,$oldTerm,$newTerm):void
     {
 
     }
@@ -354,12 +361,16 @@ class PublishingPipeline implements PublishingPipelineContract
     {
         foreach ($mappings as $predicateUri=>$columnName)
         {
-            $dataTypeUri=$shapePredicates->where('uri',$predicateUri)->first()->dataType;
-            if(blank($dataTypeUri))
+            $shapePredicate=$shapePredicates->where('uri',$predicateUri)->first();
+            if(!$shapePredicate->isObjectPredicate())
             {
+                $resource->addPropertyValue($predicateUri,new TypedValue($record[$columnName],$shapePredicate->dataType));
                 continue;
             }
-            $resource->addPropertyValue($predicateUri,new TypedValue($record[$columnName],$dataTypeUri));
+            else
+            {
+                $resource->addPropertyValue($predicateUri,$record[$columnName]);
+            }
         }
     }
     public function attachLabelToResourceFromCsv(Node $resource,array $record,array $mappings,Collection $shapePredicates)
