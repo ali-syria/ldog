@@ -227,6 +227,10 @@ class PublishingPipeline implements PublishingPipelineContract
         $shapePredicates=$this->getShapePredicates();
         foreach ($this->dataCsv->skipEmptyRecords()->getRecords() as $record)
         {
+            if(blank($record[$resourceIdentifierCsvColumnName]))
+            {
+                continue;
+            }
             $resource=$this->generateResourceNode($dataGraph,$targetClassName,
                 $record[$resourceIdentifierCsvColumnName]);
             $this->attachPredicatesToResource($resource,$record,$mappings,$shapePredicates);
@@ -338,19 +342,39 @@ class PublishingPipeline implements PublishingPipelineContract
             ->onQueue(config('ldog.silk.queue_name'));
     }
 
-    public function updateObjectValue(Node $resource,string $predicateUri,$oldTerm,$newTerm):void
+    public function updateObjectValue(Node $resource,string $predicateUri,$oldTerm,$newTerm,bool $save=true):void
     {
-        $dataJsonLd=self::initiateDatasetJsonLdDocument(true,$this->id);
-        $graph=$dataJsonLd->getGraph();
-        $resourceNode=$graph->getNode($resource->getId());
-        $resourceNode->removeProperty($predicateUri);
-        $resourceNode->addPropertyValue($predicateUri,$newTerm);
-        $this->storage->put($this->conversionPath."/dataset.jsonld",JsonLD::toString($dataJsonLd->toJsonLd()));
+        $shapePredicates=$this->getShapePredicates();
+        $shapePredicate=$shapePredicates->where('uri',$predicateUri)->first();
+        $resource->removeProperty($predicateUri);
+
+        if(!$shapePredicate->isObjectPredicate())
+        {
+            $resource->addPropertyValue($predicateUri,new TypedValue($newTerm,$shapePredicate->dataType));
+        }
+        else
+        {
+            $graph=$resource->getGraph();
+            $objectNode=$graph->createNode($newTerm);
+            $objectNode->setType(new Node($graph,$shapePredicate->objectClassUri));
+            $resource->addPropertyValue($predicateUri,$objectNode);
+        }
+
+        if($save)
+        {
+            $this->saveData();
+        }
     }
 
-    public function bulkUpdateObjectValues(string $predicate,$oldTerm,$newTerm):void
+    public function bulkUpdateObjectValues(string $predicateUri,$oldTerm,$newTerm):void
     {
+        $graph=$this->dataJsonLD->getGraph();
+        foreach ($this->getObjectOccurences($predicateUri,$oldTerm) as $resource)
+        {
+            $this->updateObjectValue($graph->getNode($resource->getId()),$predicateUri,$oldTerm,$newTerm,false);
+        }
 
+        $this->saveData();
     }
 
     public static function getConversionUri(string $conversionId):string
@@ -362,6 +386,10 @@ class PublishingPipeline implements PublishingPipelineContract
         foreach ($mappings as $predicateUri=>$columnName)
         {
             $shapePredicate=$shapePredicates->where('uri',$predicateUri)->first();
+            if(blank($record[$columnName]))
+            {
+                continue;
+            }
             if(!$shapePredicate->isObjectPredicate())
             {
                 $resource->addPropertyValue($predicateUri,new TypedValue($record[$columnName],$shapePredicate->dataType));
