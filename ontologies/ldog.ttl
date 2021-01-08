@@ -179,10 +179,10 @@ owl:sameAs rdf:type owl:AnnotationProperty .
              rdfs:range :Ontology .
 
 
-###  http://ldog.org/ontologies/2020/8/framework#hasParameter
-:hasParameter rdf:type owl:ObjectProperty ;
-              rdfs:domain :NormalizationFunction ;
-              rdfs:range rdf:Seq .
+###  http://ldog.org/ontologies/2020/8/framework#hasParameters
+:hasParameters rdf:type owl:ObjectProperty ;
+               rdfs:domain :NormalizationFunction ;
+               rdfs:range rdf:Seq .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasPassword
@@ -776,6 +776,11 @@ owl:topDataProperty rdfs:domain :DataShape ;
 :Daily rdf:type owl:NamedIndividual ,
                 :Frequency ;
        rdfs:label "Daily" .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#DateFormat
+:DateFormat rdf:type owl:NamedIndividual ,
+                     :NormalizationFunction .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Education

@@ -23,6 +23,7 @@ interface PublishingPipelineContract
     public function publish(OrganizationContract $organization,EmployeeContract $employee,
                             Carbon $fromDate=null,Carbon $toDate=null):void ;
     public function linkToOthersDatasets():void ;
+    public function updateIndex():void;
 
     public function updateObjectValue(Node $resource,string $predicateUri,$oldTerm,$newTerm,bool $save=true):void;
     public function bulkUpdateObjectValues(string $predicateUri,$oldTerm,$newTerm):void;

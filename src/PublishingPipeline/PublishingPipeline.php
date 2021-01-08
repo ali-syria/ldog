@@ -26,6 +26,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Csv\Reader;
@@ -340,6 +341,11 @@ class PublishingPipeline implements PublishingPipelineContract
         LinkToOthersDatasetsJob::dispatch(config('ldog.storage.disk'),$this->silkLslSpecsPath)
             ->onConnection(config('ldog.silk.queue_connection'))
             ->onQueue(config('ldog.silk.queue_name'));
+    }
+
+    public function updateIndex():void
+    {
+        Artisan::queue('ldog:init-graphdb-lucene');
     }
 
     public function updateObjectValue(Node $resource,string $predicateUri,$oldTerm,$newTerm,bool $save=true):void

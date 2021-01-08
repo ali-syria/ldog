@@ -3,9 +3,9 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ldog: <http://ldog.org/ontologies/2020/8/framework#> .
-@prefix hfont: <http://health.data.ae/ontology/HealthFacility#> .
-@prefix address: <http://health.data.ae/ontology/Address#> .
-@prefix contact: <http://health.data.ae/ontology/Contact#> .
+@prefix hfont: <http://health.data.ae/ontology/healthFacility#> .
+@prefix address: <http://health.data.ae/ontology/address#> .
+@prefix contact: <http://health.data.ae/ontology/contact#> .
 @prefix : <http://health.data.ae/shape/health-facility-spape#> .
 
 :HealthFacilityShape a sh:NodeShape ;
@@ -58,10 +58,40 @@
                         sh:message "sub category field is required" ;
                     ] ;
                     sh:property [
+                        sh:path hfont:status ;
+                        sh:name "status" ;
+                        sh:description "license status of facility" ;
+                        sh:order 5 ;
+                        sh:datatype xsd:string;
+                        sh:minCount 0;
+                        sh:maxCount 1;
+                        sh:message "invalid status " ;
+                    ] ;
+                    sh:property [
+                        sh:path hfont:expiryDate ;
+                        sh:name "expiry date" ;
+                        sh:description "license expiry date of facility" ;
+                        sh:order 6 ;
+                        sh:datatype xsd:string;
+                        sh:minCount 0;
+                        sh:maxCount 1;
+                        sh:message "expiry date field: required,valid date format is " ;
+                    ] ;
+                    sh:property [
+                        sh:path hfont:area ;
+                        sh:name "area" ;
+                        sh:description "area of facility" ;
+                        sh:order 7 ;
+                        sh:datatype xsd:string;
+                        sh:minCount 0;
+                        sh:maxCount 1;
+                        sh:message "invalid area" ;
+                    ] ;
+                    sh:property [
                         sh:path hfont:address_line_one ;
                         sh:name "address line one" ;
                         sh:description "address line one of facility" ;
-                        sh:order 5 ;
+                        sh:order 8 ;
                         sh:datatype xsd:string;
                         sh:minCount 1;
                         sh:maxCount 1;
@@ -72,7 +102,7 @@
                         sh:path hfont:address_line_two ;
                         sh:name "address line two" ;
                         sh:description "address line two of facility" ;
-                        sh:order 6 ;
+                        sh:order 9 ;
                         sh:datatype xsd:string;
                         sh:minCount 0;
                         sh:maxCount 1;
@@ -83,71 +113,41 @@
                         sh:path address:postalCode ;
                         sh:name "postal code" ;
                         sh:description "postal code of facility address" ;
-                        sh:order 7 ;
+                        sh:order 10 ;
                         sh:datatype xsd:string;
                         sh:minCount 0;
                         sh:maxCount 1;
                         sh:message "postal code field is string" ;
                     ] ;
                     sh:property [
-                        sh:path contact:website ;
-                        sh:name "website" ;
-                        sh:description "website of facility" ;
-                        sh:order 8 ;
-                        sh:datatype xsd:anyURI;
+                        sh:path hfont:email ;
+                        sh:name "email" ;
+                        sh:description "email of facility" ;
+                        sh:order 11 ;
+                        sh:datatype xsd:string;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "website field is url" ;
+                        sh:message "invalid email" ;
                     ] ;
                     sh:property [
                         sh:path contact:telephone ;
                         sh:name "telephone" ;
                         sh:description "telephone of facility" ;
-                        sh:order 9 ;
+                        sh:order 12 ;
                         sh:datatype xsd:string;
                         sh:minCount 1;
                         sh:maxCount 1;
                         sh:message "telephone field format " ;
                     ] ;
                     sh:property [
-                        sh:path hfont:expiry_date ;
-                        sh:name "expiry date" ;
-                        sh:description "license expiry date of facility" ;
-                        sh:order 10 ;
-                        sh:datatype xsd:string;
-                        sh:minCount 0;
-                        sh:maxCount 1;
-                        sh:message "expiry date field: required,valid date format is " ;
-                    ] ;
-                    sh:property [
-                        sh:path hfont:status ;
-                        sh:name "status" ;
-                        sh:description "license status of facility" ;
-                        sh:order 10 ;
-                        sh:datatype xsd:string;
-                        sh:minCount 0;
-                        sh:maxCount 1;
-                        sh:message "invalid status " ;
-                    ] ;
-                    sh:property [
-                        sh:path hfont:area ;
-                        sh:name "area" ;
-                        sh:description "area of facility" ;
-                        sh:order 12 ;
-                        sh:datatype xsd:string;
-                        sh:minCount 0;
-                        sh:maxCount 1;
-                        sh:message "invalid area" ;
-                    ] ;
-                    sh:property [
-                        sh:path hfont:email ;
-                        sh:name "email" ;
-                        sh:description "email of facility" ;
+                        sh:path contact:website ;
+                        sh:name "website" ;
+                        sh:description "website of facility" ;
                         sh:order 13 ;
-                        sh:datatype xsd:string;
+                        sh:datatype xsd:anyURI;
                         sh:minCount 0;
                         sh:maxCount 1;
-                        sh:message "invalid email" ;
+                        sh:message "website field is url" ;
                     ] ;
                     sh:property [
                         sh:path hfont:latitude ;
