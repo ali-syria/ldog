@@ -149,9 +149,15 @@ abstract class Organization implements OrganizationContract
         $organization=null;
         foreach ($resultSet as $result)
         {
+            try{
+                $class=OrganizationFactory::resolveLdogClassUriToClass($result->class->getUri());
+            }
+            catch (\RuntimeException $e)
+            {
+                continue;
+            }
             if(optional($result)->parentOrganization)
             {
-                $class=OrganizationFactory::resolveLdogClassUriToClass($result->class->getUri());
                 $organization= new $class($result->parentOrganization->getUri(),$result->name->getValue(),$result->description->getValue(),
                     optional(optional($result)->logo)->getValue());
             }
@@ -249,10 +255,6 @@ abstract class Organization implements OrganizationContract
                         $ldogPrefix.DataExporterTarget::ALL_SECTORS,
                         $ldogPrefix.DataExporterTarget::ALL_DEPARTMENTS,
                     ]))
-                {
-                    continue;
-                }
-                else
                 {
                     continue;
                 }

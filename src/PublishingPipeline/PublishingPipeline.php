@@ -354,6 +354,10 @@ class PublishingPipeline implements PublishingPipelineContract
         $shapePredicate=$shapePredicates->where('uri',$predicateUri)->first();
         $resource->removeProperty($predicateUri);
 
+        if(blank($newTerm))
+        {
+
+        }
         if(!$shapePredicate->isObjectPredicate())
         {
             $resource->addPropertyValue($predicateUri,new TypedValue($newTerm,$shapePredicate->dataType));

@@ -44,14 +44,16 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 ###  http://ldog.org/ontologies/2020/8/framework#basedOnTemplate
 :basedOnTemplate rdf:type owl:ObjectProperty ;
                  rdfs:domain :BatchImport ;
-                 rdfs:range :BatchImportTemplate .
+                 rdfs:range :BatchImportTemplate ;
+                 rdfs:label "Based On Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#belongsTo
 :belongsTo rdf:type owl:ObjectProperty ;
            owl:inverseOf :has ;
            rdfs:domain owl:Thing ;
-           rdfs:range owl:Thing .
+           rdfs:range owl:Thing ;
+           rdfs:label "Belongs To" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#dataDomain
@@ -59,19 +61,22 @@ owl:sameAs rdf:type owl:AnnotationProperty .
             rdfs:domain :BatchImport ,
                         :BatchImportTemplate ,
                         :Ontology ;
-            rdfs:range :DataDomain .
+            rdfs:range :DataDomain ;
+            rdfs:label "Data Domain" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#frequencyOfExport
 :frequencyOfExport rdf:type owl:ObjectProperty ;
                    rdfs:domain :ReportTemplate ;
-                   rdfs:range :Frequency .
+                   rdfs:range :Frequency ;
+                   rdfs:label "Frequency Of Export" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#has
 :has rdf:type owl:ObjectProperty ;
      rdfs:domain owl:Thing ;
-     rdfs:range owl:Thing .
+     rdfs:range owl:Thing ;
+     rdfs:label "Has" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasBatchImport
@@ -79,7 +84,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                 rdfs:subPropertyOf owl:topObjectProperty ;
                 owl:inverseOf :isBatchImportOf ;
                 rdfs:domain :GovernmentalOrganization ;
-                rdfs:range :BatchImport .
+                rdfs:range :BatchImport ;
+                rdfs:label "Has Batch Import" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasBatchImportTemplate
@@ -87,7 +93,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                         rdfs:subPropertyOf owl:topObjectProperty ;
                         owl:inverseOf :isBatchImportTemplateOf ;
                         rdfs:domain :ModellingOrganization ;
-                        rdfs:range :BatchImportTemplate .
+                        rdfs:range :BatchImportTemplate ;
+                        rdfs:label "Has Batch Import Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasBranch
@@ -96,14 +103,16 @@ owl:sameAs rdf:type owl:AnnotationProperty .
            owl:inverseOf :isBranchOf ;
            rdfs:domain :IndependentAgency ,
                        :Institution ;
-           rdfs:range :Branch .
+           rdfs:range :Branch ;
+           rdfs:label "Has Branch" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasCabinetOrganization
 :hasCabinetOrganization rdf:type owl:ObjectProperty ;
                         owl:inverseOf :isCabinetOrganizationOf ;
                         rdfs:domain :Cabinet ;
-                        rdfs:range :CabinetOrganization .
+                        rdfs:range :CabinetOrganization ;
+                        rdfs:label "Has Cabinet Organization" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasDataCollection
@@ -111,7 +120,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                    rdfs:subPropertyOf :hasBatchImport ;
                    owl:inverseOf :isDataCollectionOf ;
                    rdfs:domain :DataSourceOrganization ;
-                   rdfs:range :DataCollection .
+                   rdfs:range :DataCollection ;
+                   rdfs:label "Has Data Collection" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasDataCollectionTemplate
@@ -119,7 +129,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                            rdfs:subPropertyOf :hasBatchImportTemplate ;
                            owl:inverseOf :isDataCollectionTemplateOf ;
                            rdfs:domain :ModellingOrganization ;
-                           rdfs:range :DataCollectionTemplate .
+                           rdfs:range :DataCollectionTemplate ;
+                           rdfs:label "Has Data Collection Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasDepartment
@@ -127,7 +138,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                rdfs:subPropertyOf :hasSector ;
                owl:inverseOf :isDepartmentOf ;
                rdfs:domain :GovernmentalOrganization ;
-               rdfs:range :Department .
+               rdfs:range :Department ;
+               rdfs:label "Has Department" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasEmployee
@@ -135,7 +147,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
              rdfs:subPropertyOf owl:topObjectProperty ;
              owl:inverseOf :isEmployeeOf ;
              rdfs:domain :GovernmentalOrganization ;
-             rdfs:range :Employee .
+             rdfs:range :Employee ;
+             rdfs:label "Has Employee" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasIndependentAgency
@@ -143,7 +156,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                       rdfs:subPropertyOf :hasCabinetOrganization ;
                       owl:inverseOf :isIndependentAgencyOf ;
                       rdfs:domain :Cabinet ;
-                      rdfs:range :IndependentAgency .
+                      rdfs:range :IndependentAgency ;
+                      rdfs:label "Has Independent Agency" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasInstitution
@@ -152,7 +166,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                                    owl:topObjectProperty ;
                 owl:inverseOf :isInstitutionOf ;
                 rdfs:domain :Ministry ;
-                rdfs:range :Institution .
+                rdfs:range :Institution ;
+                rdfs:label "Has Instituation" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasLoginAccount
@@ -160,7 +175,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                  rdfs:subPropertyOf owl:topObjectProperty ;
                  owl:inverseOf :isLoginAccountOf ;
                  rdfs:domain :Employee ;
-                 rdfs:range :LoginAccount .
+                 rdfs:range :LoginAccount ;
+                 rdfs:label "Has Login Account" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasMinistry
@@ -168,7 +184,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
              rdfs:subPropertyOf :hasCabinetOrganization ;
              owl:inverseOf :isMinistryOf ;
              rdfs:domain :Cabinet ;
-             rdfs:range :Ministry .
+             rdfs:range :Ministry ;
+             rdfs:label "Has Ministry" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasOntology
@@ -176,13 +193,15 @@ owl:sameAs rdf:type owl:AnnotationProperty .
              rdfs:subPropertyOf owl:topObjectProperty ;
              owl:inverseOf :isOntologyOf ;
              rdfs:domain :BatchImportTemplate ;
-             rdfs:range :Ontology .
+             rdfs:range :Ontology ;
+             rdfs:label "Has Ontology" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasParameters
 :hasParameters rdf:type owl:ObjectProperty ;
                rdfs:domain :NormalizationFunction ;
-               rdfs:range rdf:Seq .
+               rdfs:range rdf:Seq ;
+               rdfs:label "Has Parameters" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasPassword
@@ -190,7 +209,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
              rdfs:subPropertyOf owl:topObjectProperty ;
              owl:inverseOf :isPasswordOf ;
              rdfs:domain :LoginAccount ;
-             rdfs:range :Password .
+             rdfs:range :Password ;
+             rdfs:label "Has Password" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasReport
@@ -198,7 +218,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
            rdfs:subPropertyOf :hasBatchImport ;
            owl:inverseOf :isReportOf ;
            rdfs:domain :DataSourceOrganization ;
-           rdfs:range :Report .
+           rdfs:range :Report ;
+           rdfs:label "Has Report" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasReportTemplate
@@ -206,7 +227,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                    rdfs:subPropertyOf :hasBatchImportTemplate ;
                    owl:inverseOf :isReportTemplateOf ;
                    rdfs:domain :ModellingOrganization ;
-                   rdfs:range :ReportTemplate .
+                   rdfs:range :ReportTemplate ;
+                   rdfs:label "Has Report Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasSector
@@ -215,7 +237,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                               owl:topObjectProperty ;
            owl:inverseOf :isSectorOf ;
            rdfs:domain :GovernmentalOrganization ;
-           rdfs:range :Sector .
+           rdfs:range :Sector ;
+           rdfs:label "Has Sector" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hasShape
@@ -223,13 +246,15 @@ owl:sameAs rdf:type owl:AnnotationProperty .
           rdfs:subPropertyOf owl:topObjectProperty ;
           owl:inverseOf :isShapeOf ;
           rdfs:domain :BatchImportTemplate ;
-          rdfs:range :DataShape .
+          rdfs:range :DataShape ;
+          rdfs:label "Has Shape" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hashAlgorithm
 :hashAlgorithm rdf:type owl:ObjectProperty ;
                rdfs:domain :Password ;
-               rdfs:range :HashAlgorithm .
+               rdfs:range :HashAlgorithm ;
+               rdfs:label "Hash Algorithm" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#id
@@ -242,14 +267,16 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 :isBatchImportOf rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf owl:topObjectProperty ;
                  rdfs:domain :BatchImport ;
-                 rdfs:range :GovernmentalOrganization .
+                 rdfs:range :GovernmentalOrganization ;
+                 rdfs:label "Is Batch Import Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isBatchImportTemplateOf
 :isBatchImportTemplateOf rdf:type owl:ObjectProperty ;
                          rdfs:subPropertyOf owl:topObjectProperty ;
                          rdfs:domain :BatchImportTemplate ;
-                         rdfs:range :ModellingOrganization .
+                         rdfs:range :ModellingOrganization ;
+                         rdfs:label "Is Batch Import Template Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isBranchOf
@@ -257,7 +284,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
             rdfs:subPropertyOf :isSectorOf ;
             rdfs:domain :Branch ;
             rdfs:range :IndependentAgency ,
-                       :Institution .
+                       :Institution ;
+            rdfs:label "Is Branch Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isCabinetOrganizationOf
@@ -265,42 +293,48 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                          rdfs:subPropertyOf :subOrganizationOf ,
                                             owl:topObjectProperty ;
                          rdfs:domain :CabinetOrganization ;
-                         rdfs:range :Cabinet .
+                         rdfs:range :Cabinet ;
+                         rdfs:label "Is Cabinet Organization Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isDataCollectionOf
 :isDataCollectionOf rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf :isBatchImportOf ;
                     rdfs:domain :DataCollection ;
-                    rdfs:range :DataSourceOrganization .
+                    rdfs:range :DataSourceOrganization ;
+                    rdfs:label "Is Data Collection Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isDataCollectionTemplateOf
 :isDataCollectionTemplateOf rdf:type owl:ObjectProperty ;
                             rdfs:subPropertyOf :isBatchImportTemplateOf ;
                             rdfs:domain :DataCollectionTemplate ;
-                            rdfs:range :ModellingOrganization .
+                            rdfs:range :ModellingOrganization ;
+                            rdfs:label "Is Data Collection Template Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isDepartmentOf
 :isDepartmentOf rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf :isSectorOf ;
                 rdfs:domain :Department ;
-                rdfs:range :GovernmentalOrganization .
+                rdfs:range :GovernmentalOrganization ;
+                rdfs:label "Is Department Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isEmployeeOf
 :isEmployeeOf rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf owl:topObjectProperty ;
               rdfs:domain :Employee ;
-              rdfs:range :GovernmentalOrganization .
+              rdfs:range :GovernmentalOrganization ;
+              rdfs:label "Is Employee Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isIndependentAgencyOf
 :isIndependentAgencyOf rdf:type owl:ObjectProperty ;
                        rdfs:subPropertyOf :isCabinetOrganizationOf ;
                        rdfs:domain :IndependentAgency ;
-                       rdfs:range :Cabinet .
+                       rdfs:range :Cabinet ;
+                       rdfs:label "Is Independent Agency Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isInstitutionOf
@@ -308,49 +342,56 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                  rdfs:subPropertyOf :subOrganizationOf ,
                                     owl:topObjectProperty ;
                  rdfs:domain :Institution ;
-                 rdfs:range :Ministry .
+                 rdfs:range :Ministry ;
+                 rdfs:label "Is Institution Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isLoginAccountOf
 :isLoginAccountOf rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf owl:topObjectProperty ;
                   rdfs:domain :LoginAccount ;
-                  rdfs:range :Employee .
+                  rdfs:range :Employee ;
+                  rdfs:label "Is Login Account Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isMinistryOf
 :isMinistryOf rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf :isCabinetOrganizationOf ;
               rdfs:domain :Ministry ;
-              rdfs:range :Cabinet .
+              rdfs:range :Cabinet ;
+              rdfs:label "Is Ministry Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isOntologyOf
 :isOntologyOf rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf owl:topObjectProperty ;
               rdfs:domain :Ontology ;
-              rdfs:range :BatchImportTemplate .
+              rdfs:range :BatchImportTemplate ;
+              rdfs:label "Is Ontology Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isPasswordOf
 :isPasswordOf rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf owl:topObjectProperty ;
               rdfs:domain :Password ;
-              rdfs:range :LoginAccount .
+              rdfs:range :LoginAccount ;
+              rdfs:label "Is Password Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isReportOf
 :isReportOf rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf :isBatchImportOf ;
             rdfs:domain :Report ;
-            rdfs:range :DataSourceOrganization .
+            rdfs:range :DataSourceOrganization ;
+            rdfs:label "Is Report Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isReportTemplateOf
 :isReportTemplateOf rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf :isBatchImportTemplateOf ;
                     rdfs:domain :ReportTemplate ;
-                    rdfs:range :ModellingOrganization .
+                    rdfs:range :ModellingOrganization ;
+                    rdfs:label "Is Report Template Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isSectorOf
@@ -358,39 +399,38 @@ owl:sameAs rdf:type owl:AnnotationProperty .
             rdfs:subPropertyOf :subOrganizationOf ,
                                owl:topObjectProperty ;
             rdfs:domain :Sector ;
-            rdfs:range :GovernmentalOrganization .
+            rdfs:range :GovernmentalOrganization ;
+            rdfs:label "Is Sector Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#isShapeOf
 :isShapeOf rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf owl:topObjectProperty ;
            rdfs:domain :DataShape ;
-           rdfs:range :BatchImportTemplate .
+           rdfs:range :BatchImportTemplate ;
+           rdfs:label "Is Shape Of" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#normalizedBy
 :normalizedBy rdf:type owl:ObjectProperty ;
               rdfs:domain sh:PropertyShape ;
               rdfs:range :NormalizationFunction ,
-                         rdf:Seq .
-
-
-###  http://ldog.org/ontologies/2020/8/framework#outerLinkageTarget
-:outerLinkageTarget rdf:type owl:ObjectProperty ;
-                    rdfs:domain :DataShape ;
-                    rdfs:range :OuterLinkageTarget .
+                         rdf:Seq ;
+              rdfs:label "Normalized By" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#publishedBy
 :publishedBy rdf:type owl:ObjectProperty ;
              rdfs:domain :BatchImport ;
-             rdfs:range :Employee .
+             rdfs:range :Employee ;
+             rdfs:label "Published By" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#publisher
 :publisher rdf:type owl:ObjectProperty ;
            rdfs:domain :BatchImport ;
-           rdfs:range :GovernmentalOrganization .
+           rdfs:range :GovernmentalOrganization ;
+           rdfs:label "Publisher" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#shouldBatchExportedBy
@@ -399,7 +439,8 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                        owl:inverseOf :shouldExportBatch ;
                        rdfs:domain :BatchImportTemplate ;
                        rdfs:range :BatchDataExporterTarget ,
-                                  :DataSourceOrganization .
+                                  :DataSourceOrganization ;
+                       rdfs:label "Should Batch Exported By" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#shouldDataCollectionExportedBy
@@ -407,21 +448,24 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                                 rdfs:subPropertyOf :shouldBatchExportedBy ;
                                 owl:inverseOf :shouldExportDataCollection ;
                                 rdfs:domain :DataCollectionTemplate ;
-                                rdfs:range :DataSourceOrganization .
+                                rdfs:range :DataSourceOrganization ;
+                                rdfs:label "Should Data Collection Exported By" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#shouldExportBatch
 :shouldExportBatch rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf owl:topObjectProperty ;
                    rdfs:domain :DataSourceOrganization ;
-                   rdfs:range :BatchImportTemplate .
+                   rdfs:range :BatchImportTemplate ;
+                   rdfs:label "Should Export Batch" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#shouldExportDataCollection
 :shouldExportDataCollection rdf:type owl:ObjectProperty ;
                             rdfs:subPropertyOf :shouldExportBatch ;
                             rdfs:domain :DataSourceOrganization ;
-                            rdfs:range :DataCollectionTemplate .
+                            rdfs:range :DataCollectionTemplate ;
+                            rdfs:label "Should Export Data Collection" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#shouldExportReport
@@ -429,32 +473,23 @@ owl:sameAs rdf:type owl:AnnotationProperty .
                     rdfs:subPropertyOf :shouldExportBatch ;
                     owl:inverseOf :shouldReportExportedBy ;
                     rdfs:domain :DataSourceOrganization ;
-                    rdfs:range :ReportTemplate .
+                    rdfs:range :ReportTemplate ;
+                    rdfs:label "Should Export Report" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#shouldReportExportedBy
 :shouldReportExportedBy rdf:type owl:ObjectProperty ;
                         rdfs:subPropertyOf :shouldBatchExportedBy ;
                         rdfs:domain :ReportTemplate ;
-                        rdfs:range :DataSourceOrganization .
+                        rdfs:range :DataSourceOrganization ;
+                        rdfs:label "Should Repor tExported By" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#subOrganizationOf
 :subOrganizationOf rdf:type owl:ObjectProperty ;
                    rdfs:domain <http://www.w3.org/ns/org#Organization> ;
-                   rdfs:range <http://www.w3.org/ns/org#Organization> .
-
-
-###  http://ldog.org/ontologies/2020/8/framework#targetLinkageClass
-:targetLinkageClass rdf:type owl:ObjectProperty ;
-                    rdfs:domain :OuterLinkageTarget ;
-                    rdfs:range owl:Thing .
-
-
-###  http://ldog.org/ontologies/2020/8/framework#targetLinkageProperty
-:targetLinkageProperty rdf:type owl:ObjectProperty ;
-                       rdfs:domain :OuterLinkageTarget ;
-                       rdfs:range :TargetLinkageProperty .
+                   rdfs:range <http://www.w3.org/ns/org#Organization> ;
+                   rdfs:label "Sub Organization Of" .
 
 
 #################################################################
@@ -465,19 +500,21 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 :description rdf:type owl:DatatypeProperty ;
              rdfs:domain owl:Thing ;
              rdfs:range xsd:string ;
-             rdfs:label "description" .
+             rdfs:label "Description" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#fromDate
 :fromDate rdf:type owl:DatatypeProperty ;
           rdfs:domain :BatchImport ;
-          rdfs:range xsd:dateTime .
+          rdfs:range xsd:dateTime ;
+          rdfs:label "From Date" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#hashValue
 :hashValue rdf:type owl:DatatypeProperty ;
            rdfs:domain :Password ;
-           rdfs:range xsd:string .
+           rdfs:range xsd:string ;
+           rdfs:label "Hash Value" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#id
@@ -488,15 +525,16 @@ owl:sameAs rdf:type owl:AnnotationProperty .
 ###  http://ldog.org/ontologies/2020/8/framework#lang
 :lang rdf:type owl:DatatypeProperty ;
       rdfs:subPropertyOf owl:topDataProperty ;
-      rdfs:domain :TargetLinkageProperty ;
-      rdfs:range xsd:language .
+      rdfs:range xsd:language ;
+      rdfs:label "Lang" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#logo
 :logo rdf:type owl:DatatypeProperty ;
       rdfs:subPropertyOf owl:topDataProperty ;
       rdfs:domain :GovernmentalOrganization ;
-      rdfs:range xsd:anyURI .
+      rdfs:range xsd:anyURI ;
+      rdfs:label "Logo" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#name
@@ -504,81 +542,91 @@ owl:sameAs rdf:type owl:AnnotationProperty .
       rdfs:domain owl:Thing ;
       rdfs:range xsd:string ;
       rdfs:comment "name of anything" ;
-      rdfs:label "name" .
+      rdfs:label "Name" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#namespace
 :namespace rdf:type owl:DatatypeProperty ;
            rdfs:domain :Ontology ;
-           rdfs:range xsd:anyURI .
+           rdfs:range xsd:anyURI ;
+           rdfs:label "Namespace" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#prefix
 :prefix rdf:type owl:DatatypeProperty ;
         rdfs:domain :DataShape ,
                     :Ontology ;
-        rdfs:range xsd:string .
+        rdfs:range xsd:string ;
+        rdfs:label "Prefix" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#property
 :property rdf:type owl:DatatypeProperty ;
           rdfs:subPropertyOf owl:topDataProperty ;
-          rdfs:domain :TargetLinkageProperty ;
-          rdfs:range xsd:anyURI .
+          rdfs:range xsd:anyURI ;
+          rdfs:label "Property" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#publishingDate
 :publishingDate rdf:type owl:DatatypeProperty ;
                 rdfs:domain :BatchImport ;
-                rdfs:range xsd:dateTimeStamp .
+                rdfs:range xsd:dateTimeStamp ;
+                rdfs:label "Publishing Date" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#rememberToken
 :rememberToken rdf:type owl:DatatypeProperty ;
                rdfs:domain :Password ;
-               rdfs:range xsd:string .
+               rdfs:range xsd:string ;
+               rdfs:label "Remember Token" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#resourceCommentExpression
 :resourceCommentExpression rdf:type owl:DatatypeProperty ;
                            rdfs:domain :DataShape ;
-                           rdfs:range xsd:string .
+                           rdfs:range xsd:string ;
+                           rdfs:label "Resource Comment Expression" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#resourceIdentifierProperty
 :resourceIdentifierProperty rdf:type owl:DatatypeProperty ;
                             rdfs:domain :DataShape ;
-                            rdfs:range xsd:anyURI .
+                            rdfs:range xsd:anyURI ;
+                            rdfs:label "Resource Identifier Property" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#resourceLabelExpression
 :resourceLabelExpression rdf:type owl:DatatypeProperty ;
                          rdfs:domain :DataShape ;
-                         rdfs:range xsd:string .
+                         rdfs:range xsd:string ;
+                         rdfs:label "Resource Label Expression" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#sparqlEndpoint
 :sparqlEndpoint rdf:type owl:DatatypeProperty ;
-                rdfs:domain :OuterLinkageTarget ;
-                rdfs:range xsd:anyURI .
+                rdfs:range xsd:anyURI ;
+                rdfs:label "Sparql Endpoint" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#subDomain
 :subDomain rdf:type owl:DatatypeProperty ;
            rdfs:domain :DataDomain ;
-           rdfs:range xsd:string .
+           rdfs:range xsd:string ;
+           rdfs:label "Sub Domain" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#toDate
 :toDate rdf:type owl:DatatypeProperty ;
         rdfs:domain :BatchImport ;
-        rdfs:range xsd:dateTime .
+        rdfs:range xsd:dateTime ;
+        rdfs:label "To Date" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#username
 :username rdf:type owl:DatatypeProperty ;
           rdfs:domain :LoginAccount ;
-          rdfs:range xsd:string .
+          rdfs:range xsd:string ;
+          rdfs:label "Username" .
 
 
 ###  http://www.w3.org/2002/07/owl#topDataProperty
@@ -591,53 +639,63 @@ owl:topDataProperty rdfs:domain :DataShape ;
 #################################################################
 
 ###  http://ldog.org/ontologies/2020/8/framework#BatchDataExporterTarget
-:BatchDataExporterTarget rdf:type owl:Class .
+:BatchDataExporterTarget rdf:type owl:Class ;
+                         rdfs:label "Batch Data Export Target" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#BatchImport
-:BatchImport rdf:type owl:Class .
+:BatchImport rdf:type owl:Class ;
+             rdfs:label "Batch Import" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#BatchImportTemplate
-:BatchImportTemplate rdf:type owl:Class .
+:BatchImportTemplate rdf:type owl:Class ;
+                     rdfs:label "Batch Import Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Branch
 :Branch rdf:type owl:Class ;
         rdfs:subClassOf :Sector ;
-        owl:disjointWith :Department .
+        owl:disjointWith :Department ;
+        rdfs:label "Branch" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Cabinet
 :Cabinet rdf:type owl:Class ;
          rdfs:subClassOf :GovernmentalOrganization ,
-                         :ModellingOrganization .
+                         :ModellingOrganization ;
+         rdfs:label "Cabinet" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#CabinetOrganization
 :CabinetOrganization rdf:type owl:Class ;
                      rdfs:subClassOf :GovernmentalOrganization ,
-                                     :ModellingOrganization .
+                                     :ModellingOrganization ;
+                     rdfs:label "Cabinet Organization" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#DataCollection
 :DataCollection rdf:type owl:Class ;
                 rdfs:subClassOf :BatchImport ;
-                owl:disjointWith :Report .
+                owl:disjointWith :Report ;
+                rdfs:label "Data Collection" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#DataCollectionTemplate
 :DataCollectionTemplate rdf:type owl:Class ;
                         rdfs:subClassOf :BatchImportTemplate ;
-                        owl:disjointWith :ReportTemplate .
+                        owl:disjointWith :ReportTemplate ;
+                        rdfs:label "Data Collection Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#DataDomain
-:DataDomain rdf:type owl:Class .
+:DataDomain rdf:type owl:Class ;
+            rdfs:label "Data Domain" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#DataShape
-:DataShape rdf:type owl:Class .
+:DataShape rdf:type owl:Class ;
+           rdfs:label "Data Shape" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#DataSourceOrganization
@@ -647,15 +705,18 @@ owl:topDataProperty rdfs:domain :DataShape ;
 
 ###  http://ldog.org/ontologies/2020/8/framework#Department
 :Department rdf:type owl:Class ;
-            rdfs:subClassOf :Sector .
+            rdfs:subClassOf :Sector ;
+            rdfs:label "Department" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Employee
-:Employee rdf:type owl:Class .
+:Employee rdf:type owl:Class ;
+          rdfs:label "Employee" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Frequency
-:Frequency rdf:type owl:Class .
+:Frequency rdf:type owl:Class ;
+           rdfs:label "Frequency" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#GovernmentalOrganization
@@ -665,28 +726,33 @@ owl:topDataProperty rdfs:domain :DataShape ;
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#HashAlgorithm
-:HashAlgorithm rdf:type owl:Class .
+:HashAlgorithm rdf:type owl:Class ;
+               rdfs:label "Hash Algorithm" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#IndependentAgency
 :IndependentAgency rdf:type owl:Class ;
                    rdfs:subClassOf :CabinetOrganization ;
-                   owl:disjointWith :Ministry .
+                   owl:disjointWith :Ministry ;
+                   rdfs:label "Independent Agency" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Institution
 :Institution rdf:type owl:Class ;
              rdfs:subClassOf :GovernmentalOrganization ,
-                             :ModellingOrganization .
+                             :ModellingOrganization ;
+             rdfs:label "Instituation" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#LoginAccount
-:LoginAccount rdf:type owl:Class .
+:LoginAccount rdf:type owl:Class ;
+              rdfs:label "Login Account" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Ministry
 :Ministry rdf:type owl:Class ;
-          rdfs:subClassOf :CabinetOrganization .
+          rdfs:subClassOf :CabinetOrganization ;
+          rdfs:label "Ministry" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#ModellingOrganization
@@ -694,39 +760,37 @@ owl:topDataProperty rdfs:domain :DataShape ;
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#NormalizationFunction
-:NormalizationFunction rdf:type owl:Class .
+:NormalizationFunction rdf:type owl:Class ;
+                       rdfs:label "Normalization Function" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Ontology
-:Ontology rdf:type owl:Class .
-
-
-###  http://ldog.org/ontologies/2020/8/framework#OuterLinkageTarget
-:OuterLinkageTarget rdf:type owl:Class .
+:Ontology rdf:type owl:Class ;
+          rdfs:label "Ontology" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Password
-:Password rdf:type owl:Class .
+:Password rdf:type owl:Class ;
+          rdfs:label "Password" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Report
 :Report rdf:type owl:Class ;
-        rdfs:subClassOf :BatchImport .
+        rdfs:subClassOf :BatchImport ;
+        rdfs:label "Report" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#ReportTemplate
 :ReportTemplate rdf:type owl:Class ;
-                rdfs:subClassOf :BatchImportTemplate .
+                rdfs:subClassOf :BatchImportTemplate ;
+                rdfs:label "Report Template" .
 
 
 ###  http://ldog.org/ontologies/2020/8/framework#Sector
 :Sector rdf:type owl:Class ;
         rdfs:subClassOf :DataSourceOrganization ,
-                        :GovernmentalOrganization .
-
-
-###  http://ldog.org/ontologies/2020/8/framework#TargetLinkageProperty
-:TargetLinkageProperty rdf:type owl:Class .
+                        :GovernmentalOrganization ;
+        rdfs:label "Sector" .
 
 
 ###  http://www.w3.org/ns/org#Organization
@@ -878,30 +942,12 @@ owl:topDataProperty rdfs:domain :DataShape ;
 :ModellingOrganization rdfs:label "Modelling Organization" .
 
 
+:id rdfs:label "ID" .
+
+
 #################################################################
 #    General axioms
 #################################################################
-
-[ rdf:type owl:AllDisjointClasses ;
-  owl:members ( :BatchDataExporterTarget
-                :BatchImport
-                :BatchImportTemplate
-                :DataDomain
-                :DataShape
-                :DataSourceOrganization
-                :Employee
-                :Frequency
-                :HashAlgorithm
-                :LoginAccount
-                :ModellingOrganization
-                :Ontology
-                :OuterLinkageTarget
-                :Password
-                :TargetLinkageProperty
-                <http://www.w3.org/ns/org#Organization>
-              )
-] .
-
 
 [ rdf:type owl:AllDisjointClasses ;
   owl:members ( :Cabinet
