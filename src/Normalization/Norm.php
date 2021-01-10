@@ -26,11 +26,11 @@ class Norm implements NormalizationServiceContract
         return Str::upper($input);
     }
 
-    public static function dateFormate(string $input,string $format)
+    public static function dateISO8601(string $input):string
     {
         $result=$input;
         try {
-            $result=Carbon::parse($input)->format($format);
+            $result=Carbon::parse($input)->format('Y-m-d');
         }
         catch (\Exception $e)
         {
@@ -39,4 +39,18 @@ class Norm implements NormalizationServiceContract
 
         return $result;
     }
+
+//    public static function dateFormate(string $input,string $format)
+//    {
+//        $result=$input;
+//        try {
+//            $result=Carbon::parse($input)->format($format);
+//        }
+//        catch (\Exception $e)
+//        {
+//
+//        }
+//
+//        return $result;
+//    }
 }

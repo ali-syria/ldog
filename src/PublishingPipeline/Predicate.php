@@ -37,4 +37,8 @@ class Predicate
     {
         return filled($this->objectClassUri);
     }
+    public function isRequired():bool
+    {
+        return $this->minCount > 0;
+    }
 }

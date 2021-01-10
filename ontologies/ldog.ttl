@@ -847,6 +847,15 @@ owl:topDataProperty rdfs:domain :DataShape ;
                      :NormalizationFunction .
 
 
+###  http://ldog.org/ontologies/2020/8/framework#DateISO8601
+:DateISO8601 rdf:type owl:NamedIndividual ;
+             rdfs:comment """represent dates:
+
+YYYY-MM-DD
+
+For example, September 27, 2012 is represented as 2012-09-27.""" .
+
+
 ###  http://ldog.org/ontologies/2020/8/framework#Education
 :Education rdf:type owl:NamedIndividual ,
                     :DataDomain ;

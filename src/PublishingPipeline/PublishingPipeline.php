@@ -354,11 +354,12 @@ class PublishingPipeline implements PublishingPipelineContract
         $shapePredicate=$shapePredicates->where('uri',$predicateUri)->first();
         $resource->removeProperty($predicateUri);
 
+        $newTerm=$this->sanitize($newTerm);
         if(blank($newTerm))
         {
 
         }
-        if(!$shapePredicate->isObjectPredicate())
+        elseif(!$shapePredicate->isObjectPredicate())
         {
             $resource->addPropertyValue($predicateUri,new TypedValue($newTerm,$shapePredicate->dataType));
         }
@@ -396,18 +397,20 @@ class PublishingPipeline implements PublishingPipelineContract
         foreach ($mappings as $predicateUri=>$columnName)
         {
             $shapePredicate=$shapePredicates->where('uri',$predicateUri)->first();
-            if(blank($record[$columnName]))
+            $columnValue=$this->sanitize($record[$columnName]);
+            if(blank($columnValue))
             {
                 continue;
             }
+
             if(!$shapePredicate->isObjectPredicate())
             {
-                $resource->addPropertyValue($predicateUri,new TypedValue($record[$columnName],$shapePredicate->dataType));
+                $resource->addPropertyValue($predicateUri,new TypedValue($columnValue,$shapePredicate->dataType));
                 continue;
             }
             else
             {
-                $resource->addPropertyValue($predicateUri,$record[$columnName]);
+                $resource->addPropertyValue($predicateUri,$columnValue);
             }
         }
     }
@@ -629,6 +632,25 @@ class PublishingPipeline implements PublishingPipelineContract
     public function getObjectOccurencesCount(string $predicateUri,?string $value):int
     {
         return $this->getObjectOccurences($predicateUri,$value)->count();
+    }
+    private function convertEmptyStringsToNull(string $value):?string
+    {
+        return is_string($value) && $value === '' ? null : $value;
+    }
+    private function sanitize(string $value):?string
+    {
+        $value=$this->convertEmptyStringsToNull($value);
+        if(is_null($value))
+        {
+            return null;
+        }
+        $value=(string)Str::of($value)->trim();
+        if(is_null($value))
+        {
+            return null;
+        }
+
+        return $value;
     }
 }
 //        $properties=$shapeJsonLD->getGraph($dataTemplate->dataShape->getUri())->getNode('http://health.data.ae/shape/health-facility-spape#HealthFacilityShape')
