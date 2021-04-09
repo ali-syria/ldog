@@ -637,8 +637,12 @@ class PublishingPipeline implements PublishingPipelineContract
     {
         return is_string($value) && $value === '' ? null : $value;
     }
-    private function sanitize(string $value):?string
+    private function sanitize(?string $value):?string
     {
+        if(is_null($value))
+        {
+            return null;
+        }
         $value=$this->convertEmptyStringsToNull($value);
         if(is_null($value))
         {
