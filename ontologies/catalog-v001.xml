@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="User Entered Import Resolution" name="http://ldog.org/ontologies/2020/8/framework" uri="conversion.ttl"/>
     <uri id="Imports Wizard Entry" name="http://www.w3.org/1999/02/22-rdf-syntax-ns#" uri="https://www.w3.org/1999/02/22-rdf-syntax-ns"/>
     <uri id="Imports Wizard Entry" name="http://www.w3.org/ns/shacl#" uri="https://www.w3.org/ns/shacl.ttl"/>
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base=""/>

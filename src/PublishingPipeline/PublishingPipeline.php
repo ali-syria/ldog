@@ -495,7 +495,7 @@ class PublishingPipeline implements PublishingPipelineContract
         $i=1;
         foreach ($termResourceMappings as $termResourceMapping)
         {
-            $termResourceMappingNode=$graph->createNode(self::getConversionUri($this->id)."/TermResourceMapping-".$i);
+            $termResourceMappingNode=$graph->createNode(self::getConversionUri($this->id)."/TermResourceMapping/".Str::uuid());
             $termResourceMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."TermResourceMapping"));
             $predicate=$graph->createNode($termResourceMapping->predicate);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicate",$predicate);

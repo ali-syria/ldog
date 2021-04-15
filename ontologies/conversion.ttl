@@ -58,12 +58,14 @@
 ###  http://ldog.org/ontologies/2020/11/conversion#predicate
 :predicate rdf:type owl:ObjectProperty ;
            rdfs:domain :ColumnPredicateMapping ,
+                       :ObjectReplacement ,
                        :TermResourceMapping .
 
 
 ###  http://ldog.org/ontologies/2020/11/conversion#resource
 :resource rdf:type owl:ObjectProperty ;
-          rdfs:domain :TermResourceMapping ;
+          rdfs:domain :SingleObjectReplacement ,
+                      :TermResourceMapping ;
           rdfs:range owl:Thing .
 
 
@@ -89,6 +91,11 @@
                 rdfs:range xsd:string .
 
 
+###  http://ldog.org/ontologies/2020/11/conversion#replacedBy
+:replacedBy rdf:type owl:DatatypeProperty ;
+            rdfs:domain :ObjectReplacement .
+
+
 ###  http://ldog.org/ontologies/2020/11/conversion#term
 :term rdf:type owl:DatatypeProperty ;
       rdfs:domain :TermResourceMapping ;
@@ -98,6 +105,12 @@
 #################################################################
 #    Classes
 #################################################################
+
+###  http://ldog.org/ontologies/2020/11/conversion#BulkObjectReplacement
+:BulkObjectReplacement rdf:type owl:Class ;
+                       rdfs:subClassOf :ObjectReplacement ;
+                       owl:disjointWith :SingleObjectReplacement .
+
 
 ###  http://ldog.org/ontologies/2020/11/conversion#ColumnPredicateMapping
 :ColumnPredicateMapping rdf:type owl:Class ;
@@ -123,6 +136,10 @@
                rdfs:subClassOf :ConversionPhase .
 
 
+###  http://ldog.org/ontologies/2020/11/conversion#ObjectReplacement
+:ObjectReplacement rdf:type owl:Class .
+
+
 ###  http://ldog.org/ontologies/2020/11/conversion#Publishing
 :Publishing rdf:type owl:Class ;
             rdfs:subClassOf :ConversionPhase .
@@ -138,6 +155,11 @@
                 rdfs:subClassOf :ConversionPhase .
 
 
+###  http://ldog.org/ontologies/2020/11/conversion#SingleObjectReplacement
+:SingleObjectReplacement rdf:type owl:Class ;
+                         rdfs:subClassOf :ObjectReplacement .
+
+
 ###  http://ldog.org/ontologies/2020/11/conversion#TermResourceMapping
 :TermResourceMapping rdf:type owl:Class .
 
@@ -149,6 +171,14 @@
 ###  http://ldog.org/ontologies/2020/11/conversion#Validation
 :Validation rdf:type owl:Class ;
             rdfs:subClassOf :ConversionPhase .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#BatchImport
+ldog:BatchImport rdf:type owl:Class .
+
+
+###  http://ldog.org/ontologies/2020/8/framework#BatchImportTemplate
+ldog:BatchImportTemplate rdf:type owl:Class .
 
 
 #################################################################
@@ -170,6 +200,19 @@
 #################################################################
 #    General axioms
 #################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :ColumnPredicateMapping
+                :Conversion
+                :ConversionPhase
+                :ObjectReplacement
+                :TermResourceMapping
+                :TermResourceMatchType
+                ldog:BatchImport
+                ldog:BatchImportTemplate
+              )
+] .
+
 
 [ rdf:type owl:AllDisjointClasses ;
   owl:members ( :LinkToOthersDatasets
