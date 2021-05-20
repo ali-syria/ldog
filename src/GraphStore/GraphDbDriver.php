@@ -92,7 +92,7 @@ class GraphDbDriver implements ConnectionContract,QueryContract,GraphUpdateContr
         $result=$this->client->asForm()->post("repositories/{$this->repository}/statements",[
             'update'=>"LOAD  <$sourceIRI> INTO GRAPH <$graphIRI>",
         ]);
-//        dump($result->body());
+//        dd($sourceIRI);
         $result->throw();
     }
 

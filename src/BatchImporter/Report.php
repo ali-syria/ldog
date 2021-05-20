@@ -16,6 +16,7 @@ use AliSyria\LDOG\PublishingPipeline\PublishingPipeline;
 use AliSyria\LDOG\TemplateBuilder\DataCollectionTemplate;
 use AliSyria\LDOG\TemplateBuilder\ReportTemplate;
 use AliSyria\LDOG\UriBuilder\UriBuilder;
+use AliSyria\LDOG\Utilities\LdogTypes\ReportExportFrequency;
 use Carbon\Carbon;
 
 class Report extends BatchImport implements ReportContract
@@ -38,7 +39,11 @@ class Report extends BatchImport implements ReportContract
         $rdfsPrefix=UriBuilder::PREFIX_RDFS;
         $fromDateStr=(string) $fromDate;
         $toDateStr=(string) $toDate;
-
+        if($dataTemplate->exportFrequency->uri==UriBuilder::PREFIX_LDOG.ReportExportFrequency::YEARLY)
+        {
+            $fromDateStr=(string) $fromDate->year;
+            $toDateStr=(string) $fromDate->year;
+        }
         $query="
             PREFIX ldog: <$ldogPrefix>
             PREFIX conv: <$conversionPrefix>

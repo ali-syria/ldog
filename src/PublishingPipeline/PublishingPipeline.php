@@ -45,8 +45,9 @@ class PublishingPipeline implements PublishingPipelineContract
         1=>'RawRdfGeneration',
         2=>'Normalization',
         3=>'Reconciliation',
-        4=>'Publishing',
-        5=>'LinkToOthersDatasets'
+        4=>'Validation',
+        5=>'Publishing',
+        6=>'LinkToOthersDatasets'
     ];
 
     public string $id;
@@ -102,6 +103,10 @@ class PublishingPipeline implements PublishingPipelineContract
             ->getProperty(self::CONVERSION_PREFIX."dataTemplate")
             ->getValue();
         $dataTemplate=DataCollectionTemplate::retrieve($dataTemplateUri);
+        if(is_null($dataTemplate))
+        {
+            $dataTemplate=ReportTemplate::retrieve($dataTemplateUri);
+        }
         $shapeJsonLD=self::initiateShapeJsonLdDocument(true,$conversionId,$dataTemplate);
         $silkLslSpecsPath=self::initiateSilkLslSpecs(true,$conversionId,$dataTemplate);
 
@@ -322,8 +327,8 @@ class PublishingPipeline implements PublishingPipelineContract
         }
         elseif ($this->dataTemplate instanceof ReportTemplate)
         {
-            Report::create($this->id,$conversionPath."/config.jsonld",
-                $conversionPath."/dataset.jsonld"," ",null,$this->dataTemplate,
+            Report::create($this->id,$this->storage->path($conversionPath."/config.jsonld"),
+                $this->storage->path($conversionPath."/dataset.jsonld")," ",null,$this->dataTemplate,
                 $organization,$employee,$fromDate,$toDate);
         }
         else
@@ -375,6 +380,7 @@ class PublishingPipeline implements PublishingPipelineContract
         {
             $this->saveData();
         }
+        $this->mapTermsToReplacements(false,$predicateUri,$oldTerm,$newTerm,$resource->getId());
     }
 
     public function bulkUpdateObjectValues(string $predicateUri,$oldTerm,$newTerm):void
@@ -386,6 +392,7 @@ class PublishingPipeline implements PublishingPipelineContract
         }
 
         $this->saveData();
+        $this->mapTermsToReplacements(true,$predicateUri,$oldTerm,$newTerm);
     }
 
     public static function getConversionUri(string $conversionId):string
@@ -472,10 +479,9 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$this->configJsonLD->getGraph();
         $rawRdfGenerationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'RawRdfGeneration')[0];
 
-        $i=1;
         foreach ($mappings as $predicateUri=>$columnName)
         {
-            $columnPredicateMappingNode=$graph->createNode(self::getConversionUri($this->id)."/ColumnPredicateMapping-".$i);
+            $columnPredicateMappingNode=$graph->createNode(self::getConversionUri($this->id)."/column-predicate-mapping/".Str::uuid());
             $columnPredicateMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."ColumnPredicateMapping"));
             $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."columnName",$columnName);
             $predicate=$graph->createNode($predicateUri);
@@ -483,7 +489,6 @@ class PublishingPipeline implements PublishingPipelineContract
             $predicateLabel=$this->getShapePredicates()->where('uri',$predicateUri)->first()->name;
             $columnPredicateMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicateLabel",$predicateLabel);
             $rawRdfGenerationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasColumnPredicateMapping',$columnPredicateMappingNode);
-            $i++;
         }
         $this->saveConfig();
     }
@@ -492,10 +497,9 @@ class PublishingPipeline implements PublishingPipelineContract
         $graph=$this->configJsonLD->getGraph();
         $reconciliationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'Reconciliation')[0];
 
-        $i=1;
         foreach ($termResourceMappings as $termResourceMapping)
         {
-            $termResourceMappingNode=$graph->createNode(self::getConversionUri($this->id)."/TermResourceMapping/".Str::uuid());
+            $termResourceMappingNode=$graph->createNode(self::getConversionUri($this->id)."/term-resource-mapping/".Str::uuid());
             $termResourceMappingNode->setType(new Node($graph,self::CONVERSION_PREFIX."TermResourceMapping"));
             $predicate=$graph->createNode($termResourceMapping->predicate);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX."predicate",$predicate);
@@ -505,8 +509,38 @@ class PublishingPipeline implements PublishingPipelineContract
             $matchType=$graph->createNode($termResourceMapping->matchType);
             $termResourceMappingNode->addPropertyValue(self::CONVERSION_PREFIX.'matchType',$matchType);
             $reconciliationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasTermResourceMapping',$termResourceMappingNode);
-            $i++;
         }
+        $this->saveConfig();
+    }
+    public function mapTermsToReplacements(bool $isBulkReplacement,$predicate,$term,$replacement,$resource=null)
+    {
+        if(!$isBulkReplacement && is_null($resource))
+        {
+            throw new \RuntimeException('resource required in case of a single replacement');
+        }
+        $class='SingleObjectReplacement';
+        if($isBulkReplacement)
+        {
+            $class='BulkObjectReplacement';
+        }
+
+        $graph=$this->configJsonLD->getGraph();
+        $validationNode=$graph->getNodesByType(self::CONVERSION_PREFIX.'Validation')[0];
+
+        $objectReplacementNode=$graph->createNode(self::getConversionUri($this->id)."/".Str::kebab($class)."/".Str::uuid());
+        $objectReplacementNode->setType(new Node($graph,self::CONVERSION_PREFIX.$class));
+        $predicate=$graph->createNode($predicate);
+        $objectReplacementNode->addPropertyValue(self::CONVERSION_PREFIX."predicate",$predicate);
+        $objectReplacementNode->addPropertyValue(self::CONVERSION_PREFIX."term",$term);
+        $objectReplacementNode->addPropertyValue(self::CONVERSION_PREFIX."replacedBy",$replacement);
+        if(!$isBulkReplacement)
+        {
+            $resource=$graph->createNode($resource);
+            $objectReplacementNode->addPropertyValue(self::CONVERSION_PREFIX."resource",$resource);
+        }
+
+        $validationNode->addPropertyValue(self::CONVERSION_PREFIX.'hasObjectReplacement',$objectReplacementNode);
+
         $this->saveConfig();
     }
     public function getShapePredicates():Collection
