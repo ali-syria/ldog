@@ -44,6 +44,16 @@ class Report extends BatchImport implements ReportContract
             $fromDateStr=(string) $fromDate->year;
             $toDateStr=(string) $fromDate->year;
         }
+        elseif ($dataTemplate->exportFrequency->uri==UriBuilder::PREFIX_LDOG.ReportExportFrequency::MONTHLY)
+        {
+            $fromDateStr=(string) $fromDate->format('Y-m');
+            $toDateStr=(string) $fromDate->format('Y-m');
+        }
+        elseif ($dataTemplate->exportFrequency->uri==UriBuilder::PREFIX_LDOG.ReportExportFrequency::DAILY)
+        {
+            $fromDateStr=(string) $fromDate->format('Y-m-d');
+            $toDateStr=(string) $fromDate->format('Y-m-d');
+        }
         $query="
             PREFIX ldog: <$ldogPrefix>
             PREFIX conv: <$conversionPrefix>
